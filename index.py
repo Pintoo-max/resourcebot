@@ -890,6 +890,7 @@ async def student_teacher_login(data: StudentTeacherLoginData):
     
 @app.post("/admin-login")
 async def admin_login(data: LoginData):
+    print("admin-login")
     # Query to find user in auth collection by email and role_id
     user_auth = await auth_collection.find_one({"email": data.email, "role_id": data.role_id})
 
