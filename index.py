@@ -28,6 +28,7 @@ client = AsyncIOMotorClient(MONGO_DETAILS)
 database = client.State_Board
 db = client['user_database']
 # files_collection = database.get_collection("question_database")
+print("db : ")
 print(db)
 # Collections for user data and authentication
 profiles_collection = db['user_profiles']
