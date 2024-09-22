@@ -888,7 +888,7 @@ async def student_teacher_login(data: StudentTeacherLoginData):
         return {"message": "User not found. Please register first."}
 
     
-@app.post("/admin-login")
+@app.post("/resourcebot/admin-login")
 async def admin_login(data: LoginData):
     print("admin-login")
     # Query to find user in auth collection by email and role_id
