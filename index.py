@@ -49,20 +49,20 @@ def get_collection(class_name: str) -> Collection:
     return database[collection_name]
 
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/resourcebot/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/resourcebot", response_class=HTMLResponse)
 async def get_form():
     print("This is collection1")
     with open("static/login.html") as f:
         return f.read()
     
-@app.get("/output", response_class=HTMLResponse)
+@app.get("/resourcebot/output", response_class=HTMLResponse)
 async def get_form():
     with open("static/output.html") as f:
         return f.read()
 
-@app.post("/submit")
+@app.post("/resourcebot/submit")
 async def form_uplaod(
     board: str = Form(...),
     medium: str = Form(...),
@@ -609,7 +609,7 @@ def parse_questions_and_answers(text: str, filename: str):
     # data["filename"] = filename
     return data
 
-@app.get("/retrieve", response_class=HTMLResponse)
+@app.get("/resourcebot/retrieve", response_class=HTMLResponse)
 async def get_retrieve_page():
     print("This is retrieve")
     with open("static/example_screen.html") as f:
@@ -617,7 +617,7 @@ async def get_retrieve_page():
         return HTMLResponse(content=f.read(), status_code=200)
 
 
-@app.get("/getsubjects")
+@app.get("/resourcebot/getsubjects")
 async def get_subjects(
     board: str = Query(...),
     medium: str = Query(...),
@@ -643,7 +643,7 @@ async def get_subjects(
     print(subjects)
     return {"subjects": subjects}
 
-@app.get("/getchaptersandtasks")
+@app.get("/resourcebot/getchaptersandtasks")
 async def get_chapters_and_tasks(
     board: str = Query(...),
     medium: str = Query(...),
@@ -682,7 +682,7 @@ async def get_chapters_and_tasks(
     return {"chapters": chapters, "tasks": tasks}
 
 
-@app.get("/get_questions_and_answers")
+@app.get("/resourcebot/get_questions_and_answers")
 async def get_questions_and_answers(
     board: str = Query(...),
     medium: str = Query(...),
@@ -819,13 +819,13 @@ def get_role_id(role: str):
     else:
         raise ValueError("Invalid role")
 
-@app.get("static/register.html", response_class=HTMLResponse)
+@app.get("/resourcebotstatic/register.html", response_class=HTMLResponse)
 async def get_form():
     with open("static/register.html", 'rb') as f:
         content = f.read()
         return content.decode('utf-8')
 
-@app.post("/register")
+@app.post("/resourcebot/register")
 async def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
     
@@ -872,7 +872,7 @@ class StudentTeacherLoginData(BaseModel):
     role_id: int
     password: str
 
-@app.post("/student-teacher-login")
+@app.post("/resourcebot/student-teacher-login")
 async def student_teacher_login(data: StudentTeacherLoginData):
     # Query to find user in auth collection by email and role_id
    
@@ -902,7 +902,7 @@ async def admin_login(data: LoginData):
     else:
             return {"message": "User not found. Please register first."}
     
-@app.post("/add_board")
+@app.post("/resourcebot/add_board")
 async def board_added(board: Board):
     print(board.boardName)
     # Check if the email is already registered
@@ -934,7 +934,7 @@ async def board_added(board: Board):
  
     return {"message": "Board added successful"}
 
-@app.get("/get_SchoolBoard")
+@app.get("/resourcebot/get_SchoolBoard")
 async def get_boards(request: Request):  # Accepting the Request object
     # print("virus mila hai")
     try:
@@ -956,7 +956,7 @@ class Update_Board(BaseModel):
     board_id : int
     boardName: str    
 
-@app.post("/update_board")
+@app.post("/resourcebot/update_board")
 async def pdate_board(board: Update_Board):
     print("this is board", board)
 
@@ -978,7 +978,7 @@ async def pdate_board(board: Update_Board):
         raise HTTPException(status_code=500, detail="Failed to update board")
 
     
-@app.delete("/delete_board/{board_id}")
+@app.delete("/resourcebot/delete_board/{board_id}")
 async def delete_board(board_id: int):
     try:
         # Check if the board exists
@@ -997,7 +997,7 @@ async def delete_board(board_id: int):
 class Medium(BaseModel):
     mediumName: str    
 
-@app.post("/add_medium")
+@app.post("/resourcebot/add_medium")
 async def medium_added(medium: Medium):
     # print(board.boardName)
     # Check if the email is already registered
@@ -1027,7 +1027,7 @@ async def medium_added(medium: Medium):
  
     return {"message": "Medium added successful"}
 
-@app.get("/get_SchoolMedium")
+@app.get("/resourcebot/get_SchoolMedium")
 async def get_mediums(request: Request):  # Accepting the Request object
     try:
         cursor = medium_collection.find()
@@ -1045,7 +1045,7 @@ async def get_mediums(request: Request):  # Accepting the Request object
 class Institute(BaseModel):
     instituteName: str    
 
-@app.post("/add_institute")
+@app.post("/resourcebot/add_institute")
 async def institute_added(institute: Institute):
    
     existing_institute = await institute_collection.find_one({"institute_name": institute.instituteName})
@@ -1069,7 +1069,7 @@ async def institute_added(institute: Institute):
  
     return {"message": "Institute added successful"}
 
-@app.get("/get_SchoolInstitute")
+@app.get("/resourcebot/get_SchoolInstitute")
 async def get_institutes(request: Request):  # Accepting the Request object
     try:
         cursor = institute_collection.find()
@@ -1087,7 +1087,7 @@ async def get_institutes(request: Request):  # Accepting the Request object
 class Class(BaseModel):
     className: str    
 
-@app.post("/add_class")
+@app.post("/resourcebot/add_class")
 async def class_added(classs: Class):
     existing_class = await class_collection.find_one({"classs_name": classs.className})
     if existing_class:
@@ -1110,7 +1110,7 @@ async def class_added(classs: Class):
  
     return {"message": "Class added successfully"}
 
-@app.get("/get_SchoolClass")
+@app.get("/resourcebot/get_SchoolClass")
 async def get_classs(request: Request):  
     try:
         cursor = class_collection.find()
@@ -1132,7 +1132,7 @@ class Subject(BaseModel):
     mediumName: str
     boardName: str
 
-@app.post("/add_subject")
+@app.post("/resourcebot/add_subject")
 async def subject_added(subjt: Subject):
     
     # Check if the email is already registered
@@ -1171,7 +1171,7 @@ class SubjectDtl(BaseModel):
     boardName: str
 
 
-@app.post("/get_SubjectDetails")
+@app.post("/resourcebot/get_SubjectDetails")
 async def subject_details(subjt: SubjectDtl):
     print(subjt)
     try:
@@ -1193,7 +1193,7 @@ async def subject_details(subjt: SubjectDtl):
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
-@app.get("/get_SubjectDetails1")
+@app.get("/resourcebot/get_SubjectDetails1")
 async def get_subject_details(request: Request):
     try:
         # Fetch all subjects
@@ -1266,7 +1266,7 @@ class Topic(BaseModel):
     mediumName: str
     boardName: str
 
-@app.post("/add_topic")
+@app.post("/resourcebot/add_topic")
 async def add_topic(topic: Topic):
     # Check if the topic already exists with the same subject, class, medium, and board
     existing_topic = await topic_collection.find_one({
@@ -1310,7 +1310,7 @@ class TopicDtl(BaseModel):
     subjectName: str
 
 
-@app.post("/get_TopicDetails")
+@app.post("/resourcebot/get_TopicDetails")
 async def topic_details(top: TopicDtl):
     print(top)
     try:
@@ -1333,7 +1333,7 @@ async def topic_details(top: TopicDtl):
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
-@app.get("/get_TopicDetails1")
+@app.get("/resourcebot/get_TopicDetails1")
 async def get_topic_details(request: Request):
     try:
         # Fetch all subjects
@@ -1407,17 +1407,17 @@ async def get_topic_details(request: Request):
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
 # LOGout part
-@app.get("/")
+@app.get("/resourcebot")
 async def read_root(request: Request):
     # Example endpoint
     return {"message": "Welcome to the Admin Dashboard"}
 
-@app.get("/logout")
+@app.get("/resourcebot/logout")
 async def logout(request: Request):
     request.session.pop("user", None)  # Remove user from session
     return RedirectResponse(url="/static/login.html")
 
-@app.get("/login.html")
+@app.get("/resourcebot/login.html")
 async def login():
     # Serve the login page (static file or template)
     return {"message": "Login Page"}
