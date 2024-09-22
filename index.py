@@ -28,7 +28,7 @@ client = AsyncIOMotorClient(MONGO_DETAILS)
 database = client.State_Board
 db = client['user_database']
 # files_collection = database.get_collection("question_database")
-
+print(db)
 # Collections for user data and authentication
 profiles_collection = db['user_profiles']
 auth_collection = db['user_auth']
@@ -52,7 +52,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def get_form():
-    print("This is collection")
+    print("This is collection1")
     with open("static/login.html") as f:
         return f.read()
     
@@ -125,7 +125,7 @@ async def form_uplaod(
 
     print("Generated filename:", new_filename)
 
-    print("This is collection")
+    print("This is collection2")
     collection = get_collection(class_name)
     print(collection)
 
@@ -887,7 +887,7 @@ async def student_teacher_login(data: StudentTeacherLoginData):
         return {"message": "User not found. Please register first."}
 
     
-@app.post("resourcebot/admin-login")
+@app.post("/resourcebot/admin-login")
 async def admin_login(data: LoginData):
     # Query to find user in auth collection by email and role_id
     user_auth = await auth_collection.find_one({"email": data.email, "role_id": data.role_id})
