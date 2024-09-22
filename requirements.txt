@@ -1,0 +1,9 @@
+fastapi
+pydantic
+passlib
+python-multipart
+motor
+pymongo
+python-docx
+pymupdf  # For `fitz`
+bcrypt

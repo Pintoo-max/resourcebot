@@ -1,0 +1,704 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #007bff;
+    color: #fff;
+    padding-top: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background-color: #0056b3;
+    border-radius: 5px;
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-profile {
+    font-size: 1.5em;
+    color: #007bff;
+}
+
+.welcome-section {
+    margin-bottom: 20px;
+}
+
+.dashboard-cards {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.form-item {
+    margin-bottom: 15px; /* Spacing between form items */
+    display: flex; /* Use flexbox for alignment */
+    flex-direction: column; /* Stack label and input vertically */
+}
+
+.form-item label {
+    display: block;
+    margin-bottom: 5px; /* Spacing between label and input/select */
+    font-weight: bold; /* Makes the label text bold */
+    color: #333; /* Dark grey color for text */
+}
+
+.form-item select,
+.form-item input[type="text"] {
+    padding: 10px;
+    width: 100%; /* Full width of parent container */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border 0.2s ease-in-out;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.form-item select:focus,
+.form-item input[type="text"]:focus {
+    border-color: #007bff; /* Border color when focused */
+    outline: none; /* Removes default outline */
+}
+
+.form-item input[type="text"]::placeholder {
+    color: #aaa; /* Placeholder text color */
+}
+
+/* Style for buttons */
+.form-button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Adds space above the button */
+}
+
+.form-button:hover {
+    background-color: #218838;
+}
+
+.activity-overview {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.role-management,
+.board-management,
+.medium-management,
+.institute-management,
+.class-management,
+.subject-management, 
+.topic-management {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.role-management input,
+.board-management input,
+.medium-management input,
+.institute-management input,
+.class-management input,
+.subject-management input,
+.topic-management input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.role-management button,
+.board-management button,
+.medium-management button,
+.institute-management button,
+.class-management button,
+.subject-management button,
+.topic-management button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.role-management button:hover,
+.board-management button:hover,
+.medium-management button:hover,
+.institute-management button:hover,
+.class-management button:hover,
+.subject-management button:hover,
+.topic-management button:hover {
+    background-color: #0056b3;
+}
+
+.content-section {
+    display: none;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#dashboard-section {
+    display: block;
+}
+
+.role-list div,
+.board-list div,
+.medium-list div,
+.institute-list div,
+.class-list div,
+.subject-list div,
+.topic-list div {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.role-list div span,
+.board-list div span,
+.medium-list div span,
+.institute-list div span,
+.class-list div span,
+.subject-list div span,
+.topic-list div span {
+    flex-grow: 1;
+}
+
+.role-list div button,
+.board-list div button,
+.medium-list div button,
+.institute-list div button,
+.class-list div button,
+.subject-list div button,
+.topic-list div button {
+    margin-left: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.role-list div button.edit,
+.board-list div button.edit,
+.medium-list div button.edit,
+.institute-list button.edit,
+.class-list button.edit,
+.subject-list button.edit,
+.topic-list button.edit {
+    background-color: #ffc107;
+}
+
+.role-list div button.delete,
+.board-list div button.delete,
+.medium-list div button.delete,
+.institute-list div button.delete,
+.class-list div button.delete,
+.subject-list div button.delete,
+.topic-list div button.delete {
+    background-color: #dc3545;
+}
+
+.role-list div button.update,
+.board-list div button.update,
+.medium-list div button.update,
+.institute-list div button.update,
+.class-list div button.update,
+.subject-list div button.update,
+.topic-list div button.update {
+    background-color: #28a745;
+}
+
+/* Form Section */
+.board-form,
+.medium-form,
+.institute-form,
+.class-form,
+.subject-form,
+.topic-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.board-form input,
+.medium-form input,
+.institute-form input,
+.class-form input,
+.subject-form [type="text"],
+.subject-form select, 
+.topic-form [type="text"],
+.topic-form select {
+    padding: 10px;
+    width: 280px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border 0.2s ease-in-out;
+}
+
+.board-form input:focus,
+.medium-form input:focus,
+.institute-form input:focus,
+.class-form input:focus,
+.subject-form input:focus,
+.topic-form input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* .board-form button,
+.medium-form button,
+.institute-form button,
+.class-form button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.board-form button:hover,
+.medium-form button:hover,
+.institute-form button:hover,
+.class-form button:hover {
+    background-color: #218838;
+} */
+
+/* List Container */
+.board-list-container,
+.medium-list-container,
+.institute-list-container,
+.class-list-container,
+.subject-list-container,
+.topic-list-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.board-list-container h3,
+.medium-list-container h3,
+.institute-list-container h3,
+.class-list-container h3,
+.subject-list-container h3,
+.topic-list-container h3 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+}
+
+.board-list table,
+.medium-list table,
+.institute-list table,
+.class-list table,
+.subject-list table,
+.topic-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.board-list table th,
+.board-list table td,
+.medium-list table th,
+.medium-list table td,
+.institute-list table th,
+.institute-list table td,
+.class-list table th,
+.class-list table td,
+.subject-list table th,
+.subject-list table td,
+.topic-list table th,
+.topic-list table td  {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.board-list table th,
+.medium-list table th,
+.institute-list table th,
+.class-list table th,
+.subject-list table th,
+.topic-list table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.board-list table tbody tr:nth-child(even),
+.medium-list table tbody tr:nth-child(even),
+.institute-list table tbody tr:nth-child(even),
+.class-list table tbody tr:nth-child(even),
+.subject-list table tbody tr:nth-child(even),
+.topic-list table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.board-list table tbody tr:hover,
+.medium-list table tbody tr:hover,
+.institute-list table tbody tr:hover,
+.class-list table tbody tr:hover, 
+.subject-list table tbody tr:hover,
+.topic-list table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.action-icons {
+    display: flex;
+    gap: 15px;
+    font-size: 18px;
+}
+
+.action-icons i {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.action-icons i:hover {
+    color: #0056b3;
+}
+
+/* Upload Section Styling */
+#upload-section {
+    margin-top: 20px;
+}
+
+#upload-section h2 {
+    color: #333;
+}
+
+#upload-form-container {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    
+    /* Flexbox for centering content */
+    display: flex;
+    flex-direction: column; /* Align content in a vertical column */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    min-height: 200px; /* Adjust as per your content's height */
+}
+
+/* Responsive Design */
+/* @media screen and (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .main-content {
+        margin-left: 200px;
+    }
+
+    .dashboard-cards {
+        flex-direction: column;
+    }
+
+    .role-management,
+    .board-management,
+    .medium-management,
+    .institute-management,
+    .class-management,
+    .subject-management,
+    .topic-management {
+        right: 10px;
+        top: 80px;
+    }
+
+    .board-form ,
+    .medium-form ,
+    .institute-form,
+    .class-form,
+    .subject-form,
+    .topic-form {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .board-form input,
+    .medium-form input,
+    .institute-form input,
+    .class-form input,
+    .subject-form input,
+    .topic-form input {
+        width: 100%;
+    }
+
+    .board-list-container,
+    .medium-list-container,
+    .institute-list-container,
+    .class-list-container, 
+    .subject-list-container,
+    .topic-list-container {
+        padding: 15px;
+    }
+} */
+
+/* Media Queries for Better Responsiveness */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .main-content {
+        margin-left: 200px;
+    }
+
+    .dashboard-cards {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 150px;
+    }
+
+    .main-content {
+        margin-left: 150px;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    .role-management,
+    .board-management,
+    .medium-management,
+    .institute-management,
+    .class-management,
+    .subject-management,
+    .topic-management {
+        right: 10px;
+        top: 80px;
+    }
+
+    .board-form,
+    .medium-form,
+    .institute-form,
+    .class-form,
+    .subject-form,
+    .topic-form {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .board-form input,
+    .medium-form input,
+    .institute-form input,
+    .class-form input,
+    .subject-form input,
+    .topic-form input {
+        width: 100%;
+    }
+
+    .board-list-container,
+    .medium-list-container,
+    .institute-list-container,
+    .class-list-container,
+    .subject-list-container,
+    .topic-list-container {
+        padding: 15px;
+    }
+
+    .dashboard-cards {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 120px;
+        padding-top: 10px;
+    }
+
+    .main-content {
+        margin-left: 120px;
+        padding: 10px;
+    }
+
+    .sidebar h2 {
+        font-size: 1.2rem;
+    }
+
+    .dashboard-cards {
+        flex-direction: column;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .role-management,
+    .board-management,
+    .medium-management,
+    .institute-management,
+    .class-management,
+    .subject-management,
+    .topic-management {
+        right: 5px;
+        top: 60px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .action-icons {
+        flex-direction: column;
+    }
+
+    /* Reduce button padding */
+    button {
+        padding: 8px 12px;
+    }
+}
+
+/* Smooth Hover Effects */
+.sidebar ul li a:hover,
+.sidebar ul li a.active,
+button:hover {
+    transition: background-color 0.3s ease;
+    background-color: #0056b3;
+}
+
+/* Make text more readable */
+h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Cards improvement */
+.card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.activity-overview {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+.activity-overview h3 {
+    margin-bottom: 20px;
+}
+.activity-overview div {
+    margin-bottom: 20px;
+}
+.chart-container {
+    margin-bottom: 20px;
+}
+.chart-container canvas {
+    width: 100%;
+    height: 200px;
+}
+

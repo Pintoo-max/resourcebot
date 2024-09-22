@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <ul>
+            <li><a href="#" id="dashboard-link" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#" id="roles-link"><i class="fas fa-users"></i> Roles</a></li>
+            <li><a href="#" id="boards-link"><i class="fas fa-chalkboard-teacher"></i> Board</a></li>
+            <li><a href="#" id="mediums-link"><i class="fas fa-language"></i> Medium</a></li>
+            <li><a href="#" id="institutes-link"><i class="fas fa-school"></i> Institute</a></li>
+            <li><a href="#" id="classs-link"><i class="fas fa-graduation-cap"></i> Class</a></li>
+            <li><a href="#" id="subjects-link"><i class="fas fa-book"></i> Subject</a></li>
+            <li><a href="#" id="topics-link"><i class="fas fa-list-alt"></i> Topics</a></li>
+            <li><a href="/static/ex.html" id="upload-link"><i class="fas fa-upload"></i> Upload</a></li>
+            <!-- <li><a href="#"><i class="fas fa-user"></i> Users</a></li>
+            <li><a href="#"><i class="fas fa-cogs"></i> Settings</a></li> -->
+            <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h2>Admin Dashboard</h2>
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+
+
+        <div id="dashboard-section" class="content-section">
+            <div class="welcome-section">
+                <h3>Welcome, Admin!</h3>
+                <p>Select an option from the left sidebar to manage the dashboard.</p>
+            </div>
+
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Total Users</h3>
+                    <p>1,200</p>
+                </div>
+                <div class="card">
+                    <h3>Active Roles</h3>
+                    <p>5</p>
+                </div>
+                <div class="card">
+                    <h3>Institutes</h3>
+                    <p>15</p>
+                </div>
+                <div class="card">
+                    <h3>Pending Requests</h3>
+                    <p>8</p>
+                </div>
+            </div>
+
+            <div class="activity-overview">
+                <h3>Activity Overview</h3>
+
+                <!-- Recent Activities -->
+                <div class="recent-activities">
+                    <h4>Recent Activities</h4>
+                    <ul>
+                        <li>New user registered: John Doe</li>
+                        <li>Role updated: Admin to Editor for Jane Smith</li>
+                        <li>Pending request approved: Institute XYZ</li>
+                        <!-- Add more activities as needed -->
+                    </ul>
+                </div>
+
+                <!-- Graphical Statistics -->
+                <div class="graphical-statistics">
+                    <h4>Graphical Statistics</h4>
+                    <div class="chart-container">
+                        <!-- Example chart (use a chart library like Chart.js for real charts) -->
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Another example chart -->
+                        <canvas id="roleDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Performers -->
+                <div class="top-performers">
+                    <h4>Top Performers</h4>
+                    <ul>
+                        <li>Institute ABC: Most active in the last month</li>
+                        <li>User: Alice Johnson - Most engaged</li>
+                        <!-- Add more top performers as needed -->
+                    </ul>
+                </div>
+
+                <!-- System Health -->
+                <div class="system-health">
+                    <h4>System Health</h4>
+                    <p>Status: All systems operational</p>
+                    <!-- Add any system alerts or statuses as needed -->
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="upcoming-events">
+                    <h4>Upcoming Events</h4>
+                    <ul>
+                        <li>System maintenance: Sept 30, 2024</li>
+                        <li>New user training: Oct 5, 2024</li>
+                        <!-- Add more events as needed -->
+                    </ul>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h4>Quick Actions</h4>
+                    <ul>
+                        <li><a href="/approve-requests">Approve Pending Requests</a></li>
+                        <li><a href="/add-user">Add New User</a></li>
+                        <li><a href="/update-institute">Update Institute Information</a></li>
+                        <!-- Add more quick actions as needed -->
+                    </ul>
+                </div>
+
+                <!-- User Feedback -->
+                <div class="user-feedback">
+                    <h4>User Feedback</h4>
+                    <ul>
+                        <li>"Great system, but we need more features for reporting." - Feedback from user123</li>
+                        <li>"The dashboard is very user-friendly." - Feedback from user456</li>
+                        <!-- Add more feedback as needed -->
+                    </ul>
+                </div>
+
+                <!-- Recent Logins -->
+                <div class="recent-logins">
+                    <h4>Recent Logins</h4>
+                    <ul>
+                        <li>John Doe - Sept 28, 2024</li>
+                        <li>Jane Smith - Sept 27, 2024</li>
+                        <!-- Add more recent logins as needed -->
+                    </ul>
+                </div>
+
+                <!-- Notifications -->
+                <div class="notifications">
+                    <h4>Notifications</h4>
+                    <p>No new notifications</p>
+                    <!-- Add notifications or alerts as needed -->
+                </div>
+
+                <!-- Activity Summary -->
+                <div class="activity-summary">
+                    <h4>Activity Summary</h4>
+                    <p>This week: 10 new users, 5 role updates, 2 pending requests resolved</p>
+                    <!-- Add more summary details as needed -->
+                </div>
+            </div>
+        </div>
+
+
+        <div id="roles-section" class="content-section" style="display: none;">
+            <h3>Role Management</h3>
+            <input type="text" id="new-role-input" placeholder="Enter new role name">
+            <button id="add-role-btn">Add Role</button>
+            <div class="role-list"></div>
+        </div>
+
+        <!-- Board Part -->
+        <div id="boards-section" class="content-section" style="display:none;">
+            <h2>Board Management</h2>
+
+            <!-- Form Section -->
+            <div class="board-form">
+                <div class="form-item">
+                    <label for="new-board-input">Board</label>
+                    <input type="text" id="new-board-input" placeholder="Add new board">
+                </div>
+
+                <button id="add-board-btn" class="form-button">Add Board</button>
+            </div>
+
+            <!-- Board List Section -->
+            <div class="board-list-container">
+                <h3>Existing Boards</h3>
+                <div class="board-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Board ID</th>
+                                <th>Board Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamically populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medium Part -->
+        <div id="mediums-section" class="content-section" style="display:none;">
+            <h2>Medium Management</h2>
+
+            <!-- Form Section -->
+            <div class="medium-form">
+                <div class="form-item">
+                    <label for="new-medium-input">Medium</label>
+                    <input type="text" id="new-medium-input" placeholder="Add new Medium">
+                </div>
+                <button id="add-medium-btn" class="form-button">Add Medium</button>
+            </div>
+
+            <!-- Medium List Section -->
+            <div class="medium-list-container">
+                <h3>Existing Mediums</h3>
+                <div class="medium-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Medium ID</th>
+                                <th>Medium Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamically populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Institutes Part -->
+        <div id="institutes-section" class="content-section" style="display:none;">
+            <h2>Institute Management</h2>
+
+            <!-- Form Section -->
+            <div class="institute-form">
+                <div class="form-item">
+                    <label for="new-institute-input">Institute</label>
+                    <input type="text" id="new-institute-input" placeholder="Add new Institute">
+                </div>
+                <button id="add-institute-btn" class="form-button">Add Institute</button>
+            </div>
+
+            <!-- Institute List Section -->
+            <div class="institute-list-container">
+                <h3>Existing Institutes</h3>
+                <div class="institute-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Institute ID</th>
+                                <th>Institute Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamically populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Class Part -->
+        <div id="classs-section" class="content-section" style="display:none;">
+            <h2>Class Management</h2>
+
+            <!-- Form Section -->
+            <div class="class-form">
+                <div class="form-item">
+                    <label for="new-class-input">Class</label>
+                    <input type="text" id="new-class-input" placeholder="Add new Class">
+                </div>
+                <button id="add-class-btn" class="form-button">Add Class</button>
+            </div>
+
+            <!-- Class List Section -->
+            <div class="class-list-container">
+                <h3>Existing Classes</h3>
+                <div class="class-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Class ID</th>
+                                <th>Class Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamically populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject part -->
+        <div id="subjects-section" class="content-section" style="display:none;">
+            <h2>Subject Management</h2>
+
+            <div class="subject-form">
+                <div class="form-item">
+                    <label for="brd-input">Board</label>
+                    <select id="brd-input">
+                        <option value="">Select Board</option>
+                        <!-- Populate options dynamically via JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="mid-input">Medium</label>
+                    <select id="mid-input">
+                        <option value="">Select Medium</option>
+                        <!-- Populate options dynamically via JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="cls-input">Class</label>
+                    <select id="cls-input">
+                        <option value="">Select Class</option>
+                        <!-- Populate options dynamically via JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="new-subject-input">Subject</label>
+                    <input type="text" id="new-subject-input" placeholder="Add subject name">
+                </div>
+                <button id="add-subject-btn" class="form-button">Add Subject</button>
+            </div>
+
+            <!-- Class List Section -->
+            <div class="subject-list-container">
+                <h3>Existing Subjects</h3>
+                <div class="subject-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Board Name</th>
+                                <th>Medium Name</th>
+                                <th>Class Name</th>
+                                <th>Subject ID</th>
+                                <th>Subject Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subject-table-body">
+                            <!-- Dynamically populated rows will appear here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topics Section -->
+        <div id="topics-section" class="content-section" style="display:none;">
+            <h2>Topic Management</h2>
+
+            <div class="topic-form">
+                <div class="form-item">
+                    <label for="topic-brd-input">Board</label>
+                    <select id="topic-brd-input">
+                        <option value="">Select Board</option>
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="topic-mid-input">Medium</label>
+                    <select id="topic-mid-input">
+                        <option value="">Select Medium</option>
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="topic-cls-input">Class</label>
+                    <select id="topic-cls-input">
+                        <option value="">Select Class</option>
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="topic-subj-input">Subject</label>
+                    <select id="topic-subj-input">
+                        <option value="">Select Subject</option>
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="new-topic-input">Topic</label>
+                    <input type="text" id="new-topic-input" placeholder="Add topic name">
+                </div>
+                <button id="add-topic-btn" class="form-button">Add Topic</button>
+            </div>
+
+            <!-- Topic List Section -->
+            <div class="topic-list-container">
+                <h3>Existing Topics</h3>
+                <div class="topic-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Board</th>
+                                <th>Medium</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Topic</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamically populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Upload Form Section -->
+        <div id="upload-section" class="content-section" style="display:none;">
+            <h2>Upload Form</h2>
+
+            <!-- Message container -->
+            <div id="upload-message" style="display:none; color: green; margin-bottom: 20px;">
+                Form has been successfully redirected.
+            </div>
+
+            <!-- Form will be dynamically loaded here -->
+            <div id="upload-form-container">
+            </div>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            var ctx1 = document.getElementById('userGrowthChart').getContext('2d');
+            var userGrowthChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'User Growth',
+                        data: [50, 100, 150, 200, 250, 300],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+
+            var ctx2 = document.getElementById('roleDistributionChart').getContext('2d');
+            var roleDistributionChart = new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: ['Admin', 'Editor', 'Viewer', 'Contributor'],
+                    datasets: [{
+                        label: 'Role Distribution',
+                        data: [10, 15, 20, 5],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const dashboardLink = document.getElementById('dashboard-link');
+                const rolesLink = document.getElementById('roles-link');
+                const boardsLink = document.getElementById('boards-link');
+                const mediumsLink = document.getElementById('mediums-link');
+                const institutesLink = document.getElementById('institutes-link');
+                const classsLink = document.getElementById('classs-link');
+                const uploadLink = document.getElementById('upload-link');
+                const subjectsLink = document.getElementById('subjects-link');
+                const topicsLink = document.getElementById('topics-link');
+
+                const dashboardSection = document.getElementById('dashboard-section');
+                const rolesSection = document.getElementById('roles-section');
+                const boardsSection = document.getElementById('boards-section');
+                const mediumsSection = document.getElementById('mediums-section');
+                const institutesSection = document.getElementById('institutes-section');
+                const classsSection = document.getElementById('classs-section');
+                const uploadSection = document.getElementById("upload-section");
+                const subjectsSection = document.getElementById('subjects-section');
+                const topicsSection = document.getElementById('topics-section');
+
+                const addRoleBtn = document.getElementById('add-role-btn');
+                const addBoardBtn = document.getElementById('add-board-btn');
+                const addMediumBtn = document.getElementById('add-medium-btn');
+                const addInstituteBtn = document.getElementById('add-institute-btn');
+                const addClassBtn = document.getElementById('add-class-btn');
+                const addSubjectBtn = document.getElementById('add-subject-btn');
+                const addTopicBtn = document.getElementById('add-topic-btn');
+
+                const newRoleInput = document.getElementById('new-role-input');
+                const newBoardInput = document.getElementById('new-board-input');
+                const newMediumInput = document.getElementById('new-medium-input');
+                const newInstituteInput = document.getElementById('new-institute-input');
+                const newClassInput = document.getElementById('new-class-input');
+                const newSubjectInput = document.getElementById('new-subject-input');
+                const newTopicInput = document.getElementById('new-topic-input');
+
+                const roleList = document.querySelector('.role-list');
+                const boardList = document.querySelector('.board-list');
+                const mediumList = document.querySelector('.medium-list');
+                const instituteList = document.querySelector('.institute-list');
+                const class_List = document.querySelector('.class-list');
+                // const uploadList = document.querySelector(.upload-list);
+                const subjectList = document.querySelector('.subject-list');
+                const topicList = document.querySelector('.topic-list');
+
+                // Load roles and boards from local storage or initialize them
+                let roles = JSON.parse(localStorage.getItem('roles')) || [];
+                let boards = JSON.parse(localStorage.getItem('boards')) || [];
+                let mediums = JSON.parse(localStorage.getItem('mediums')) || [];
+                let institutes = JSON.parse(localStorage.getItem('institutes')) || [];
+                let classs = JSON.parse(localStorage.getItem('classs')) || [];
+                let subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+                let topics = JSON.parse(localStorage.getItem('topics')) || [];
+
+                // Render Roles
+                function renderRoles() {
+                    roleList.innerHTML = '';
+                    roles.forEach((role, index) => {
+                        const roleItem = document.createElement('div');
+                        const roleSpan = document.createElement('span');
+                        roleSpan.textContent = role;
+
+                        const editBtn = document.createElement('button');
+                        editBtn.textContent = 'Edit';
+                        editBtn.classList.add('edit');
+                        editBtn.addEventListener('click', () => editRole(index));
+
+                        const updateBtn = document.createElement('button');
+                        updateBtn.textContent = 'Update';
+                        updateBtn.classList.add('update');
+                        updateBtn.style.display = 'none';
+                        updateBtn.addEventListener('click', () => updateRole(index, roleSpan, updateBtn, editBtn));
+
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.textContent = 'Delete';
+                        deleteBtn.classList.add('delete');
+                        deleteBtn.addEventListener('click', () => deleteRole(index));
+
+                        roleItem.appendChild(roleSpan);
+                        roleItem.appendChild(editBtn);
+                        roleItem.appendChild(updateBtn);
+                        roleItem.appendChild(deleteBtn);
+                        roleList.appendChild(roleItem);
+                    });
+                }
+
+                // Add Role
+                function addRole() {
+                    const roleName = newRoleInput.value.trim();
+                    if (roleName !== '') {
+                        roles.push(roleName);
+                        localStorage.setItem('roles', JSON.stringify(roles)); // Save to local storage
+                        newRoleInput.value = '';
+                        renderRoles();
+                    }
+                }
+
+                // Edit Role
+                function editRole(index) {
+                    const roleItem = roleList.children[index];
+                    const roleSpan = roleItem.querySelector('span');
+                    const editBtn = roleItem.querySelector('.edit');
+                    const updateBtn = roleItem.querySelector('.update');
+
+                    roleSpan.contentEditable = true;
+                    roleSpan.focus();
+                    editBtn.style.display = 'none';
+                    updateBtn.style.display = 'inline-block';
+                }
+
+                // Update Role
+                function updateRole(index, roleSpan, updateBtn, editBtn) {
+                    const updatedRoleName = roleSpan.textContent.trim();
+                    if (updatedRoleName !== '') {
+                        roles[index] = updatedRoleName;
+                        localStorage.setItem('roles', JSON.stringify(roles)); // Update in local storage
+                        roleSpan.contentEditable = false;
+                        editBtn.style.display = 'inline-block';
+                        updateBtn.style.display = 'none';
+                        renderRoles();
+                    }
+                }
+
+                // Delete Role
+                function deleteRole(index) {
+                    roles.splice(index, 1);
+                    localStorage.setItem('roles', JSON.stringify(roles)); // Remove from local storage
+                    renderRoles();
+                }
+
+                // Event Listener for Adding Role
+                addRoleBtn.addEventListener('click', addRole);
+
+
+                // Add Board
+                function addBoard() {
+                    event.preventDefault();
+                    const boardName = newBoardInput.value.trim();
+                    // alert(boardName);
+                    if (boardName !== '') {
+
+                        const formData = {
+
+                            board_name: boardName,
+                        };
+
+                        // alert(boardName);
+
+                        fetch('/add_board', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ boardName: boardName }),
+                        })
+                            .then(response => {
+                                console.log("Response Status:", response.status); // Log status
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log("Response Data:", data); // Log response data
+                                if (data.message === "Board added successful") {
+                                    alert("Board added successful");
+                                    fetchAndRenderBoards();
+                                    // Redirect to login page
+                                    // window.location.href = "/static/login.html";
+
+
+                                } else {
+                                    alert(data.message || data.detail || "An error occurred");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("An error occurred. Please try again.");
+                            });
+                    }
+                }
+
+                // Function to fetch and render boards
+                function fetchAndRenderBoards() {
+                    const tbody = document.querySelector('.board-list tbody');
+                    tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>'; // Show loading message
+
+                    fetch('/get_SchoolBoard', 
+                    { method: 'GET'})
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(boards => {
+                            console.log('Boards:', boards); // Check the fetched data
+                            tbody.innerHTML = ''; // Clear existing rows after fetching
+
+                            if (boards.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="4">No boards found.</td></tr>'; // Handle empty state
+                            } else {
+                                boards.forEach((board, index) => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${board.board_id}</td>
+                        <td>${board.board_name}</td>
+                        <td class="action-icons">
+                           <i class="fas fa-edit edit-icon" title="Edit" data-board-id="${board.board_id}" data-board-name="${board.board_name}"></i>
+                            <i class="fas fa-trash-alt delete-icon" title="Delete" data-board-id="${board.board_id}"></i>
+                        </td>
+                    `;
+                                    tbody.appendChild(row);
+                                });
+                                // Add event listeners for edit and delete icons after rows are appended
+                                addEditEventListeners();
+                                addDeleteEventListeners();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching boards:', error);
+                            tbody.innerHTML = '<tr><td colspan="4">An error occurred while fetching boards.</td></tr>';
+                        });
+                }
+
+                // Function to add event listeners for edit icons
+                function addEditEventListeners() {
+                    document.querySelectorAll('.edit-icon').forEach(icon => {
+                        icon.addEventListener('click', function () {
+                            const board_id = this.getAttribute('data-board-id');
+                            const board_name = this.getAttribute('data-board-name');
+                            editBoard(board_id, board_name);
+                        });
+                    });
+                }
+
+                // Function to add event listeners for delete icons
+                function addDeleteEventListeners() {
+                    document.querySelectorAll('.delete-icon').forEach(icon => {
+                        icon.addEventListener('click', function () {
+                            const board_id = this.getAttribute('data-board-id');
+                            deleteBoard(board_id);
+                        });
+                    });
+                }
+
+                // Function to edit a board name
+                function editBoard(board_id, board_name) {
+                    alert(board_id);
+                    alert(board_name);
+                    const newBoardName = prompt("Edit Board Name:", board_name);
+                    if (!newBoardName || newBoardName === board_name) {
+                        return;
+                    }
+
+                    const updatedBoard = {
+                        board_id: board_id,
+                        board_name: newBoardName
+                    };
+                    console.log("update board",updatedBoard);
+
+                    fetch(`/update_board`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedBoard)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Board updated:', data);
+                            alert('Board updated successfully');
+                            fetchAndRenderBoards(); // Re-fetch and render the updated list
+                        })
+                        .catch(error => {
+                            console.error('Error updating board:', error);
+                            alert('Error updating the board');
+                        });
+                }
+
+                function deleteBoard(board_id) {
+                    // Your delete logic here
+                    console.log("Deleting Board ID:", board_id);
+                }
+
+                // Event Listener for Adding Board
+                addBoardBtn.addEventListener('click', addBoard);
+
+
+
+                // Add Medium
+                function addMedium() {
+                    event.preventDefault();
+                    const mediumName = newMediumInput.value.trim();
+                    if (mediumName !== '') {
+
+                        const formData = {
+
+                            medium_name: mediumName,
+                        };
+
+
+                        fetch('/add_medium', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ mediumName: mediumName }),
+                        })
+                            .then(response => {
+                                console.log("Response Status:", response.status); // Log status
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log("Response Data:", data); // Log response data
+                                if (data.message === "Medium added successful") {
+                                    alert("Medium added successful");
+                                    fetchAndRenderMediums();
+                                    // Redirect to login page
+                                    // window.location.href = "/static/login.html";
+
+                                } else {
+                                    alert(data.message || data.detail || "An error occurred");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("An error occurred. Please try again.");
+                            });
+                    }
+                }
+
+
+                // Function to fetch and render mediums
+                function fetchAndRenderMediums() {
+                    const tbody = document.querySelector('.medium-list tbody');
+                    tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>'; // Show loading message
+
+                    fetch('/get_SchoolMedium', { method: 'GET' })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(mediums => {
+                            console.log('Mediums:', mediums); // Check the fetched data
+                            tbody.innerHTML = ''; // Clear existing rows after fetching
+
+                            if (mediums.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="4">No mediums found.</td></tr>'; // Handle empty state
+                            } else {
+                                mediums.forEach((medium, index) => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${medium.medium_id}</td>
+                        <td>${medium.medium_name}</td>
+                        <td class="action-icons">
+                            <i class="fas fa-edit" title="Edit" onclick="editMedium(${medium.medium_id})"></i>
+                            <i class="fas fa-trash-alt" title="Delete" onclick="deleteMedium(${medium.medium_id})"></i>
+                        </td>
+                    `;
+                                    tbody.appendChild(row);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching mediums:', error);
+                            tbody.innerHTML = '<tr><td colspan="4">An error occurred while fetching mediums.</td></tr>';
+                        });
+                }
+
+
+                // Edit Medium
+                function editMedium(index) {
+                    const mediumItem = mediumList.children[index];
+                    const mediumSpan = mediumItem.querySelector('span');
+                    const editBtn2 = mediumItem.querySelector('.edit');
+                    const updateBtn2 = mediumItem.querySelector('.update');
+
+                    mediumSpan.contentEditable = true;
+                    mediumSpan.focus();
+                    editBtn2.style.display = 'none';
+                    updateBtn2.style.display = 'inline-block';
+                }
+
+                // Update Medium
+                function updateMedium(index, mediumSpan, updateBtn2, editBtn2) {
+                    const updatedMediumName = mediumSpan.textContent.trim();
+                    if (updatedMediumName !== '') {
+                        mediums[index] = updatedMediumName;
+                        localStorage.setItem('mediums', JSON.stringify(mediums));
+                        mediumSpan.contentEditable = false;
+                        editBtn2.style.display = 'inline-block';
+                        updateBtn2.style.display = 'none';
+                        renderMediums();
+                    }
+                }
+
+                // Delete Medium
+                function deleteMedium(index) {
+                    mediums.splice(index, 1);
+                    localStorage.setItem('mediums', JSON.stringify(mediums));
+                    renderMediums();
+                }
+
+
+                // Event Listener for Adding Medium
+                addMediumBtn.addEventListener('click', addMedium);
+
+
+                // Reset Active State for Sidebar Links
+                function resetActiveLinks() {
+                    const links = document.querySelectorAll('.sidebar ul li a');
+                    links.forEach(link => {
+                        link.classList.remove('active');
+                    });
+                }
+
+                // Add Institute
+                function addInstitute() {
+                    event.preventDefault();
+                    const instituteName = newInstituteInput.value.trim();
+                    if (instituteName !== '') {
+
+                        const formData = {
+
+                            institute_name: instituteName,
+                        };
+
+
+                        fetch('/add_institute', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ instituteName: instituteName }),
+                        })
+                            .then(response => {
+                                console.log("Response Status:", response.status); // Log status
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log("Response Data:", data); // Log response data
+                                if (data.message === "Institute added successful") {
+                                    alert("Institute added successful");
+                                    fetchAndRenderInstitutes();
+                                } else {
+                                    alert(data.message || data.detail || "An error occurred");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("An error occurred. Please try again.");
+                            });
+                    }
+                }
+
+
+                // Function to fetch and render institutes
+                function fetchAndRenderInstitutes() {
+                    const tbody = document.querySelector('.institute-list tbody');
+                    tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>'; // Show loading message
+
+                    fetch('/get_SchoolInstitute', { method: 'GET' })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(institutes => {
+                            console.log('Institutes:', institutes); // Check the fetched data
+                            tbody.innerHTML = ''; // Clear existing rows after fetching
+
+                            if (institutes.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="4">No institutes found.</td></tr>'; // Handle empty state
+                            } else {
+                                institutes.forEach((institute, index) => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${institute.institute_id}</td>
+                        <td>${institute.institute_name}</td>
+                        <td class="action-icons">
+                            <i class="fas fa-edit" title="Edit" onclick="editInstitute(${institute.institute_id})"></i>
+                            <i class="fas fa-trash-alt" title="Delete" onclick="deleteInstitute(${institute.institute_id})"></i>
+                        </td>
+                    `;
+                                    tbody.appendChild(row);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching institutes:', error);
+                            tbody.innerHTML = '<tr><td colspan="4">An error occurred while fetching institutes.</td></tr>';
+                        });
+                }
+
+                // Edit Institute
+                function editInstitute(index) {
+                    const instituteItem = instituteList.children[index];
+                    const instituteSpan = instituteItem.querySelector('span');
+                    const editBtn3 = instituteItem.querySelector('.edit');
+                    const updateBtn3 = instituteItem.querySelector('.update');
+
+                    instituteSpan.contentEditable = true;
+                    instituteSpan.focus();
+                    editBtn3.style.display = 'none';
+                    updateBtn3.style.display = 'inline-block';
+                }
+
+                // Update Institute
+                function updateInstitute(index, instituteSpan, updateBtn3, editBtn3) {
+                    const updatedInstituteName = instituteSpan.textContent.trim();
+                    if (updatedInstituteName !== '') {
+                        institutes[index] = updatedInstituteName;
+                        localStorage.setItem('institutes', JSON.stringify(institutes));
+                        instituteSpan.contentEditable = false;
+                        editBtn3.style.display = 'inline-block';
+                        updateBtn3.style.display = 'none';
+                        renderInstitutes();
+                    }
+                }
+
+                // Delete Institute
+                function deleteInstitute(index) {
+                    institutes.splice(index, 1);
+                    localStorage.setItem('institutes', JSON.stringify(institutes));
+                    renderInstitutes();
+                }
+
+                // Event Listener for Adding Medium
+                addInstituteBtn.addEventListener('click', addInstitute);
+
+
+                // Add Class
+                function addClass() {
+                    event.preventDefault();
+                    const className = newClassInput.value.trim();
+                    if (className !== '') {
+
+                        const formData = {
+
+                            class_name: className,
+                        };
+
+                        fetch('/add_class', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ className: className }),
+                        })
+                            .then(response => {
+                                console.log("Response Status:", response.status); // Log status
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log("Response Data:", data); // Log response data
+                                if (data.message === "Class added successful") {
+                                    alert("Class added successful");
+                                    fetchAndRenderClasss();
+
+                                } else {
+                                    alert(data.message || data.detail || "An error occurred");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("An error occurred. Please try again.");
+                            });
+                    }
+                }
+
+                // Function to fetch and render Class
+                function fetchAndRenderClasss() {
+                    const tbody = document.querySelector('.class-list tbody');
+                    tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>'; // Show loading message
+
+                    fetch('/get_SchoolClass', { method: 'GET' })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(classs => {
+                            console.log('classs:', classs); // Check the fetched data
+                            tbody.innerHTML = ''; // Clear existing rows after fetching
+
+                            if (classs.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="4">No classs found.</td></tr>'; // Handle empty state
+                            } else {
+                                classs.forEach((classes, index) => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${classes.classs_id}</td>
+                        <td>${classes.classs_name}</td>
+                        <td class="action-icons">
+                            <i class="fas fa-edit" title="Edit" onclick="editClass(${classes.classs_id})"></i>
+                            <i class="fas fa-trash-alt" title="Delete" onclick="deleteClass(${classes.classs_id})"></i>
+                        </td>
+                    `;
+                                    tbody.appendChild(row);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching classes:', error);
+                            tbody.innerHTML = '<tr><td colspan="4">An error occurred while fetching classes.</td></tr>';
+                        });
+                }
+                // Event Listener for Adding Class
+                addClassBtn.addEventListener('click', addClass);
+
+
+
+                // Function to handle adding subject
+                function addSubject(event) {
+                    event.preventDefault();
+
+                    const subjectName = newSubjectInput.value.trim();
+                    const className = document.getElementById('cls-input').value;
+                    const mediumName = document.getElementById('mid-input').value;
+                    const boardName = document.getElementById('brd-input').value;
+
+                    // Validation: ensure all fields are filled
+                    if (!subjectName || !className || !mediumName || !boardName) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+
+                    // Make a POST request to add subject
+                    fetch('/add_subject', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            subjectName,
+                            className,
+                            mediumName,
+                            boardName
+                        }),
+                    })
+                        .then(response => {
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.message === "Subject added successful") {
+                                alert("Subject added successfully");
+                                fetchAndRenderSubjects(); // Refresh the subject list
+                            } else {
+                                alert(data.message || "An error occurred");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("An error occurred. Please try again.");
+                        });
+                }
+
+                // Function to fetch and populate board details
+                function fetchBoardDtls() {
+                    fetchDetails('/get_SchoolBoard', 'brd-input', 'board_id', 'board_name');
+                }
+
+                // Function to fetch and populate medium details
+                function fetchMediumDtls() {
+                    fetchDetails('/get_SchoolMedium', 'mid-input', 'medium_id', 'medium_name');
+                }
+
+                // Function to fetch and populate class details
+                function fetchClassDtls() {
+                    fetchDetails('/get_SchoolClass', 'cls-input', 'classs_id', 'classs_name');
+                }
+
+
+                // Reusable function to fetch details and populate dropdowns
+                function fetchDetails(url, selectElementId, valueField, textField) {
+                    fetch(url, { method: 'GET' })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const selectElement = document.getElementById(selectElementId);
+                            selectElement.innerHTML = `<option value="">Select</option>`;
+
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item[valueField];
+                                option.textContent = item[textField];
+                                selectElement.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error(`Error fetching data from ${url}:`, error);
+                            alert("An error occurred while fetching data.");
+                        });
+                }
+
+                function fetchAndRenderSubjects() {
+                    const tbody = document.querySelector('.subject-list tbody');
+                    tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>'; // Show loading message
+
+                    fetch('/get_SubjectDetails1', { method: 'GET' })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(subjects => {
+                            console.log('Subjects:', subjects); // Check the fetched data
+                            tbody.innerHTML = ''; // Clear existing rows after fetching
+
+                            if (subjects.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="6">No subjects found.</td></tr>'; // Handle empty state
+                            } else {
+                                subjects.forEach((subject, index) => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${subject.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
+                        <td>${subject.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
+                        <td>${subject.board_name || 'Unknown Board'}</td> <!-- Display Board Name -->
+                        <td>${subject.subject_id || 'Unknown subject_ID'}</td> <!-- Display Subject ID -->
+                        <td>${subject.subject_name || 'Unknown Subject'}</td> <!-- Display Subject Name -->
+                        <td class="action-icons">
+                            <i class="fas fa-edit" title="Edit" onclick="editSubject(${subject.subject_id})"></i>
+                            <i class="fas fa-trash-alt" title="Delete" onclick="deleteSubject(${subject.subject_id})"></i>
+                        </td>
+                    `;
+                                    tbody.appendChild(row);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching subjects:', error);
+                            tbody.innerHTML = '<tr><td colspan="6">An error occurred while fetching subjects.</td></tr>';
+                        });
+                }
+
+                //     // Fetch initial data on page load
+                //     fetchClassDtls();
+                //     fetchMediumDtls();
+                //     fetchBoardDtls();
+                //     fetchSubjectList();
+                // });
+
+                addSubjectBtn.addEventListener('click', addSubject);
+
+
+                // Function to handle adding a new topic
+                function addTopic(event) {
+                    event.preventDefault();
+
+                    const topicName = document.getElementById('new-topic-input').value.trim();
+                    const className = document.getElementById('topic-cls-input').value;
+                    const mediumName = document.getElementById('topic-mid-input').value;
+                    const boardName = document.getElementById('topic-brd-input').value;
+                    const subjectName = document.getElementById('topic-subj-input').value;
+
+                    // Validation: ensure all fields are filled
+                    if (!topicName || !className || !mediumName || !boardName || !subjectName) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+
+                    // Make a POST request to add topic
+                    fetch('/add_topic', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            topicName,
+                            className,
+                            mediumName,
+                            boardName,
+                            subjectName
+                        }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Topic added successfully") {
+                                alert("Topic added successfully");
+                                fetchAndRenderTopics(); // Refresh the topic list
+                            } else {
+                                alert(data.message || "An error occurred");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("An error occurred. Please try again.");
+                        });
+                }
+
+
+                // Function to fetch and populate board details
+                function fetchBoardDtls_T() {
+                    fetchDetails('/get_SchoolBoard', 'topic-brd-input', 'board_id', 'board_name');
+                }
+
+                // Function to fetch and populate medium details
+                function fetchMediumDtls_T() {
+                    fetchDetails('/get_SchoolMedium', 'topic-mid-input', 'medium_id', 'medium_name');
+                }
+
+                // Function to fetch and populate class details
+                function fetchClassDtls_T() {
+                    fetchDetails('/get_SchoolClass', 'topic-cls-input', 'classs_id', 'classs_name');
+                }
+
+                // Function to fetch and populate class details
+                function fetchSubjectDtls_T() {
+                    fetchDetails('/get_SubjectDetails', 'topic-subj-input', 'subject_id', 'subject_name');
+                }
+
+
+
+                // Reusable function to fetch details and populate dropdowns
+                function fetchDetails(url, selectElementId, valueField, textField) {
+                    fetch(url, { method: 'GET' })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const selectElement = document.getElementById(selectElementId);
+                            selectElement.innerHTML = `<option value="">Select</option>`;
+
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item[valueField];
+                                option.textContent = item[textField];
+                                selectElement.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error(`Error fetching data from ${url}:`, error);
+                            alert("An error occurred while fetching data.");
+                        });
+                }
+
+                addTopicBtn.addEventListener('click', addTopic);
+
+                // Function to handle section display and link activation
+                function showSection(sectionToShow, linkToActivate) {
+                    resetActiveLinks();
+                    linkToActivate.classList.add('active');
+
+                    // Hide all sections
+                    dashboardSection.style.display = 'none';
+                    rolesSection.style.display = 'none';
+                    boardsSection.style.display = 'none';
+                    mediumsSection.style.display = 'none';
+                    institutesSection.style.display = 'none';
+                    classsSection.style.display = 'none';
+                    uploadSection.style.display = 'none';
+                    subjectsSection.style.display = 'none';
+                    topicsSection.style.display = 'none';
+
+                    // Show the selected section
+                    sectionToShow.style.display = 'block';
+                }
+
+                // Dashboard Link Event Listener
+                dashboardLink.addEventListener('click', function () {
+                    showSection(dashboardSection, dashboardLink);
+                });
+
+                // UploadForm Link Event Listener
+                uploadLink.addEventListener('click', function () {
+                    showSection(uploadSection, uploadLink);
+                });
+
+                // Roles Link Event Listener
+                rolesLink.addEventListener('click', function () {
+                    showSection(rolesSection, rolesLink);
+                    renderRoles(); // Render roles only when the section is shown
+                });
+
+                // Boards Link Event Listener
+                boardsLink.addEventListener('click', function () {
+                    showSection(boardsSection, boardsLink);
+                    // renderBoards(); // Render boards only when the section is shown
+                    fetchAndRenderBoards();
+                });
+
+                // Mediums Link Event Listener
+                mediumsLink.addEventListener('click', function () {
+                    showSection(mediumsSection, mediumsLink);
+                    // renderMediums(); // Render mediums only when the section is shown
+                    fetchAndRenderMediums();
+                });
+
+                institutesLink.addEventListener('click', function () {
+                    showSection(institutesSection, institutesLink);
+                    // renderInstitutes();
+                    fetchAndRenderInstitutes();
+                });
+
+                classsLink.addEventListener('click', function () {
+                    showSection(classsSection, classsLink);
+                    // renderInstitutes();
+                    fetchAndRenderClasss();
+                });
+
+                subjectsLink.addEventListener('click', function () {
+                    showSection(subjectsSection, subjectsLink);
+                    fetchAndRenderSubjects();
+                    fetchClassDtls();
+                    fetchMediumDtls();
+                    fetchBoardDtls();
+                });
+
+                topicsLink.addEventListener('click', function () {
+                    showSection(topicsSection, topicsLink);
+                    fetchAndRenderTopics();
+                    fetchBoardDtls_T();
+                    fetchMediumDtls_T();
+                    fetchClassDtls_T();
+                    //fetchSubjectDtls_T();
+
+                });
+
+                // Render roles and boards on page load
+                renderRoles();
+                // renderBoards();
+                // renderMediums();
+                //renderInstitutes();
+            });
+
+
+            // // for uploading the form
+            // document.getElementById('upload-link').addEventListener('click', function (event) {
+            //     event.preventDefault();  // Prevent default link behavior
+
+            //     // Fetch the form from FastAPI
+            //     fetch('/static/ex.html')
+            //         .then(response => {
+            //             if (!response.ok) {
+            //                 throw new Error('Network response was not ok');
+            //             }
+            //             return response.text();  // Get the HTML content
+            //         })
+            //         .then(html => {
+            //             // Display the form in the upload section
+            //             document.getElementById('upload-form-container').innerHTML = html;
+
+            //             // Show the upload section
+            //             document.getElementById('upload-section').style.display = 'block';
+            //         })
+            //         .catch(error => {
+            //             console.error('Error fetching upload form:', error);
+            //             alert('An error occurred while loading the form.');
+            //         });
+            // });
+
+
+            // Upload part of the form
+            document.getElementById('upload-link').addEventListener('click', function (event) {
+                event.preventDefault();  // Prevent default link behavior
+
+                // Show the message before opening the new tab
+                const messageContainer = document.getElementById('upload-message');
+                messageContainer.style.display = 'block'; // Show the message
+                messageContainer.textContent = 'Redirecting to form...'; // Update the message text
+
+                // Open the form in a new tab
+                window.open('/static/1.html', '_blank');
+
+                // // Optionally, hide the message after a delay
+                // setTimeout(() => {
+                //     messageContainer.style.display = 'none'; // Hide the message after a delay
+                // }, 2000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+            });
+
+
+
+            function fetchSubjectDtls_T() {
+                const className = document.getElementById('topic-cls-input').value;
+                const mediumName = document.getElementById('topic-mid-input').value;
+                const boardName = document.getElementById('topic-brd-input').value;
+
+                fetch('/get_SubjectDetails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        mediumName: mediumName,
+                        className: className,
+                        boardName: boardName
+                    }),
+                })
+                    .then(response => {
+                        console.log("Response Status:", response.status);
+                        return response.json();
+                    })
+                    .then(subject => {
+                        // console.log("Subject Data:", subject); // Log the actual data to inspect its structure
+
+
+                        const subjectInput = document.getElementById('topic-subj-input');
+
+                        // Clear previous options
+                        subjectInput.innerHTML = '<option value="">Select Subject</option>';
+
+
+                        // Iterate through the array and create option elements
+                        subject.forEach(subItem => {
+
+                            const option = document.createElement('option');
+                            option.value = subItem.subject_id; // Adjust based on actual keys
+                            option.textContent = subItem.subject_name; // Adjust based on actual keys
+                            subjectInput.appendChild(option);
+                        });
+
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                        alert("An error occurred while fetching data.");
+                    });
+
+            }
+
+            function fetchTopicDtls() {
+                const className = document.getElementById('topic-cls-input').value;
+                const mediumName = document.getElementById('topic-mid-input').value;
+                const boardName = document.getElementById('topic-brd-input').value;
+                const subjectName = document.getElementById('topic-subj-input').value;
+
+                // Only fetch topics if subject is selected
+                if (!subjectName) {
+                    alert("Please select a subject first.");
+                    return;
+                }
+
+                fetch('/get_TopicDetails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        className: className,
+                        mediumName: mediumName,
+                        boardName: boardName,
+                        subjectName: subjectName
+                    }),
+                })
+                    .then(response => {
+                        console.log("Response Status:", response.status);
+                        return response.json();
+                    })
+                    .then(topics => {
+                        // console.log("Topics Data:", topics); // Log the actual data to inspect its structure
+
+                        const topicInput = document.getElementById('new-topic-input');
+
+                        // Clear previous options
+                        topicInput.innerHTML = '<option value="">Select Topic</option>';
+
+                        // Iterate through the array and create option elements
+                        topics.forEach(topicItem => {
+                            const option = document.createElement('option');
+                            option.value = topicItem.topic_id; // Adjust based on actual keys
+                            option.textContent = topicItem.topic_name; // Adjust based on actual keys
+                            topicInput.appendChild(option);
+                        });
+
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                        alert("An error occurred while fetching data.");
+                    });
+            }
+
+
+
+            function fetchAndRenderTopics() {
+                const tbody = document.querySelector('.topic-list tbody');
+                tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>'; // Show loading message
+
+                fetch('/get_TopicDetails1', { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(topics => {
+                        console.log('Topics:', topics); // Check the fetched data
+                        tbody.innerHTML = ''; // Clear existing rows after fetching
+
+                        if (topics.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="6">No Topics found.</td></tr>'; // Handle empty state
+                        } else {
+                            topics.forEach((topic, index) => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${topic.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
+                        <td>${topic.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
+                        <td>${topic.board_name || 'Unknown Board'}</td> <!-- Display Board Name -->
+                        <td>${topic.subject_name || 'Unknown Subject'}</td> <!-- Display Subject Name -->
+                        <td>${topic.topic_name || 'Unknown subject_ID'}</td> <!-- Display Topic Name -->
+                        <td class="action-icons">
+                            <i class="fas fa-edit" title="Edit" onclick="editTopic(${topic.topic_id})"></i>
+                            <i class="fas fa-trash-alt" title="Delete" onclick="deleteTopic(${topic.topic_id})"></i>
+                        </td>
+                    `;
+                                tbody.appendChild(row);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching topics:', error);
+                        tbody.innerHTML = '<tr><td colspan="6">An error occurred while fetching topics.</td></tr>';
+                    });
+            }
+
+            // Function to check all selections and call fetchSubjectDtls_T
+            function checkSelectionsAndFetch() {
+                const board = document.getElementById('topic-brd-input').value;
+                const medium = document.getElementById('topic-mid-input').value;
+                const classInput = document.getElementById('topic-cls-input').value;
+
+                // Check if all three dropdowns have a selected value
+                if (board && medium && classInput) {
+                    fetchSubjectDtls_T();
+
+                    // Fetch topics if a subject is selected
+                    if (subject) {
+                        fetchTopicDtls();
+                    }
+                }
+            }
+
+            // Add event listeners to the three dropdowns
+            document.getElementById('topic-brd-input').addEventListener('change', checkSelectionsAndFetch);
+            document.getElementById('topic-mid-input').addEventListener('change', checkSelectionsAndFetch);
+            document.getElementById('topic-cls-input').addEventListener('change', checkSelectionsAndFetch);
+            document.getElementById('topic-subj-input').addEventListener('change', fetchTopicDtls); // Fetch topics when subject changes
+
+            document.getElementById('logout').addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default anchor behavior
+
+                // Show a confirmation dialog
+                if (confirm('Are you sure you want to logout?')) {
+                    // Make a request to the logout endpoint
+                    fetch('/logout', {
+                        method: 'GET',
+                        credentials: 'same-origin' // Include credentials for session management
+                    })
+                        .then(response => {
+                            if (response.redirected) {
+                                // Show success message and redirect to login page
+                                alert('Logout successful. Redirecting to login page...');
+                                window.location.href = response.url;
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            });
+
+
+        </script>
+</body>
+
+</html>

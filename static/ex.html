@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="scripts.js" defer></script>
+</head>
+
+<body>
+
+    <form action="/submit" method="post" enctype="multipart/form-data">
+        <h2>CONTENTS</h2>
+        <div id="dynamic-content">
+        <label for="boards" class="required">Board</label>
+        <select id="boards" name="boards" required onclick="fetchBoards()">
+            <option value="">Select</option>
+
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+    <script>
+        function fetchBoards() {
+
+            alert("tjhfljulu");
+
+            fetch('/get_SchoolBoard')
+                .then(response => response.json())
+                // .then(data => {
+                //console.log('Received data:', data); // Debugging line
+                //     if (Array.isArray(data)) {
+                //         populateDropdown('boards', data);
+                //     } else {
+                //         console.error('Expected an array but received:', data);
+                //     }
+                // })
+                .then(boards => {
+                    // console.log("Subject Data:", subject); // Log the actual data to inspect its structure
+
+
+                    const boardInput = document.getElementById('boards');
+
+                    // Clear previous options
+                    boardInput.innerHTML = '<option value="">Select Boards</option>';
+
+
+                    // Iterate through the array and create option elements
+                    boards.forEach(boardItem => {
+
+                        const option = document.createElement('option');
+                        option.value = boardItem.board_id; // Adjust based on actual keys
+                        option.textContent = boardItem.board_name; // Adjust based on actual keys
+                        boardInput.appendChild(option);
+                    });
+
+                })
+                .catch(error => console.error('Fetch error:', error));
+
+                document.getElementById('boards').addEventListener('click', fetchBoards);
+
+        }
+    </script>
+</body>
+
+</html>
