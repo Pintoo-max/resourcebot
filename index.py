@@ -62,6 +62,11 @@ async def get_form():
     with open("static/output.html") as f:
         return f.read()
 
+@app.get("/register", response_class=HTMLResponse)
+async def get_form():
+    with open("static/register.html") as f:
+        return f.read()
+
 @app.post("/submit")
 async def form_uplaod(
     board: str = Form(...),
