@@ -1685,7 +1685,7 @@
                             if (response.redirected) {
                                 // Show success message and redirect to login page
                                 alert('Logout successful. Redirecting to login page...');
-                                window.location.href = response.url;
+                                window.location.href = '/'+BASE_URL+response.url;
                             }
                         })
                         .catch(error => console.error('Error:', error));
