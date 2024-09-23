@@ -55,7 +55,7 @@ def get_collection(class_name: str) -> Collection:
     return database[collection_name]
 
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/resourcebot/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def get_form():
