@@ -151,13 +151,6 @@
             font-size: 18px;
         } */
     </style>
-
-<script>
-    const BASE_URL = window.location.pathname.split('/')[1]; // This gets the project name
-    console.log("window.location.pathname : "+window.location.pathname);
-    console.log("BASE_URL : "+BASE_URL);
-</script>
-
 </head>
 
 <body>
@@ -267,7 +260,7 @@
 
                 if (loginSuccess) {
                     //alert("Valid credentials.");
-                    window.location.href = `/static/admin_dashboard.html`;
+                    window.location.href = "/static/admin_dashboard.html";
                 } else {
                     alert("Invalid credentials. Please try again.");
                 }
@@ -283,7 +276,7 @@
                     const loginSuccess = await performLogin(email, password, instituteId, role_id);
                     if (loginSuccess) {
                         //alert("Valid credentials.");
-                        window.location.href = `${BASE_URL}/static/example_screen.html`;
+                        window.location.href = "/static/example_screen.html";
                     } else {
                         alert("Invalid credentials. Please register first.");
                         redirectToRegistration();
@@ -343,7 +336,7 @@
 
         async function performAdminLogin(email, password, role_id) {
             try {
-                const response = await fetch('/resourcebot/admin-login', {
+                const response = await fetch('/admin-login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -367,7 +360,7 @@
 
         function redirectToRegistration() {
             const role = document.getElementById('role').value;
-            window.location.href = `${BASE_URL}/register.html?role=${role}`;
+            window.location.href = `register.html?role=${role}`;
         }
 
 
