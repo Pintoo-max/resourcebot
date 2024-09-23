@@ -1677,7 +1677,7 @@
                 if (confirm('Are you sure you want to logout?')) {
                     console.log("BASE_URL : "+BASE_URL);
                     // Make a request to the logout endpoint
-                    fetch('/logout', {
+                    fetch('/'+BASE_URL+'/logout', {
                         method: 'GET',
                         credentials: 'same-origin' // Include credentials for session management
                     })
