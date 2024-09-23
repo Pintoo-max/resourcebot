@@ -26,7 +26,8 @@ app = FastAPI()
 # MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/"
 # MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 # MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsAllowInvalidCertificates=true"
-MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true"
+# MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true"
+MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&ssl=true"
 client = AsyncIOMotorClient(MONGO_DETAILS)
 database = client.State_Board
 db = client['user_database']
