@@ -267,7 +267,7 @@
 
                 if (loginSuccess) {
                     //alert("Valid credentials.");
-                    window.location.href = "/static/admin_dashboard.html";
+                    window.location.href = `${BASE_URL}/static/admin_dashboard.html`;
                 } else {
                     alert("Invalid credentials. Please try again.");
                 }
@@ -283,7 +283,7 @@
                     const loginSuccess = await performLogin(email, password, instituteId, role_id);
                     if (loginSuccess) {
                         //alert("Valid credentials.");
-                        window.location.href = "/static/example_screen.html";
+                        window.location.href = `${BASE_URL}/static/example_screen.html`;
                     } else {
                         alert("Invalid credentials. Please register first.");
                         redirectToRegistration();
@@ -367,7 +367,7 @@
 
         function redirectToRegistration() {
             const role = document.getElementById('role').value;
-            window.location.href = `register.html?role=${role}`;
+            window.location.href = `${BASE_URL}/register.html?role=${role}`;
         }
 
 
