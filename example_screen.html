@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Selection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            width: 80%;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .form-section {
+            width: 45%;
+            padding: 20px;
+            background-color: #f7f9fa;
+            border-left: 1px solid #e0e4e8;
+        }
+
+        /* General output section styling */
+        .output-section {
+            width: 120%;
+            /* Adjusted to 100% to fit properly */
+            padding: 30px;
+            background-color: #ffffff;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+
+        .output-section .output {
+            border: 1px solid #e0e4e8;
+            padding: 20px;
+            border-radius: 8px;
+            height: 700px;
+            /* Adjusted height to 300px for visibility */
+            background-color: #f7f9fa;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+        }
+
+        /* Specific styling for questionsDiv */
+        #questionsDiv {
+            display: block;
+            /* Show questions by default */
+        }
+
+        /* Specific styling for answersDiv */
+        #answersDiv {
+            display: none;
+            /* Hide answers by default */
+        }
+
+        /* Button styling */
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        /* Container for all buttons */
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        /* Left side buttons: "Add Question" and "Add Answer" */
+        .left-buttons {
+            display: flex;
+        }
+
+        .left-buttons button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .left-buttons button:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+
+        /* Right side buttons: "Print" and "Download" */
+        .right-buttons {
+            display: flex;
+        }
+
+        .right-buttons button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .right-buttons button:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .form-group:last-child {
+            margin-right: 0;
+        }
+
+        .form-section select,
+        .form-section input[type="text"],
+        .form-section input[type="number"],
+        .form-group.task input[type="checkbox"] {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .form-group.task label {
+            margin-left: 4px;
+        }
+
+        .form-group.task input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .form-section label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form p {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-section button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .task label {
+            flex-grow: 1;
+            /* Ensure label takes up available space */
+            margin-right: 10px;
+            /* Space between label and limit control */
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .limit-controls {
+            display: flex;
+            width: 75px;
+
+        }
+
+        input[type="number"] {
+            width: 10px;
+            /* Smaller width for compactness */
+            text-align: center;
+            margin-right: 5px;
+            /* Space between number input and potential buttons */
+            padding: 2px;
+            /* Small padding for better appearance */
+        }
+
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        .columns-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            /* Adds space between columns */
+            margin-bottom: 20px;
+            /* Adds space below the columns */
+            flex-wrap: wrap;
+            /* Allows columns to wrap on smaller screens */
+        }
+
+        .column {
+            flex: 1;
+            /* Makes each column take up equal space */
+            min-width: 200px;
+            /* Ensures a minimum width for each column */
+            box-sizing: border-box;
+            /* Includes padding and border in the element’s total width and height */
+        }
+
+        .column ul {
+            padding-left: 0;
+            /* Removes padding from the left of the list */
+            margin: 0;
+            /* Removes default margin */
+            list-style-type: none;
+            /* Removes bullets from list items */
+        }
+
+        .column li {
+            padding: 8px 0;
+            /* Adds padding between list items */
+        }
+
+        .column strong {
+            display: block;
+            /* Makes the heading take up the full width */
+            margin-bottom: 10px;
+            /* Adds space below the heading */
+            font-size: 1.2em;
+            /* Makes the heading slightly larger */
+            color: #333;
+            /* Sets a color for better readability */
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .form-section,
+            .output-section {
+                width: 100%;
+            }
+
+            .columns-wrapper {
+                flex-direction: column;
+                /* Stacks columns vertically on smaller screens */
+            }
+
+            .column {
+                min-width: auto;
+                /* Allows columns to take up full width */
+                margin-bottom: 20px;
+                /* Adds space below each column */
+            }
+
+            .column:last-child {
+                margin-bottom: 0;
+                /* Removes margin below the last column */
+            }
+        }
+
+        .answersDiv {
+            display: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .logout-icon {
+            font-size: 36px;
+            /* Increase size of the icon */
+            color: #333;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .logout-icon:hover {
+            color: #007bff;
+            /* Change color on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="output-section">
+            <div class="output" id="data">
+                <h3>Fetched Questions And Answers will appear here .....</h3>
+                <!-- Questions section -->
+                <div class="questionsDiv" id="questionsDiv">
+
+                    <!-- Fetched questions will be displayed here -->
+                </div>
+
+                <!-- Answers section -->
+                <div class="answersDiv" id="answersDiv" style="display: none;">
+
+                    <!-- Fetched answers will be displayed here -->
+                </div>
+            </div>
+
+            <div class="buttons-container">
+                <!-- Left side buttons: "Add Question" and "Add Answer" -->
+                <div class="left-buttons">
+                    <button id="addQuestionBtn">Question</button>
+                    <button id="addAnswerBtn" disabled>Answers</button>
+                </div>
+
+                <!-- Right side buttons: "Print" and "Download" -->
+                <div class="right-buttons">
+                    <button id="printBtn">Print</button>
+                    <button id="downloadBtn">Download</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <h3>CONTENTS</h3>
+            <form onsubmit="fetchQuestionsAndAnswers(); return false;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="board" class="required">Board</label>
+                        <select id="board" name="board" required>
+                            <option value="select">Select</option>
+                            <!-- <option value="MSB">State Board</option>
+                            <option value="CB">CBSE</option>
+                            <option value="IB">ICSE</option> -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="medium">Medium</label>
+                        <select id="medium" name="medium">
+                            <option value="select">Select</option>
+                            <!-- <option value="en_m">English</option>
+                            <option value="hi_m">Hindi</option>
+                            <option value="ma_m">Marathi</option> -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="grade" class="required">Class</label>
+                        <select id="grade" name="grade" required>
+                            <option value="select">Select</option>
+                            <!-- <option value="5">Class 5</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option> -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject" class="required">Subject</label>
+                        <select id="subject" name="subject" required>
+                            <option value="select">Select</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lesson">Chapter/Topic</label>
+                        <select id="lesson" name="lesson" required>
+                            <option value="select">Select</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <label for="task" class="required">Select the Question Type</label>
+                <div class="task">
+                    <input type="checkbox" id="fill-in-the-blanks" name="tasks" value="fill-in-the-blanks">
+                    <label for="fill-in-the-blanks">Fill in the Blanks</label>
+                    <div class="limit-controls">
+                        <input type="number" id="fill-in-the-blanks_limit" name="limit_Fills_ups" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="match-the-column" name="tasks" value="match-the-column">
+                    <label for="match-the-column">Match the Column</label>
+                    <div class="limit-controls">
+                        <input type="number" id="match-the-column_limit" name="limit_match-the-column" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="name-the-following" name="tasks" value="name-the-following">
+                    <label for="name-the-following">Name the Following</label>
+                    <div class="limit-controls">
+                        <input type="number" id="name-the-following_limit" name="limit_name-the-following" min="0"
+                            value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="give-reasons" name="tasks" value="give-reasons">
+                    <label for="give-reasons">Give Reasons</label>
+                    <div class="limit-controls">
+                        <input type="number" id="give-reasons_limit" name="limit_give-reasons" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="answer-in-one-word" name="tasks" value="answer-in-one-word">
+                    <label for="answer-in-one-word">Answers in One Word</label>
+                    <div class="limit-controls">
+                        <input type="number" id="answer-in-one-word_limit" name="limit_ans-one-word" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="short-answers" name="tasks" value="short-answers">
+                    <label for="short-answers">Short Answers</label>
+                    <div class="limit-controls">
+                        <input type="number" id="short-answers_limit" name="limit_short-answers" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="multiple-choice-questions" name="tasks"
+                        value="multiple-choice-questions">
+                    <label for="multiple-choice-questions">Multiple Choice Questions</label>
+                    <div class="limit-controls">
+                        <input type="number" id="multiple-choice-questions_limit" name="limit_multiple-choice-questions"
+                            min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="true-false" name="tasks" value="true-false">
+                    <label for="true-false">True/False</label>
+                    <div class="limit-controls">
+                        <input type="number" id="true-false_limit" name="limit_true-false" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="text-book-solution" name="tasks" value="text-book-solution"
+                        onchange="toggleCheckboxes(this)">
+                    <label for="text-book-solution">Test Book Solutions</label>
+                    <!-- <div class="limit-controls">
+                        <input type="number" id="text-book-solution_limit" name="limit_text-book-solution" min="0"
+                            value="">
+                    </div> -->
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="previous_year">Previous Year</label>
+                        <select id="previous_year" name="previous_year" required>
+                            <option value="select">Select</option>
+                            <option value="select">Previous Year 2023</option>
+                            <option value="select">Previous Year 2022</option>
+                        </select>
+                    </div>
+                </div>
+
+                <br>
+
+                <!-- Logout icon container -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
+
+                    </div>
+                </div>
+                <!-- Fetch button -->
+                <!-- <button type="submit">Fetch Questions and Answers</button> -->
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchBoards();
+            fetchMediums();
+            fetchClasses();
+            //fetchSubjects();
+            //fetchTopics();
+            document.getElementById('board').addEventListener('change', handleBoardChange);
+            // document.getElementById('medium').addEventListener('change', fetchSubjects);
+            // document.getElementById('grade').addEventListener('change', fetchSubjects);
+            // document.getElementById('subject').addEventListener('change', fetchChaptersAndTasks);
+            document.getElementById('board').addEventListener('change', fetchSubjects);
+            document.getElementById('medium').addEventListener('change', fetchSubjects);
+            document.getElementById('grade').addEventListener('change', fetchSubjects);
+            // Add event listener for subject change
+            document.getElementById('subject').addEventListener('change', fetchTopics);
+            document.querySelectorAll('input[name="tasks"]').forEach(checkbox => {
+                // checkbox.addEventListener('change', fetchQuestionsAndAnswers);
+            });
+        });
+
+        function handleBoardChange() {
+            var boardSelect = document.getElementById('board');
+            var mediumSelect = document.getElementById('medium');
+
+            if (boardSelect.value === 'IB' || boardSelect.value === 'CB') {
+                mediumSelect.disabled = true;
+                mediumSelect.value = 'select'; // Reset medium select
+            } else {
+                mediumSelect.disabled = false;
+            }
+
+            fetchSubjects();
+        }
+
+        function toggleCheckboxes(mainCheckbox) {
+            const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#text-book-solution)');
+            otherCheckboxes.forEach(checkbox => {
+                if (mainCheckbox.checked) {
+                    checkbox.disabled = true;  // Disable the other checkboxes
+                    checkbox.checked = false;  // Uncheck the other checkboxes
+                } else {
+                    checkbox.disabled = false;  // Enable the other checkboxes
+                }
+            });
+        }
+
+        // Function to fetch and populate boards
+        function fetchBoards() {
+            fetch('/get_SchoolBoard')
+                .then(response => response.json())
+                .then(boards => {
+                    const boardInput = document.getElementById('board');
+                    boardInput.innerHTML = '<option value="">Select Board</option>';
+
+                    // Populate the board dropdown
+                    boards.forEach(boardItem => {
+                        const option = document.createElement('option');
+                        option.value = boardItem.board_id;
+                        option.textContent = boardItem.board_name;
+                        boardInput.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching boards:', error));
+        }
+
+        // Function to fetch and populate mediums
+        function fetchMediums() {
+            fetch('/get_SchoolMedium')
+                .then(response => response.json())
+                .then(mediums => {
+                    const mediumInput = document.getElementById('medium');
+                    mediumInput.innerHTML = '<option value="">Select Medium</option>';
+
+                    // Populate the medium dropdown
+                    mediums.forEach(mediumItem => {
+                        const option = document.createElement('option');
+                        option.value = mediumItem.medium_id;
+                        option.textContent = mediumItem.medium_name;
+                        mediumInput.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching mediums:', error));
+        }
+
+        // Function to fetch and populate classes
+        function fetchClasses() {
+            fetch('/get_SchoolClass')
+                .then(response => response.json())
+                .then(classes => {
+                    const classInput = document.getElementById('grade');
+                    classInput.innerHTML = '<option value="">Select Class</option>';
+
+                    // Populate the class dropdown
+                    classes.forEach(classItem => {
+                        const option = document.createElement('option');
+                        option.value = classItem.classs_id;
+                        option.textContent = classItem.classs_name;
+                        classInput.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching classes:', error));
+        }
+
+        // async function fetchSubjects() {
+        //     const board = document.getElementById('board').value;
+        //     const medium = document.getElementById('medium').value;
+        //     const grade = document.getElementById('grade').value;
+
+        //     if (board === 'select' || medium === 'select' || grade === 'select') {
+        //         return;
+        //     }
+
+        //     try {
+        //         const response = await fetch(`/get_SubjectDetails?board=${board}&medium=${medium}&grade=${grade}`);
+        //         const result = await response.json();
+        //         const subjectSelect = document.getElementById('subject');
+
+        //         subjectSelect.innerHTML = '<option value="select">Select</option>';
+
+        //         if (response.ok) {
+        //             result.subjects.forEach(subject => {
+        //                 const option = document.createElement('option');
+        //                 option.value = subject;
+        //                 option.textContent = subject;
+        //                 subjectSelect.appendChild(option);
+        //             });
+        //         } else {
+        //             console.error('Error fetching subjects:', result.detail);
+        //         }
+        //     } catch (error) {
+        //         console.error('Error fetching subjects:', error);
+        //     }
+        // }
+
+        // Function to fetch and populate subjects based on selected board, medium, and class
+        function fetchSubjects() {
+            const boardInput = document.getElementById('board');
+            const mediumInput = document.getElementById('medium');
+            const classInput = document.getElementById('grade');
+            //const subjectInput = document.getElementById('subject'); // Subject dropdown
+
+            // Get selected values
+            const selectedBoard = boardInput.value;
+            const selectedMedium = mediumInput.value;
+            const selectedClass = classInput.value;
+
+            fetch('/get_SubjectDetails', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mediumName: selectedMedium,
+                    className: selectedClass,
+                    boardName: selectedBoard
+                }),
+            })
+                .then(response => {
+                    console.log("Response Status:", response.status);
+                    return response.json();
+                })
+                .then(subject => {
+                    const subjectInput = document.getElementById('subject');
+
+                    // Clear previous options
+                    subjectInput.innerHTML = '<option value="">Select Subject</option>';
+
+                    // Iterate through the array and create option elements
+                    subject.forEach(subItem => {
+
+                        const option = document.createElement('option');
+                        option.value = subItem.subject_id; // Adjust based on actual keys
+                        option.textContent = subItem.subject_name; // Adjust based on actual keys
+                        subjectInput.appendChild(option);
+                    });
+
+                })
+
+        }
+
+        // async function fetchChaptersAndTasks() {
+        //     const board = document.getElementById('board').value;
+        //     const medium = document.getElementById('medium').value;
+        //     const grade = document.getElementById('grade').value;
+        //     const subject = document.getElementById('subject').value;
+        //     const lessonDropdown = document.getElementById('lesson');
+
+        //     if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select') {
+        //         console.error('Please select all required fields');
+        //         return;
+        //     }
+
+        //     try {
+        //         const queryString = `board=${encodeURIComponent(board)}&medium=${encodeURIComponent(medium)}&grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(subject)}`;
+        //         const response = await fetch(`/getchaptersandtasks?${queryString}`);
+        //         const result = await response.json();
+
+        //         lessonDropdown.innerHTML = '';
+
+        //         if (response.ok) {
+        //             result.chapters.forEach(chapter => {
+        //                 const option = document.createElement('option');
+        //                 option.value = chapter;
+        //                 option.textContent = chapter;
+        //                 lessonDropdown.appendChild(option);
+        //             });
+
+        //             const taskCheckboxes = document.querySelectorAll('input[name="tasks"]');
+        //             taskCheckboxes.forEach(checkbox => {
+        //                 checkbox.checked = false;
+        //                 checkbox.disabled = !result.tasks.includes(checkbox.value);
+        //             });
+        //         } else {
+        //             console.error('Error fetching chapters and tasks:', result.detail);
+        //         }
+        //     } catch (error) {
+        //         console.error('Error fetching chapters and tasks:', error);
+        //     }
+        // }
+
+        // Function to fetch and populate topics based on selected subject
+        function fetchTopics() {
+            const boardInput = document.getElementById('board');
+            const mediumInput = document.getElementById('medium');
+            const classInput = document.getElementById('grade');
+            const subjectInput = document.getElementById('subject');
+            //const topicInput = document.getElementById('topic');
+
+            const selectedBoard = boardInput.value;
+            const selectedMedium = mediumInput.value;
+            const selectedClass = classInput.value;
+            const selectedSubject = subjectInput.value;
+
+            // Ensure all values are selected before making the request
+            if (!selectedBoard || !selectedMedium || !selectedClass || !selectedSubject) {
+                return;
+            }
+
+            fetch('/get_TopicDetails', {
+                method: 'POST', headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mediumName: selectedMedium,
+                    className: selectedClass,
+                    boardName: selectedBoard,
+                    subjectName: selectedSubject
+                }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(topics => {
+                    const topicInput = document.getElementById('lesson');
+
+                    // Clear previous options
+                    topicInput.innerHTML = '<option value="">Select Topic</option>';
+
+                    // Iterate through the array and create option elements
+                    topics.forEach(topicItem => {
+                        const option = document.createElement('option');
+                        option.value = topicItem.topic_id; // Adjust based on actual keys
+                        option.textContent = topicItem.topic_name; // Adjust based on actual keys
+                        topicInput.appendChild(option);
+                    });
+
+                })
+                .catch(error => {
+                    console.error('Error fetching topics:', error);
+                    const topicInput = document.getElementById('topic');
+                    topicInput.innerHTML = '<option value="">Error loading topics</option>';
+                });
+        }
+
+        //  Fetch wala part hai quetsiona and answers
+
+        // Fetch and display questions when the "Question" button is clicked
+        document.getElementById('addQuestionBtn').addEventListener('click', async () => {
+            const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+            // Extract and store the IDs of checked checkboxes
+            const checkedIds = [];
+            checkboxes.forEach((checkbox) => {
+                checkedIds.push(checkbox.id);
+            });
+
+            // Check if the length is 1 and the id is 'text-book-solution'
+            if (checkedIds.length === 1 && checkedIds[0] === 'text-book-solution') {
+                await fetchTextbookSolution();
+            } else {
+                await fetchQuestionsAndAnswers();
+            }
+            // Fetch questions and answers
+
+            // Show all the questions and hide the answers initially
+            document.querySelectorAll('.questionsDiv').forEach(questionsDiv => {
+                questionsDiv.style.display = 'block'; // Show all questions
+            });
+
+            document.querySelectorAll('.answersDiv').forEach(answersDiv => {
+                answersDiv.style.display = 'none'; // Hide all answers by default
+            });
+
+            // Enable the "Answer" button now that questions are fetched
+            document.getElementById('addAnswerBtn').disabled = false;
+        });
+
+        // Show answers when the "Answer" button is clicked
+        document.getElementById('addAnswerBtn').addEventListener('click', () => {
+            document.querySelectorAll('.questionsDiv').forEach(questionsDiv => {
+                questionsDiv.style.display = 'none'; // Hide all questions
+            });
+
+            document.querySelectorAll('.answersDiv').forEach(answersDiv => {
+                answersDiv.style.display = 'block'; // Show all answers
+            });
+        });
+
+        // Shazzi ma;am ka code haii
+        // Important part hai
+        async function fetchQuestionsAndAnswers() {
+            let selectedTasks = [];
+
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const taskId = checkbox.id; // Get the ID of the selected checkbox
+                // alert(taskId);
+
+                const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
+
+                if (limitInput) { // Check if the number input exists
+                    const limitValue = limitInput.value; // Get the value of the number input
+                    selectedTasks.push({ id: taskId, limit: limitValue }); // Store the checkbox ID and limit value
+                }
+
+
+            });
+
+
+            console.log("Selected tasks with limits:", selectedTasks);
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+
+            // Ensure there are selected tasks
+            if (selectedTasks.length === 0) {
+                dataContainer.innerHTML = '<p>No tasks selected.</p>';
+                return;
+            }
+
+            // Define a function to handle the fetching and displaying of questions and answers
+            const fetchAndDisplayResults = async (sTask) => {
+                const board = document.getElementById('board').value;
+                const medium = document.getElementById('medium').value;
+                const grade = document.getElementById('grade').value;
+                console.log("This is grade", grade);
+                const subject = document.getElementById('subject').value;
+                const lesson = document.getElementById('lesson').value;
+                const tasks = sTask.id;
+
+
+                let limit = sTask.limit;
+
+                // Validate limit
+                limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '' : parseInt(limit);
+                console.log("This is limit", limit);
+
+                // Validate required fields
+                if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select' || limit === 'select') {
+                    console.error('Please select all required fields');
+                    return;
+                }
+
+                // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+                // Construct the query string
+                const queryParams = new URLSearchParams({
+                    board: board,
+                    medium: medium,
+                    grade: grade,
+                    subject: subject,
+                    lesson: lesson,
+                    tasks: tasks,
+                    limit: limit,
+                });
+                console.log("This is query:", queryParams.toString());
+
+                try {
+                    const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
+                    console.log("Response:", response);
+                    const result = await response.json();
+                    console.log("Results: ", result);
+
+
+                    if (response.ok) {
+                        if (result.questions_and_answers) {
+                            console.log("Before:", result.questions_and_answers);
+                            const questionsAndAnswers = result.questions_and_answers;
+                            console.log("This is the question&answers", questionsAndAnswers);
+
+                            const questionArray = [];
+                            const answerArray = [];
+                            const optionsArray = [];
+                            const explanationArray = [];
+                            const column_aArray = [];
+                            const column_bArray = [];
+
+                            // Loop through the questions and answers
+                            questionsAndAnswers.forEach(qa => {
+                                if (qa.question) {
+                                    questionArray.push(qa.question); // Add question to questionArray
+                                }
+                                if (qa.answer) {
+                                    answerArray.push(qa.answer); // Add answer to answerArray
+                                }
+                                if (qa.options) {
+                                    optionsArray.push(qa.options); // Add answer to answerArray
+                                }
+                                if (qa.explanation) {
+                                    explanationArray.push(qa.explanation); // Add answer to answerArray
+                                }
+                                if (qa.column_a) {
+                                    column_aArray.push(qa.column_a); // Add answer to answerArray
+                                }
+                                if (qa.column_b) {
+                                    column_bArray.push(qa.column_b); // Add answer to answerArray
+                                }
+                            });
+
+                            console.log("This is questionArray", questionArray);
+                            console.log("This is answerArray", answerArray);
+                            console.log("This is optionArray", optionsArray);
+                            console.log("This is columnaArray", column_aArray);
+                            console.log("This is columnbArray", column_bArray);
+                            console.log("This is explanationArray", explanationArray);
+
+                            // Create a div for questions
+                            const questionsDiv = document.createElement('div');
+                            questionsDiv.classList.add('questionsDiv');
+
+                            // Transform the sTask.id to capitalize first letter and replace hyphens with spaces
+                            let formattedTaskId = sTask.id.replace(/-/g, ' ').charAt(0).toUpperCase() + sTask.id.replace(/-/g, ' ').slice(1);
+
+                            questionsDiv.innerHTML = `<h3>${formattedTaskId} <br> Question List</h3>`;
+
+                            // Loop through the questions and answers array
+                            questionsAndAnswers.forEach((qa, index) => {
+                                // Display the question
+                                questionsDiv.innerHTML += `<p>Question ${index + 1}: ${qa.question}</p>`;
+
+                                // Display the options if they exist
+                                if (qa.options && qa.options.length > 0) {
+                                    questionsDiv.innerHTML += `Options:`;
+                                    qa.options.forEach(option => {
+                                        questionsDiv.innerHTML += `</br>`;
+                                        questionsDiv.innerHTML += `${option}`;
+                                    });
+                                    questionsDiv.innerHTML += ``;
+                                }
+
+                                // Create a wrapper div for columns
+                                let columnsWrapper = '<div class="columns-wrapper">';
+
+                                // Display column_a if it exists
+                                if (qa.column_a && qa.column_a.length > 0) {
+                                    columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
+                                    qa.column_a.forEach((a, i) => {
+                                        columnsWrapper += `<li>${a}</li>`;
+                                    });
+                                    columnsWrapper += '</ul></div>';
+                                }
+
+                                // Display column_b if it exists
+                                if (qa.column_b && qa.column_b.length > 0) {
+                                    columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
+                                    qa.column_b.forEach((b, i) => {
+                                        columnsWrapper += `<li>${b}</li>`;
+                                    });
+                                    columnsWrapper += '</ul></div>';
+                                }
+
+                                columnsWrapper += '</div>';
+
+                                questionsDiv.innerHTML += columnsWrapper;
+                            });
+
+                            // Add a separator after the questions list
+                            questionsDiv.innerHTML += `<hr>`;
+
+                            // Append the questions div to the container
+                            dataContainer.appendChild(questionsDiv);
+
+                            // Create a div for answers
+                            const answersDiv = document.createElement('div');
+                            answersDiv.classList.add('answersDiv');
+                            answersDiv.innerHTML = `<h3>${formattedTaskId} <br> Answer List</h3>`;
+
+                            // Loop through the answers array
+                            questionsAndAnswers.forEach((ans, index) => {
+                                // Display the answer
+                                answersDiv.innerHTML += `<p>Answer ${index + 1}: ${ans.answer}</p>`;
+
+                                // Display the explanation if it exists
+                                if (ans.explanation && ans.explanation.length > 0) {
+                                    answersDiv.innerHTML += `<p>Explanation: ${ans.explanation}</p>`;
+                                }
+                            });
+
+                            // Add a separator after the answers list
+                            answersDiv.innerHTML += `<hr>`;
+
+                            // Append the answers div to the container
+                            dataContainer.appendChild(answersDiv);
+
+                            // Initially, hide the answers div
+                            answersDiv.style.display = 'none';
+                        }
+                    }
+                    else {
+                        alert("No questions and answers found for selected tasks");
+                    }
+
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
+
+            // Fetch and display results for each selected task
+            for (const sTask of selectedTasks) {
+                await fetchAndDisplayResults(sTask);
+            }
+        }
+
+        /* async function fetchQuestionsAndAnswers() {
+            let selectedTasks = [];
+
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const taskId = checkbox.id; // Get the ID of the selected checkbox
+                const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
+
+                if (limitInput) { // Check if the number input exists
+                    const limitValue = limitInput.value; // Get the value of the number input
+                    selectedTasks.push({ id: taskId, limit: limitValue }); // Store the checkbox ID and limit value
+                }
+            });
+
+            console.log("Selected tasks with limits:", selectedTasks);
+
+            // Clear previous data before starting to append new results
+            const questionsDiv = document.getElementById('questionsDiv');
+            const answersDiv = document.getElementById('answersDiv');
+            questionsDiv.innerHTML = '';
+            answersDiv.innerHTML = '';
+
+            // Ensure there are selected tasks
+            if (selectedTasks.length === 0) {
+                questionsDiv.innerHTML = '<p>No tasks selected.</p>';
+                answersDiv.innerHTML = '<p>No tasks selected.</p>';
+                return;
+            }
+
+            // Define a function to handle the fetching and displaying of questions and answers
+            const fetchAndDisplayResults = async (sTask) => {
+                const board = document.getElementById('board').value;
+                const medium = document.getElementById('medium').value;
+                const grade = document.getElementById('grade').value;
+                const subject = document.getElementById('subject').value;
+                const lesson = document.getElementById('lesson').value;
+                const tasks = sTask.id;
+                let limit = sTask.limit;
+
+                // Validate limit
+                limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '' : parseInt(limit);
+
+                // Validate required fields
+                if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select' || limit === 'select') {
+                    console.error('Please select all required fields');
+                    return;
+                }
+
+                // Construct the query string
+                const queryParams = new URLSearchParams({
+                    board: board,
+                    medium: medium,
+                    grade: grade,
+                    subject: subject,
+                    lesson: lesson,
+                    tasks: tasks,
+                    limit: limit,
+                });
+
+                try {
+                    const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        if (result.questions_and_answers) {
+                            const questionsAndAnswers = result.questions_and_answers;
+
+                            // Create and populate the questions div
+                            const formattedTaskId = sTask.id.replace(/-/g, ' ').charAt(0).toUpperCase() + sTask.id.replace(/-/g, ' ').slice(1);
+                            questionsDiv.innerHTML += `<h3>${formattedTaskId} <br> Question List</h3>`;
+
+                            questionsAndAnswers.forEach((qa, index) => {
+                                // Display the question
+                                questionsDiv.innerHTML += `<p>Question ${index + 1}: ${qa.question}</p>`;
+
+                                // Display the options if they exist
+                                if (qa.options && qa.options.length > 0) {
+                                    questionsDiv.innerHTML += `Options:`;
+                                    qa.options.forEach(option => {
+                                        questionsDiv.innerHTML += `</br>${option}`;
+                                    });
+                                }
+
+                                // Create a wrapper div for columns
+                                let columnsWrapper = '<div class="columns-wrapper">';
+
+                                // Display column_a if it exists
+                                if (qa.column_a && qa.column_a.length > 0) {
+                                    columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
+                                    qa.column_a.forEach((a, i) => {
+                                        columnsWrapper += `<li>${a}</li>`;
+                                    });
+                                    columnsWrapper += '</ul></div>';
+                                }
+
+                                // Display column_b if it exists
+                                if (qa.column_b && qa.column_b.length > 0) {
+                                    columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
+                                    qa.column_b.forEach((b, i) => {
+                                        columnsWrapper += `<li>${b}</li>`;
+                                    });
+                                    columnsWrapper += '</ul></div>';
+                                }
+
+                                columnsWrapper += '</div>';
+                                questionsDiv.innerHTML += columnsWrapper;
+                            });
+
+                            // Add a separator after the questions list
+                            questionsDiv.innerHTML += `<hr>`;
+
+                            // Create and populate the answers div
+                            answersDiv.innerHTML += `<h3>${formattedTaskId} <br> Answer List</h3>`;
+
+                            questionsAndAnswers.forEach((ans, index) => {
+                                // Display the answer
+                                answersDiv.innerHTML += `<p>Answer ${index + 1}: ${ans.answer}</p>`;
+
+                                // Display the explanation if it exists
+                                if (ans.explanation && ans.explanation.length > 0) {
+                                    answersDiv.innerHTML += `<p>Explanation: ${ans.explanation}</p>`;
+                                }
+                            });
+
+                            // Add a separator after the answers list
+                            answersDiv.innerHTML += `<hr>`;
+                        }
+                    }
+
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
+
+            // Fetch and display results for each selected task
+            for (const sTask of selectedTasks) {
+                await fetchAndDisplayResults(sTask);
+            }
+        }
+
+        // Button click event handlers
+        document.getElementById('addQuestionBtn').addEventListener('click', function () {
+            document.getElementById('questionsDiv').style.display = 'block';
+            document.getElementById('answersDiv').style.display = 'none';
+        });
+
+        document.getElementById('addAnswerBtn').addEventListener('click', function () {
+            document.getElementById('questionsDiv').style.display = 'none';
+            document.getElementById('answersDiv').style.display = 'block';
+        });*/
+
+        function confirmLogout() {
+            const confirmLogout = confirm("Are you sure you want to log out?");
+            if (confirmLogout) {
+                // Redirect to login page
+                window.location.href = '/static/login.html'; // Change 'login.html' to your actual login page URL
+            }
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+
+            // Select the content to be converted into PDF
+            const element = document.getElementById('data');
+
+            // Get values from form fields
+            var boarddropdown = document.getElementById("board");
+            var selectedBoardText = boarddropdown.options[boarddropdown.selectedIndex].text;
+            //const board = document.getElementById('board').value;
+
+            var mediumdropdown = document.getElementById("medium");
+            var selectedMediumText = mediumdropdown.options[mediumdropdown.selectedIndex].text;
+            //const medium = document.getElementById('medium').value;
+
+            var gradedropdown = document.getElementById("grade");
+            var selectedGradeText = gradedropdown.options[gradedropdown.selectedIndex].text
+            // const grade = document.getElementById('grade').value;
+
+            var subjectdropdown = document.getElementById("subject");
+            var selectedSubjectText = subjectdropdown.options[subjectdropdown.selectedIndex].text
+            // const subject = document.getElementById('subject').value;
+
+            var lessondropdown = document.getElementById("lesson");
+            var selectedLessonText = lessondropdown.options[lessondropdown.selectedIndex].text
+            // const lesson = document.getElementById('lesson').value;
+
+            // Handle multiple task types with limits
+            const tasks = Array.from(document.querySelectorAll('input[name="tasks"]:checked'))
+                .map(task => {
+                    const limitElement = document.getElementById(`${task.value}_limit`);
+                    return limitElement ? `${task.value}: ${limitElement.value || 0}` : task.value;
+                }).join(', ');
+
+            // Create a filename based on selected parameters
+            const filename = `output_${selectedBoardText}_${selectedMediumText}_${selectedGradeText}_${selectedSubjectText}_${selectedLessonText}_${tasks}.pdf`;
+            console.log('Generated filename:', filename);
+
+            // Define options for html2pdf
+            const options = {
+                margin: 1,
+                filename: filename, // Use dynamically generated filename
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+
+            // Convert HTML to PDF and show the print button after saving
+            html2pdf().set(options).from(element).save().then(() => {
+                document.getElementById('printBtn').style.display = 'block'; // Show the print button
+            });
+        });
+
+        // Add event listener to the print button
+        document.getElementById('printBtn').addEventListener('click', function () {
+            // Select the content to be converted into PDF
+            const element = document.getElementById('data');
+
+            // Get values from form fields
+            const boarddropdown = document.getElementById("board");
+            const selectedBoardText = boarddropdown.options[boarddropdown.selectedIndex].text;
+
+            const mediumdropdown = document.getElementById("medium");
+            const selectedMediumText = mediumdropdown.options[mediumdropdown.selectedIndex].text;
+
+            const gradedropdown = document.getElementById("grade");
+            const selectedGradeText = gradedropdown.options[gradedropdown.selectedIndex].text;
+
+            const subjectdropdown = document.getElementById("subject");
+            const selectedSubjectText = subjectdropdown.options[subjectdropdown.selectedIndex].text;
+
+            const lessondropdown = document.getElementById("lesson");
+            const selectedLessonText = lessondropdown.options[lessondropdown.selectedIndex].text;
+
+            // Handle multiple task types with limits
+            const tasks = Array.from(document.querySelectorAll('input[name="tasks"]:checked'))
+                .map(task => {
+                    const limitElement = document.getElementById(`${task.value}_limit`);
+                    return limitElement ? `${task.value}: ${limitElement.value || 0}` : task.value;
+                }).join(', ');
+
+            // Create a filename based on selected parameters
+            const filename = `output_${selectedBoardText}_${selectedMediumText}_${selectedGradeText}_${selectedSubjectText}_${selectedLessonText}_${tasks}.pdf`;
+            console.log('Generated filename:', filename);
+
+            // Define options for html2pdf
+            const options = {
+                margin: 1,
+                filename: filename, // Use dynamically generated filename
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Convert HTML to PDF
+            html2pdf().set(options).from(element).toPdf().output('blob').then(blob => {
+                // Create a URL for the blob and open it in a new tab
+                const url = URL.createObjectURL(blob);
+                const printWindow = window.open(url);
+                s
+                // Trigger print dialog in the new tab
+                printWindow.print();
+            });
+        })
+
+        async function fetchTextbookSolution() {
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+            const board = document.getElementById('board').value;
+            const medium = document.getElementById('medium').value;
+            const grade = document.getElementById('grade').value;
+            console.log("This is grade", grade);
+            const subject = document.getElementById('subject').value;
+            const lesson = document.getElementById('lesson').value;
+
+            // Define a function to handle the fetching and displaying of questions and answers
+
+            // Validate required fields
+            if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select') {
+                console.error('Please select all required fields');
+                return;
+            }
+
+            // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+            // Construct the query string
+            const queryParams = new URLSearchParams({
+                board: board,
+                medium: medium,
+                grade: grade,
+                subject: subject,
+                lesson: lesson,
+                tasks: 'text-book-solution',
+
+            });
+            console.log("This is query:", queryParams.toString());
+
+            try {
+                const response = await fetch(`/get_textbook-solution?${queryParams.toString()}`);
+                // console.log("Response:", response);
+                const result = await response.json();
+                // console.log("Results: ", result);
+
+
+                if (response.ok) {
+                    const documentData = result.document;
+                    console.log('path', "upload/textbook_pdf/"+documentData.filename);
+
+                    // Get the element with the id "data"
+                    const dataContainer = document.getElementById('data');
+
+                    // Clear the existing content in the data container
+                    dataContainer.innerHTML = '';
+
+                    // Create an iframe to embed the PDF
+                    const pdfIframe = document.createElement('iframe');
+                     pdfIframe.src = "../"+documentData.file_path;  // Set the file path as the source
+                   // pdfIframe.src = "upload/textbook_pdf/"+documentData.filename+".pdf";
+                    pdfIframe.width = '100%';
+                    pdfIframe.height = '100%'; // You can adjust this height as per your design
+
+                    // Append the iframe to the data container directly
+                    dataContainer.appendChild(pdfIframe);
+
+                }
+                else {
+                    alert("No questions and answers found for selected tasks");
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+
+
+
+
+        }
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 import random
 from typing import Dict, List, Optional, Tuple
 from urllib import request
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query, Request
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query, Request, Body
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pymongo.collection import Collection
 from pymongo  import DESCENDING
@@ -13,6 +13,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from docx import Document
 import fitz  # PyMuPDF
 import io
+import os
+import shutil
 import re
 import uuid
 from datetime import datetime
@@ -88,259 +90,324 @@ async def form_uplaod(
     print(medium)
     print("This is subject")
   
+    if tasks=='text-book-solution':
+        print(tasks)
+        unique_code = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+        new_filename = f"{board}_{medium}_{grade}_{subject}_{lesson}_{tasks}"
+        pdffilename = f"{board}_{medium}_{grade}_{subject}_{lesson}_{tasks}.pdf"
+        print(new_filename)
 
-    file_contents = await file.read()
-    file_extension = file.filename.split('.')[-1].lower()
-    print(file_extension)
+        print("Generated filename:", pdffilename)
 
-    if file_extension == 'pdf':
-        text = extract_text_from_pdf(file_contents)
-    elif file_extension in ['doc', 'docx']:
-        text = extract_text_from_doc(file_contents)
-        print(text)
-    else:
-        raise HTTPException(status_code=400, detail="Unsupported file type")
+        # Ensure the upload folder exists
+        upload_folder = 'upload/textbook_pdf'
+        file_path = os.path.join(upload_folder, pdffilename)
+      # print("file path name", file_path)
+       # file.save(file_path)
 
-    tasks_list = tasks.split(",")  # Assuming tasks are sent as a comma-separated string
+       # Save the file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        print("File uploaded successfully:", pdffilename)
+
+        existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+        print(existing_grade)
+        class_name = existing_grade["classs_name"]
+
+        collection = get_collection(class_name)
+        print(collection)
+
+       # if file.content_type == 'application/pdf':  # If it's already a PDF
+           # with open(file_path, "wb") as buffer:
+               # shutil.copyfileobj(file.file, buffer)
+           # print("File uploaded successfully as PDF:", pdffilename)
     
-    # Generate a unique code and timestamp
-    unique_code = str(uuid.uuid4())
-    timestamp = datetime.utcnow().isoformat()
-
-    print("this is something")
-    existing_board = await board_collection.find_one({"board_id": int(board)})
-    print(existing_board)
-    board_name = existing_board["board_name"]
-    
-    existing_medium = await medium_collection.find_one({"medium_id": int(medium) })
-    print(existing_medium)
-    medium_name = existing_medium["medium_name"]
-
-    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
-    print(existing_grade)
-    class_name = existing_grade["classs_name"]
-
-    existing_subject = await subject_collection.find_one({"subject_id": int(subject) })
-    print(existing_subject)
-    subject_name = existing_subject["subject_name"]
-
-    existing_topic = await topic_collection.find_one({"topic_id": int(lesson) })
-    print(existing_topic)
-    topic_name = existing_topic["topic_name"]
-
-    new_filename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name[:3]}_{topic_name}_{'.'.join(tasks_list)}"
-    #new_filename = f"{board}{medium}{grade}{subject}{lesson}_{'.'.join(tasks_list)}"
-    print(new_filename)
-
-    # new_filename = f"{board}_{medium}_{grade}_{subject}_{lesson}_{'.'.join(tasks_list)}"
-    # new_filename = f"{board_name[:3]}{medium_name[:3]}{grade}{subject_name[:3]}{lesson}_{'.'.join(tasks_list)}"
-
-    print("Generated filename:", new_filename)
-
-    print("This is collection2")
-    collection = get_collection(class_name)
-    print(collection)
-
-
-     # Check for existing files with the same base filename
-    existing_file = await collection.find_one({"filename": new_filename})
-
-    if existing_file:
-        print("This is existing file")
-        # print(existing_file)
-        # Extract existing questions and answers
-        existing_data = existing_file.get('questions_and_answers', {})
-
-        print("this is filename",new_filename)
-        # Parse new questions and answers
-        new_data = parse_questions_and_answers(text, new_filename)
+       # elif file.content_type == 'text/html':  # Example: Converting an HTML file to PDF
+            # html_content = file.file.read().decode('utf-8')  # Read the HTML content
+           # pdfkit.from_string(html_content, file_path)  # Convert HTML to PDF
+           # print("HTML file converted and saved as PDF:", pdffilename)
         
-        print("This is new_data")
-        print(new_data)
+        #else:
+          #  print(f"Error: Unsupported file type '{file.content_type}'. Only PDF or HTML supported for conversion.")
 
-        
-        if new_data:
-            # if 'question' in new_data:
-                # Find the maximum existing question number in the document
-            max_question_num = max(
-            [int(key.replace('question', '')) for key in existing_data.keys() if key.startswith('question')] or [0])
-
-            # Prepare cleaned data by excluding unnecessary keys like heading and filename
-            cleaned_new_data = {}
-            for key, value in new_data.items():
-                # if key.startswith('heading') or key == 'filename':
-                #     continue  # Skip the heading and filename
-                cleaned_new_data[key] = value
-
-                if len(cleaned_new_data) % 2 == 0:
-                    num_questions = len(cleaned_new_data) // 2
-                    # print("gljwe    wiyefijb",tasks_list)
-                    print(f"tasks_list: {tasks_list}")
-                    if not any(task in tasks_list for task in ['match-the-column', 'multiple-choice-questions', 'true-false']):
-                        print("'match-the-column' not in tasks_list, proceeding with question and answer processing...")
-                        for i in range(1, num_questions + 1):
-                            question_key = f"question{i}"
-                            answer_key = f"answer{i}"
-                            
-                            new_question_key = f"question{max_question_num + i}"
-                            new_answer_key = f"answer{max_question_num + i}"
-                        
-                            if question_key in cleaned_new_data and answer_key in cleaned_new_data:
-                                existing_data[new_question_key] = cleaned_new_data[question_key]
-                                existing_data[new_answer_key] = cleaned_new_data[answer_key]
-                            
-                        # Update the existing document in MongoDB
-                        results = await collection.update_one(
-                            {"_id": existing_file["_id"]},
-                            {"$set": {
-                                "questions_and_answers": existing_data,
-                                "timestamp": timestamp  # Update the timestamp
-                            }}
-                        )
-                        print(results)
-                    else:
-                        print("No questions and answers extracted or incorrect number of keys.")
-
-
-                if len(cleaned_new_data) % 4 == 0:
-                    num_questions = len(cleaned_new_data) // 4
-                
-                    if "multiple-choice-questions" in tasks_list:
-                        print("Handling multiple-choice questions")
-                        for i in range(1, num_questions + 1):
-                            question_key = f"question{i}"
-                            options_key = f"options{i}"
-                            answer_key = f"answer{i}"
-                            explanation_key = f"explanation{i}"
-                            
-                            new_question_key = f"question{max_question_num + i}"
-                            new_options_key = f"options{max_question_num + i}"
-                            new_answer_key = f"answer{max_question_num + i}"
-                            new_explanation_key = f"explanation{max_question_num + i}"
-                            
-                             # Check if all required keys are in the new data
-                            if question_key in cleaned_new_data:
-                                existing_data[new_question_key] = cleaned_new_data[question_key]
-                            if options_key in cleaned_new_data:
-                                existing_data[new_options_key] = cleaned_new_data[options_key]
-                            if answer_key in cleaned_new_data:
-                                existing_data[new_answer_key] = cleaned_new_data[answer_key]
-                            if explanation_key in cleaned_new_data:
-                                existing_data[new_explanation_key] = cleaned_new_data[explanation_key]
-
-                        # Update the existing document in MongoDB
-                        results = await collection.update_one(
-                            {"_id": existing_file["_id"]},
-                            {"$set": {
-                                "questions_and_answers": existing_data,
-                                "timestamp": timestamp  # Update the timestamp
-                            }}
-                        )
-                        print(results)
-                    
-                    elif "true-false" in tasks_list:
-                        print("Handling true/false questions")
-                        for i in range(1, num_questions + 1):
-                            question_key = f"question{i}"
-                            options_key = f"options{i}"
-                            answer_key = f"answer{i}"
-                            explanation_key = f"explanation{i}"
-                            
-                            new_question_key = f"question{max_question_num + i}"
-                            new_options_key = f"options{max_question_num + i}"
-                            new_answer_key = f"answer{max_question_num + i}"
-                            new_explanation_key = f"explanation{max_question_num + i}"
-                            
-                             # Check if all required keys are in the new data
-                            if question_key in cleaned_new_data:
-                                existing_data[new_question_key] = cleaned_new_data[question_key]
-                            if options_key in cleaned_new_data:
-                                existing_data[new_options_key] = cleaned_new_data[options_key]
-                            if answer_key in cleaned_new_data:
-                                existing_data[new_answer_key] = cleaned_new_data[answer_key]
-                            if explanation_key in cleaned_new_data:
-                                existing_data[new_explanation_key] = cleaned_new_data[explanation_key]
-
-                        # Update the existing document in MongoDB
-                        results = await collection.update_one(
-                            {"_id": existing_file["_id"]},
-                            {"$set": {
-                                "questions_and_answers": existing_data,
-                                "timestamp": timestamp  # Update the timestamp
-                            }}
-                        )
-                        print(results)
-
-                    elif "match-the-column" in tasks_list:
-                        print("Handling match-the-column questions")
-                        for i in range(1, num_questions + 1):
-                            question_key = f"question{i}"
-                            column_a_key = f"column_a{i}"
-                            column_b_key = f"column_b{i}"
-                            answer_key = f"answer{i}"  # Corrected key name
-                            
-                            # print("KEYY")
-                            
-                            new_question_key = f"question{max_question_num + i}"
-                            new_column_a_key = f"column_a{max_question_num + i}"
-                            new_column_b_key = f"column_b{max_question_num + i}"
-                            new_answer_key = f"answer{max_question_num + i}"  # Corrected key name
-                            
-                            # print("jwkerwkjbe;")
-
-                            if question_key in cleaned_new_data and column_a_key in cleaned_new_data and column_b_key in cleaned_new_data and answer_key in cleaned_new_data:
-                                existing_data[new_question_key] = cleaned_new_data[question_key]
-                                existing_data[new_column_a_key] = cleaned_new_data[column_a_key]
-                                existing_data[new_column_b_key] = cleaned_new_data[column_b_key]
-                                existing_data[new_answer_key] = cleaned_new_data[answer_key]
-
-                        print("This is cleaned new data", cleaned_new_data)
-
-                        # Update the existing document in MongoDB
-                        print("This is existing data", existing_data)
-                        results = await collection.update_one(
-                            {"_id": existing_file["_id"]},
-                            {"$set": {
-                                "questions_and_answers": existing_data,
-                                "timestamp": timestamp  # Update the timestamp
-                            }}
-                        )
-                        print(results)
-
-                    else:
-                        print("No questions and answers extracted or incorrect number of keys.")
-                    
-    else:
-        print("hgjhvj;ht;j")
-        new_data = parse_questions_and_answers(text, new_filename) or {}
-        # print('hello')
-        # print('new  data extract',new_data)
-        if not new_data:
-            print("No data extracted. Check the extraction logic and data format.")
-
+       
         document = {
-            "board": board,
-            "board_name": board_name,
-            "medium": medium,
-            "medium_name": medium_name,
-            "grade": grade,
-            "grade_name": class_name,
-            "subject": subject,
-            "subject_name": subject_name,
-            "lesson": lesson,
-            "lesson_name": topic_name,
-            "filename": new_filename,
-            "tasks": tasks_list,
-            "unique_code": unique_code,
-            "timestamp": timestamp,
-            "questions_and_answers": new_data
-        }
+                "board": board,
+                "medium": medium,
+                "grade": grade,
+                "subject": subject,
+                "lesson": lesson,
+                "filename": new_filename,
+                "tasks": tasks,
+                "unique_code": unique_code,
+                "timestamp": timestamp,
+                "file_path": file_path
+            }
         result = await collection.insert_one(document)
         print("Document to insert:", document)
 
         print("This is detect formatresult collection")
         print(result)
         return {"file_id": str(result.inserted_id), "message": "File uploaded and saved successfully", "filename": new_filename}
+
+       
+
+
+
+    else:
+        file_contents = await file.read()
+        file_extension = file.filename.split('.')[-1].lower()
+        print(file_extension)
+
+        if file_extension == 'pdf':
+            text = extract_text_from_pdf(file_contents)
+        elif file_extension in ['doc', 'docx']:
+            text = extract_text_from_doc(file_contents)
+            print(text)
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported file type")
+
+        tasks_list = tasks.split(",")  # Assuming tasks are sent as a comma-separated string
+        
+        # Generate a unique code and timestamp
+        unique_code = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+
+        print("this is something")
+        existing_board = await board_collection.find_one({"board_id": int(board)})
+        print(existing_board)
+        board_name = existing_board["board_name"]
+        
+        existing_medium = await medium_collection.find_one({"medium_id": int(medium) })
+        print(existing_medium)
+        medium_name = existing_medium["medium_name"]
+
+        existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+        print(existing_grade)
+        class_name = existing_grade["classs_name"]
+
+        existing_subject = await subject_collection.find_one({"subject_id": int(subject) })
+        print(existing_subject)
+        subject_name = existing_subject["subject_name"]
+
+        existing_topic = await topic_collection.find_one({"topic_id": int(lesson) })
+        print(existing_topic)
+        topic_name = existing_topic["topic_name"]
+
+        new_filename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name[:3]}_{topic_name}_{'.'.join(tasks_list)}"
+        #new_filename = f"{board}{medium}{grade}{subject}{lesson}_{'.'.join(tasks_list)}"
+        print(new_filename)
+
+        # new_filename = f"{board}_{medium}_{grade}_{subject}_{lesson}_{'.'.join(tasks_list)}"
+        # new_filename = f"{board_name[:3]}{medium_name[:3]}{grade}{subject_name[:3]}{lesson}_{'.'.join(tasks_list)}"
+
+        print("Generated filename:", new_filename)
+
+        print("This is collection2")
+        collection = get_collection(class_name)
+        print(collection)
+
+
+        # Check for existing files with the same base filename
+        existing_file = await collection.find_one({"filename": new_filename})
+
+        if existing_file:
+            print("This is existing file")
+            # print(existing_file)
+            # Extract existing questions and answers
+            existing_data = existing_file.get('questions_and_answers', {})
+
+            print("this is filename",new_filename)
+            # Parse new questions and answers
+            new_data = parse_questions_and_answers(text, new_filename)
+            
+            print("This is new_data")
+            print(new_data)
+
+            
+            if new_data:
+                # if 'question' in new_data:
+                    # Find the maximum existing question number in the document
+                max_question_num = max(
+                [int(key.replace('question', '')) for key in existing_data.keys() if key.startswith('question')] or [0])
+
+                # Prepare cleaned data by excluding unnecessary keys like heading and filename
+                cleaned_new_data = {}
+                for key, value in new_data.items():
+                    # if key.startswith('heading') or key == 'filename':
+                    #     continue  # Skip the heading and filename
+                    cleaned_new_data[key] = value
+
+                    if len(cleaned_new_data) % 2 == 0:
+                        num_questions = len(cleaned_new_data) // 2
+                        # print("gljwe    wiyefijb",tasks_list)
+                        print(f"tasks_list: {tasks_list}")
+                        if not any(task in tasks_list for task in ['match-the-column', 'multiple-choice-questions', 'true-false']):
+                            print("'match-the-column' not in tasks_list, proceeding with question and answer processing...")
+                            for i in range(1, num_questions + 1):
+                                question_key = f"question{i}"
+                                answer_key = f"answer{i}"
+                                
+                                new_question_key = f"question{max_question_num + i}"
+                                new_answer_key = f"answer{max_question_num + i}"
+                            
+                                if question_key in cleaned_new_data and answer_key in cleaned_new_data:
+                                    existing_data[new_question_key] = cleaned_new_data[question_key]
+                                    existing_data[new_answer_key] = cleaned_new_data[answer_key]
+                                
+                            # Update the existing document in MongoDB
+                            results = await collection.update_one(
+                                {"_id": existing_file["_id"]},
+                                {"$set": {
+                                    "questions_and_answers": existing_data,
+                                    "timestamp": timestamp  # Update the timestamp
+                                }}
+                            )
+                            print(results)
+                        else:
+                            print("No questions and answers extracted or incorrect number of keys.")
+
+
+                    if len(cleaned_new_data) % 4 == 0:
+                        num_questions = len(cleaned_new_data) // 4
+                    
+                        if "multiple-choice-questions" in tasks_list:
+                            print("Handling multiple-choice questions")
+                            for i in range(1, num_questions + 1):
+                                question_key = f"question{i}"
+                                options_key = f"options{i}"
+                                answer_key = f"answer{i}"
+                                explanation_key = f"explanation{i}"
+                                
+                                new_question_key = f"question{max_question_num + i}"
+                                new_options_key = f"options{max_question_num + i}"
+                                new_answer_key = f"answer{max_question_num + i}"
+                                new_explanation_key = f"explanation{max_question_num + i}"
+                                
+                                # Check if all required keys are in the new data
+                                if question_key in cleaned_new_data:
+                                    existing_data[new_question_key] = cleaned_new_data[question_key]
+                                if options_key in cleaned_new_data:
+                                    existing_data[new_options_key] = cleaned_new_data[options_key]
+                                if answer_key in cleaned_new_data:
+                                    existing_data[new_answer_key] = cleaned_new_data[answer_key]
+                                if explanation_key in cleaned_new_data:
+                                    existing_data[new_explanation_key] = cleaned_new_data[explanation_key]
+
+                            # Update the existing document in MongoDB
+                            results = await collection.update_one(
+                                {"_id": existing_file["_id"]},
+                                {"$set": {
+                                    "questions_and_answers": existing_data,
+                                    "timestamp": timestamp  # Update the timestamp
+                                }}
+                            )
+                            print(results)
+                        
+                        elif "true-false" in tasks_list:
+                            print("Handling true/false questions")
+                            for i in range(1, num_questions + 1):
+                                question_key = f"question{i}"
+                                options_key = f"options{i}"
+                                answer_key = f"answer{i}"
+                                explanation_key = f"explanation{i}"
+                                
+                                new_question_key = f"question{max_question_num + i}"
+                                new_options_key = f"options{max_question_num + i}"
+                                new_answer_key = f"answer{max_question_num + i}"
+                                new_explanation_key = f"explanation{max_question_num + i}"
+                                
+                                # Check if all required keys are in the new data
+                                if question_key in cleaned_new_data:
+                                    existing_data[new_question_key] = cleaned_new_data[question_key]
+                                if options_key in cleaned_new_data:
+                                    existing_data[new_options_key] = cleaned_new_data[options_key]
+                                if answer_key in cleaned_new_data:
+                                    existing_data[new_answer_key] = cleaned_new_data[answer_key]
+                                if explanation_key in cleaned_new_data:
+                                    existing_data[new_explanation_key] = cleaned_new_data[explanation_key]
+
+                            # Update the existing document in MongoDB
+                            results = await collection.update_one(
+                                {"_id": existing_file["_id"]},
+                                {"$set": {
+                                    "questions_and_answers": existing_data,
+                                    "timestamp": timestamp  # Update the timestamp
+                                }}
+                            )
+                            print(results)
+
+                        elif "match-the-column" in tasks_list:
+                            print("Handling match-the-column questions")
+                            for i in range(1, num_questions + 1):
+                                question_key = f"question{i}"
+                                column_a_key = f"column_a{i}"
+                                column_b_key = f"column_b{i}"
+                                answer_key = f"answer{i}"  # Corrected key name
+                                
+                                # print("KEYY")
+                                
+                                new_question_key = f"question{max_question_num + i}"
+                                new_column_a_key = f"column_a{max_question_num + i}"
+                                new_column_b_key = f"column_b{max_question_num + i}"
+                                new_answer_key = f"answer{max_question_num + i}"  # Corrected key name
+                                
+                                # print("jwkerwkjbe;")
+
+                                if question_key in cleaned_new_data and column_a_key in cleaned_new_data and column_b_key in cleaned_new_data and answer_key in cleaned_new_data:
+                                    existing_data[new_question_key] = cleaned_new_data[question_key]
+                                    existing_data[new_column_a_key] = cleaned_new_data[column_a_key]
+                                    existing_data[new_column_b_key] = cleaned_new_data[column_b_key]
+                                    existing_data[new_answer_key] = cleaned_new_data[answer_key]
+
+                            print("This is cleaned new data", cleaned_new_data)
+
+                            # Update the existing document in MongoDB
+                            print("This is existing data", existing_data)
+                            results = await collection.update_one(
+                                {"_id": existing_file["_id"]},
+                                {"$set": {
+                                    "questions_and_answers": existing_data,
+                                    "timestamp": timestamp  # Update the timestamp
+                                }}
+                            )
+                            print(results)
+
+                        else:
+                            print("No questions and answers extracted or incorrect number of keys.")
+                        
+        else:
+            print("hgjhvj;ht;j")
+            new_data = parse_questions_and_answers(text, new_filename) or {}
+            # print('hello')
+            # print('new  data extract',new_data)
+            if not new_data:
+                print("No data extracted. Check the extraction logic and data format.")
+
+            document = {
+                "board": board,
+                "board_name": board_name,
+                "medium": medium,
+                "medium_name": medium_name,
+                "grade": grade,
+                "grade_name": class_name,
+                "subject": subject,
+                "subject_name": subject_name,
+                "lesson": lesson,
+                "lesson_name": topic_name,
+                "filename": new_filename,
+                "tasks": tasks_list,
+                "unique_code": unique_code,
+                "timestamp": timestamp,
+                "questions_and_answers": new_data
+            }
+            result = await collection.insert_one(document)
+            print("Document to insert:", document)
+
+            print("This is detect formatresult collection")
+            print(result)
+            return {"file_id": str(result.inserted_id), "message": "File uploaded and saved successfully", "filename": new_filename}
 
     return {"message": "File content appended successfully", "filename": new_filename}
             
@@ -798,6 +865,53 @@ async def get_questions_and_answers(
 
     return {"questions_and_answers": result}
 
+@app.get("/get_textbook-solution")
+async def get_questions_and_answers(
+    board: str = Query(...),
+    medium: str = Query(...),
+    grade: str = Query(...),
+    subject: str = Query(...),
+    lesson: str = Query(...),
+    tasks: str = Query(...),
+   
+):
+    
+   
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        "lesson": lesson,
+        "tasks": tasks
+    }
+
+   
+
+    print("Query:", query)
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    print(existing_grade)
+    class_name = existing_grade["classs_name"]
+
+    collection = get_collection(class_name)
+   # print(collection)
+    # Get the collection based on grade
+   
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+    document = await collection.find_one(query)
+    if not document:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        document['_id'] = str(document['_id'])
+       
+      
+    return {"document": document}
 
 # Login part start here
 
