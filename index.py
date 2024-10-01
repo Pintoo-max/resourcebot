@@ -25,19 +25,12 @@ from starlette.requests import Request
 app = FastAPI()
 # templates = Jinja2Templates(directory="templates") 
 
-# MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/"
-# MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-# MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsAllowInvalidCertificates=true"
-# MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true"
-MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&ssl=true"
+MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/"
 client = AsyncIOMotorClient(MONGO_DETAILS)
 database = client.State_Board
 db = client['user_database']
 # files_collection = database.get_collection("question_database")
-print("database :")
-print(database)
-print("db :")
-print(db)
+
 # Collections for user data and authentication
 profiles_collection = db['user_profiles']
 auth_collection = db['user_auth']
@@ -875,8 +868,6 @@ async def get_questions_and_answers(
     tasks: str = Query(...),
    
 ):
-    
-   
 
     # Construct the query
     query = {
@@ -1015,7 +1006,6 @@ async def student_teacher_login(data: StudentTeacherLoginData):
     
 @app.post("/admin-login")
 async def admin_login(data: LoginData):
-    print("admin-login")
     # Query to find user in auth collection by email and role_id
     user_auth = await auth_collection.find_one({"email": data.email, "role_id": data.role_id})
 
@@ -1076,14 +1066,12 @@ async def get_boards(request: Request):  # Accepting the Request object
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
-
-
 class Update_Board(BaseModel):
-    board_id : int
-    boardName: str    
+    board_id: int
+    board_name: str  
 
-@app.post("/update_board")
-async def pdate_board(board: Update_Board):
+@app.put("/update_board")
+async def update_board(board: Update_Board):
     print("this is board", board)
 
     # Find the board by ID
@@ -1094,14 +1082,14 @@ async def pdate_board(board: Update_Board):
 
     # Update the board name
     result = await board_collection.update_one(
-        {"board_id": board.board_id},  # Ensure board_id is an integer
-        {"$set": {"board_name": board.boardName}}  # Use board.board_name
+        {"board_id": board.board_id},
+        {"$set": {"board_name": board.board_name}}  # Corrected to use board.board_name
     )
 
     if result.modified_count == 1:
         return {"message": "Board updated successfully"}
     else:
-        raise HTTPException(status_code=500, detail="Failed to update board")
+        raise HTTPException(status_code=500, detail="Failed to update medium")
 
     
 @app.delete("/delete_board/{board_id}")
@@ -1167,6 +1155,48 @@ async def get_mediums(request: Request):  # Accepting the Request object
     except Exception as e:
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    
+class Update_Medium(BaseModel):
+    medium_id: int
+    medium_name: str  
+
+@app.put("/update_medium")
+async def update_medium(medium: Update_Medium):
+    print("this is medium", medium)
+
+    # Find the medium by ID
+    existing_medium = await medium_collection.find_one({"medium_id": medium.medium_id})
+
+    if not existing_medium:
+        raise HTTPException(status_code=404, detail="Medium not found")
+
+    # Update the medium name
+    result = await medium_collection.update_one(
+        {"medium_id": medium.medium_id},  # Corrected field
+        {"$set": {"medium_name": medium.medium_name}}  # Correct field for update
+    )
+
+    if result.modified_count == 1:
+        return {"message": "Medium updated successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update medium")
+
+@app.delete("/delete_medium/{medium_id}")
+async def delete_medium(medium_id: int):
+    try:
+        # Check if the medium exists
+        existing_medium = await medium_collection.find_one({"medium_id": medium_id})
+        if not existing_medium:
+            raise HTTPException(status_code=404, detail="Medium not found")
+
+        # Perform the delete operation
+        await medium_collection.delete_one({"medium_id": medium_id})
+
+        return {"message": "Medium deleted successfully"}
+    except Exception as e:
+        print(f"Unhandled Exception: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
+
 
 class Institute(BaseModel):
     instituteName: str    
@@ -1210,6 +1240,48 @@ async def get_institutes(request: Request):  # Accepting the Request object
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
+class Update_Institute(BaseModel):
+    institute_id: int
+    institute_name: str  
+
+@app.put("/update_institute")
+async def update_institute(institute: Update_Institute):
+    print("this is institute", institute)
+
+    # Find the institute by ID
+    existing_institute = await institute_collection.find_one({"institute_id": institute.institute_id})
+
+    if not existing_institute:
+        raise HTTPException(status_code=404, detail="Institute not found")
+
+    # Update the medium name
+    result = await institute_collection.update_one(
+        {"institute_id": institute.institute_id},  # Corrected field
+        {"$set": {"institute_name": institute.institute_name}}  # Correct field for update
+    )
+
+    if result.modified_count == 1:
+        return {"message": "Institute updated successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update institute")
+
+
+@app.delete("/delete_institute/{institute_id}")
+async def delete_institute(institute_id: int):
+    try:
+        # Check if the institute exists
+        existing_institute = await institute_collection.find_one({"institute_id": institute_id})
+        if not existing_institute:
+            raise HTTPException(status_code=404, detail="Institute not found")
+
+        # Perform the delete operation
+        await institute_collection.delete_one({"institute_id": institute_id})
+
+        return {"message": "Institute deleted successfully"}
+    except Exception as e:
+        print(f"Unhandled Exception: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
+    
 class Class(BaseModel):
     className: str    
 
@@ -1250,6 +1322,47 @@ async def get_classs(request: Request):
     except Exception as e:
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    
+class Update_Class(BaseModel):
+    classs_id: int
+    classs_name: str  
+
+@app.put("/update_class")
+async def update_class(classs: Update_Class):
+    print("this is classs", classs)
+
+    # Find the institute by ID
+    existing_class = await class_collection.find_one({"classs_id": classs.classs_id})
+
+    if not existing_class:
+        raise HTTPException(status_code=404, detail="Class not found")
+
+    # Update the medium name
+    result = await class_collection.update_one(
+        {"classs_id": classs.classs_id},  # Corrected field
+        {"$set": {"classs_name": classs.classs_name}}  # Correct field for update
+    )
+
+    if result.modified_count == 1:
+        return {"message": "Class updated successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update Class")
+
+@app.delete("/delete_class/{classs_id}")
+async def delete_class(classs_id: int):
+    try:
+        # Check if the class exists
+        existing_class = await class_collection.find_one({"classs_id": classs_id})
+        if not existing_class:
+            raise HTTPException(status_code=404, detail="Class not found")
+
+        # Perform the delete operation
+        await class_collection.delete_one({"classs_id": classs_id})
+
+        return {"message": "Class deleted successfully"}
+    except Exception as e:
+        print(f"Unhandled Exception: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 # For subject Part Shazzi ma'am
 class Subject(BaseModel):
@@ -1380,10 +1493,53 @@ async def get_subject_details(request: Request):
 
         return detailed_subjects
     
-
     except Exception as e:
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    
+class Update_Subject(BaseModel):
+    subject_id: int
+    subject_name: str
+
+
+@app.put("/update_subject")
+async def update_subject(subject: Update_Subject):
+    print("Updating subject:", subject)
+
+    # Find the subject by ID
+    existing_subject = await subject_collection.find_one({"subject_id": subject.subject_id})
+
+    if not existing_subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    # Update the subject name
+    result = await subject_collection.update_one(
+        {"subject_id": subject.subject_id},  # Find the subject by ID
+        {"$set": {"subject_name": subject.subject_name}}  # Update the subject name
+    )
+
+    if result.modified_count == 1:
+        return {"message": "Subject updated successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update Subject")
+
+@app.delete("/delete_subject/{subject_id}")
+async def delete_subject(subject_id: int):
+    try:
+        # Check if the subject exists
+        existing_subject = await subject_collection.find_one({"subject_id": subject_id})
+        if not existing_subject:
+            raise HTTPException(status_code=404, detail="Subject not found")
+
+        # Perform the delete operation
+        await subject_collection.delete_one({"subject_id": subject_id})
+
+        return {"message": "Subject deleted successfully"}
+    except Exception as e:
+        print(f"Unhandled Exception: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
+
+
 
 class Topic(BaseModel):
     topicName: str
@@ -1532,6 +1688,49 @@ async def get_topic_details(request: Request):
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
+class Update_Topic(BaseModel):
+    topic_id: int
+    topic_name: str
+
+@app.put("/update_topic")
+async def update_topic(topic: Update_Topic):
+    print("Updating topic:", topic)
+
+    # Find the topic by ID
+    existing_topic = await topic_collection.find_one({"topic_id": topic.topic_id})
+
+    if not existing_topic:
+        raise HTTPException(status_code=404, detail="Topic not found")
+
+    # Update the topic name
+    result = await topic_collection.update_one(
+        {"topic_id": topic.topic_id},  # Find the topic by ID
+        {"$set": {"topic_name": topic.topic_name}}  # Update the topic name
+    )
+
+    if result.modified_count == 1:
+        return {"message": "Topic updated successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update Topic")
+    
+    
+@app.delete("/delete_topic/{topic_id}")
+async def delete_topic(topic_id: int):
+    try:
+        # Check if the topic exists
+        existing_topic = await topic_collection.find_one({"topic_id": topic_id})
+        if not existing_topic:
+            raise HTTPException(status_code=404, detail="Topic not found")
+
+        # Perform the delete operation
+        await topic_collection.delete_one({"topic_id": topic_id})
+
+        return {"message": "Topic deleted successfully"}
+    except Exception as e:
+        print(f"Unhandled Exception: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
+
+    
 # LOGout part
 @app.get("/")
 async def read_root(request: Request):
@@ -1551,4 +1750,4 @@ async def login():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

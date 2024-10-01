@@ -127,7 +127,10 @@
 
             <div class="form-group hidden" id="classGroup">
                 <label for="class"><b><i class="fas fa-school"></i> Class</b></label>
-                <input type="text" placeholder="Enter Class" name="class" id="class">
+                <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
+                <select id="class" name="class" required>
+                    <option value="select">Select Class</option>
+                </select>
             </div>
 
 
@@ -143,8 +146,10 @@
 
             <div class="form-group">
                 <label for="institute-name"><b><i class="fas fa-university"></i> Institute Name</b></label>
-                <input type="text" placeholder="Enter Institute Name" name="institute-name" id="institute-name"
-                    required>
+                <!-- <input type="text" placeholder="Enter Institute Name" name="institute-name" id="institute-name" required> -->
+                <select id="institute-name" name="institute-name" required>
+                    <option value="select">Select Institute</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -206,7 +211,7 @@
 
         function handleRegistration(event) {
             event.preventDefault();
-            const showPasswordCheckbox = document.querySelector('#showPassword');   
+            const showPasswordCheckbox = document.querySelector('#showPassword');
             const password = document.getElementById('psw').value;
             const confirmPassword = document.getElementById('psw-confirm').value;
 
@@ -261,6 +266,49 @@
 
         // Initialize the form based on the default role selection
         window.onload = updateForm;
+
+        // Function to fetch and populate classes
+        function fetchClasses() {
+            fetch('/get_SchoolClass')
+                .then(response => response.json())
+                .then(classes => {
+                    const classInput = document.getElementById('class');
+                    classInput.innerHTML = '<option value="">Select Class</option>';
+
+                    // Populate the class dropdown
+                    classes.forEach(classItem => {
+                        const option = document.createElement('option');
+                        option.value = classItem.classs_id;
+                        option.textContent = classItem.classs_name;
+                        classInput.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching classes:', error));
+        }
+
+        function fetchInstitutes() {
+            fetch('/get_SchoolInstitute')
+                .then(response => response.json())
+                .then(institutes => {
+                    const instituteInput = document.getElementById('institute-name');
+                    instituteInput.innerHTML = '<option value="">Select Institute</option>';
+
+                    // Populate the class dropdown
+                    institutes.forEach(instituteItem => {
+                        const option = document.createElement('option');
+                        option.value = instituteItem.institute_id;
+                        option.textContent = instituteItem.institute_name;
+                        instituteInput.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching institutes:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchClasses();
+            fetchInstitutes();
+        });
+
     </script>
 
 </body>
