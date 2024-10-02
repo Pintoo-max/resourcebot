@@ -94,8 +94,10 @@ async def form_uplaod(
         print("Generated filename:", pdffilename)
 
         # Ensure the upload folder exists
-        upload_folder = 'upload/textbook_pdf'
+        upload_folder = 'static/upload/textbook_pdf'
+        upload_folder1='upload/textbook_pdf'
         file_path = os.path.join(upload_folder, pdffilename)
+        file_path1 = os.path.join(upload_folder1, pdffilename)
       # print("file path name", file_path)
        # file.save(file_path)
 
@@ -135,7 +137,7 @@ async def form_uplaod(
                 "tasks": tasks,
                 "unique_code": unique_code,
                 "timestamp": timestamp,
-                "file_path": file_path
+                "file_path": file_path1
             }
         result = await collection.insert_one(document)
         print("Document to insert:", document)

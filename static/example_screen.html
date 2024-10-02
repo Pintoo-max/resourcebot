@@ -571,8 +571,14 @@
         function toggleCheckboxes(mainCheckbox) {
             const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#text-book-solution)');
             otherCheckboxes.forEach(checkbox => {
-                checkbox.disabled = mainCheckbox.checked;
+                if (mainCheckbox.checked) {
+                    checkbox.disabled = true;  // Disable the other checkboxes
+                    checkbox.checked = false;  // Uncheck the other checkboxes
+                } else {
+                    checkbox.disabled = false;  // Enable the other checkboxes
+                }
             });
+
         }
 
         // Function to fetch and populate boards
@@ -810,7 +816,20 @@
 
         // Fetch and display questions when the "Question" button is clicked
         document.getElementById('addQuestionBtn').addEventListener('click', async () => {
-            await fetchQuestionsAndAnswers(); // Fetch questions and answers
+            const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+            // Extract and store the IDs of checked checkboxes
+            const checkedIds = [];
+            checkboxes.forEach((checkbox) => {
+                checkedIds.push(checkbox.id);
+            });
+
+            // Check if the length is 1 and the id is 'text-book-solution'
+            if (checkedIds.length === 1 && checkedIds[0] === 'text-book-solution') {
+                await fetchTextbookSolution();
+            } else {
+                await fetchQuestionsAndAnswers();
+            }
 
             // Show all the questions and hide the answers initially
             document.querySelectorAll('.questionsDiv').forEach(questionsDiv => {
@@ -1307,6 +1326,82 @@
                 printWindow.print();
             });
         })
+
+        async function fetchTextbookSolution() {
+
+// Clear previous data before starting to append new results
+const dataContainer = document.getElementById('data');
+dataContainer.innerHTML = '';
+const board = document.getElementById('board').value;
+const medium = document.getElementById('medium').value;
+const grade = document.getElementById('grade').value;
+console.log("This is grade", grade);
+const subject = document.getElementById('subject').value;
+const lesson = document.getElementById('lesson').value;
+
+// Define a function to handle the fetching and displaying of questions and answers
+
+// Validate required fields
+if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select') {
+    console.error('Please select all required fields');
+    return;
+}
+
+// retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+// Construct the query string
+const queryParams = new URLSearchParams({
+    board: board,
+    medium: medium,
+    grade: grade,
+    subject: subject,
+    lesson: lesson,
+    tasks: 'text-book-solution',
+
+});
+console.log("This is query:", queryParams.toString());
+
+try {
+    const response = await fetch(`/get_textbook-solution?${queryParams.toString()}`);
+    // console.log("Response:", response);
+    const result = await response.json();
+    // console.log("Results: ", result);
+
+
+    if (response.ok) {
+        const documentData = result.document;
+        const baseUrl = window.location.origin + "/";
+        console.log('path', "upload/textbook_pdf/"+documentData.filename);
+        var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
+        console.log("upload path",pathname);
+        // Get the element with the id "data"
+        const dataContainer = document.getElementById('data');
+
+        // Clear the existing content in the data container
+        dataContainer.innerHTML = '';
+
+        // Create an iframe to embed the PDF
+        const pdfIframe = document.createElement('iframe');
+         pdfIframe.src = documentData.file_path.replace(/\\/g, '/');
+        //pdfIframe.src = baseUrl +"upload/textbook_pdf/"+documentData.filename+".pdf";
+        pdfIframe.width = '100%';
+        pdfIframe.height = '100%'; // You can adjust this height as per your design
+
+        // Append the iframe to the data container directly
+        dataContainer.appendChild(pdfIframe);
+
+    }
+    else {
+        alert("No questions and answers found for selected tasks");
+    }
+
+} catch (error) {
+    console.error("Error fetching data:", error);
+}
+
+
+
+
+}
     </script>
 </body>
 
