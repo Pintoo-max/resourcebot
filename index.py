@@ -222,7 +222,7 @@ async def form_uplaod(
                     "file_path": file_path1
                 }
             result = await collection.insert_one(document)
-            print("Document to insert:", document)
+            #print("Document to insert:", document)
 
             print("This is detect formatresult collection")
             print(result)
