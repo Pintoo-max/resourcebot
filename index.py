@@ -70,12 +70,14 @@ async def get_form():
 
 @app.post("/submit")
 async def form_uplaod(
+    request: Request,  # Added request to access form data dynamically
     board: str = Form(...),
     medium: str = Form(...),
     grade: str = Form(...),
     subject: str = Form(...),
-    lesson: str = Form(...),
+   # lesson: str = Form(...),
     tasks: str = Form(...),
+    set_number: str = Form(None),  # Accept set number from form
     file: UploadFile = File(...),
    ):
    
@@ -85,6 +87,8 @@ async def form_uplaod(
   
     if tasks=='text-book-solution':
         print(tasks)
+        form_data = await request.form()
+        lesson = form_data.get('lesson')  # Fetch lesson from form data dynamically
         unique_code = str(uuid.uuid4())
         timestamp = datetime.utcnow().isoformat()
         new_filename = f"{board}_{medium}_{grade}_{subject}_{lesson}_{tasks}"
@@ -148,9 +152,88 @@ async def form_uplaod(
 
        
 
+    elif tasks=='sample-paper-solution':
+       # print(set_number)
+        unique_code = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+        new_filename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}"
+        pdffilename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}.pdf"
+        print(new_filename)
+
+        print("Generated filename:", pdffilename)
+        existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+        print(existing_grade)
+        class_name = existing_grade["classs_name"]
+
+        existing_board = await board_collection.find_one({"board_id": int(board)})
+        print(existing_board)
+        board_name = existing_board["board_name"]
+        
+        existing_medium = await medium_collection.find_one({"medium_id": int(medium) })
+        print(existing_medium)
+        medium_name = existing_medium["medium_name"]
+
+        existing_subject = await subject_collection.find_one({"subject_id": int(subject) })
+        print(existing_subject)
+        subject_name = existing_subject["subject_name"]
+
+        collection = get_collection(class_name)
+        print(collection)
+        # Check for existing files with the same base filename
+        existing_file = await collection.find_one({"filename": new_filename})
+
+
+
+        if existing_file:
+            return {"status": "0", "message": "File already exsist"}
+           # return "alredy exsist"
+        else:
+
+
+            # Ensure the upload folder exists
+            upload_folder = 'static/upload/sample_papers'
+            upload_folder1='upload/sample_papers'
+            file_path = os.path.join(upload_folder, pdffilename)
+            file_path1 = os.path.join(upload_folder1, pdffilename)
+        # print("file path name", file_path)
+        # file.save(file_path)
+
+        # Save the file
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            print("File uploaded successfully:", pdffilename)
+
+            
+
+            document = {
+                     "board": board,
+                     "board_name": board_name,
+                     "medium": medium,
+                     "medium_name": medium_name,
+                     "grade": grade,
+                     "grade_name": class_name,
+                     "subject": subject,
+                     "subject_name": subject_name,
+                    "filename": new_filename,
+                    "tasks": tasks,
+                    "set_number":set_number,
+                    "unique_code": unique_code,
+                    "timestamp": timestamp,
+                    "file_path": file_path1
+                }
+            result = await collection.insert_one(document)
+            print("Document to insert:", document)
+
+            print("This is detect formatresult collection")
+            print(result)
+           # return {"status": "1", "message": "File uploaded successfully"}
+            return {"file_id": str(result.inserted_id), "message": "File uploaded and saved successfully", "filename": new_filename}
+
 
 
     else:
+        form_data = await request.form()
+        lesson = form_data.get('lesson')  # Fetch lesson from form data dynamically
         file_contents = await file.read()
         file_extension = file.filename.split('.')[-1].lower()
         print(file_extension)
@@ -905,6 +988,57 @@ async def get_questions_and_answers(
        
       
     return {"document": document}
+
+@app.get("/get_SamplePaper-solution")
+async def get_questions_and_answers(
+    board: str = Query(...),
+    medium: str = Query(...),
+    grade: str = Query(...),
+    subject: str = Query(...),
+    tasks: str = Query(...),
+   
+):
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        
+        "tasks": tasks
+    }
+
+   
+
+    print("Query:", query)
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    print(existing_grade)
+    class_name = existing_grade["classs_name"]
+
+    collection = get_collection(class_name)
+   # print(collection)
+    # Get the collection based on grade
+   
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+   # document = await collection.find(query)
+    documents = await collection.find(query).to_list(length=None)  # Convert cursor to list
+    if not documents:
+    
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+         # Convert ObjectId to string for JSON serialization
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])
+
+       # document['_id'] = str(document['_id'])
+       
+      
+    return {"document": documents}
 
 # Login part start here
 

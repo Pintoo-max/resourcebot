@@ -170,15 +170,18 @@
         </div>
 
         <div class="task">
-            <input type="checkbox" id="text-book-solution" name="tasks" value="text-book-solution"
+            <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
                 onclick="toggleSamplePaper(this)">
-            <label for="text-book-solution">Sample Paper</label>
+            <label for="sample-paper-solution">Sample Paper</label>
         </div>
+
 
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="file" accept=".doc,.pdf" required>
 
-        <input type="submit" value="Submit">
+        <input type="hidden" id="set_number" name="set_number" value="">
+
+        <input type="submit" value="Submit" onclick="askForSetNumber()">
     </form>
 </body>
 
@@ -210,6 +213,19 @@
             });
         } else {
             otherCheckboxes.forEach(checkbox => checkbox.disabled = false);
+        }
+    }
+
+     // Function to toggle checkboxes (if needed in the future)
+     function toggleSamplePaper(mainCheckbox) {
+        const otherCheckboxes1 = document.querySelectorAll('input[type="checkbox"]:not(#sample-paper-solution)');
+        if (mainCheckbox.checked) {
+            otherCheckboxes1.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            });
+        } else {
+            otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);
         }
     }
 
@@ -394,11 +410,11 @@
         document.getElementById('subject').addEventListener('change', fetchTopics);
     });
 
-    async function submitForm(event) {
+    async function submitForm(event) {alert("1111");
         event.preventDefault(); // Prevent the form from submitting the traditional way
 
         let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'uploadForm'
-
+     
         try {
             const response = await fetch('/submit', {
                 method: 'POST',
@@ -406,8 +422,9 @@
             });
 
             const result = await response.json();
+            console.log("result data found", result);
 
-            if (response.ok) {
+            if (result.status === "1") {
                 // Show success alert with the message from the server
                 alert(result.message);
             } else {
@@ -419,6 +436,29 @@
             alert('An error occurred while submitting the form.');
             console.error('Error:', error);
         }
+    }
+
+    function askForSetNumber() {
+        // Get the checkbox for sample-paper-solution
+    let samplePaperCheckbox = document.getElementById("sample-paper-solution");
+    
+    if (samplePaperCheckbox.checked) {
+        // Ask the user for the set number
+        let setNumber = prompt("Please enter the set number:");
+        
+        if (setNumber != null && setNumber !== '') {
+            // Set the hidden input value for set_number
+            document.getElementById("set_number").value = setNumber;
+            
+            // Submit the form
+            document.getElementById("UploadForm").submit();
+        } else {
+            alert("Set number is required!");
+        }
+    } else {
+        // If the sample-paper-solution is not checked, submit the form as usual
+        document.getElementById("UploadForm").submit();
+    }
     }
 
     document.getElementById('Submit').addEventListener('click', submitForm);  // Assuming your submit button has the ID 'submitButton'
