@@ -205,16 +205,19 @@
             <label for="text-book-solution">Text Book Solution</label>
         </div>
 
-        <div class="task"></div>
+        <div class="task">
             <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
                 onclick="toggleSamplePaper(this)">
             <label for="sample-paper-solution">Sample Paper</label>
         </div>
 
+
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="file" accept=".doc,.pdf" required>
 
-        <input type="submit" id="submitButton" value="Submit" onclick="askForSetNumber()">
+        <input type="hidden" id="set_number" name="set_number" value="">
+
+        <input type="submit" value="Submit" onclick="askForSetNumber()">
     </form>
 </body>
 
@@ -249,8 +252,8 @@
         }
     }
 
-// Function to toggle checkboxes (if needed in the future)
-function toggleSamplePaper(mainCheckbox) {
+    // Function to toggle checkboxes (if needed in the future)
+    function toggleSamplePaper(mainCheckbox) {
         const otherCheckboxes1 = document.querySelectorAll('input[type="checkbox"]:not(#sample-paper-solution)');
         if (mainCheckbox.checked) {
             otherCheckboxes1.forEach(checkbox => {
@@ -260,7 +263,7 @@ function toggleSamplePaper(mainCheckbox) {
         } else {
             otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);
         }
-}
+    }
     // Function to fetch and populate boards
     function fetchBoards() {
         fetch('/get_SchoolBoard')
@@ -477,25 +480,25 @@ function toggleSamplePaper(mainCheckbox) {
 
     function askForSetNumber() {
         // Get the checkbox for sample-paper-solution
-    let samplePaperCheckbox = document.getElementById("sample-paper-solution");
-    
-    if (samplePaperCheckbox.checked) {
-        // Ask the user for the set number
-        let setNumber = prompt("Please enter the set number:");
-        
-        if (setNumber != null && setNumber !== '') {
-            // Set the hidden input value for set_number
-            document.getElementById("set_number").value = setNumber;
-            
-            // Submit the form
-            document.getElementById("UploadForm").submit();
+        let samplePaperCheckbox = document.getElementById("sample-paper-solution");
+
+        if (samplePaperCheckbox.checked) {
+            // Ask the user for the set number
+            let setNumber = prompt("Please enter the set number:");
+
+            if (setNumber != null && setNumber !== '') {
+                // Set the hidden input value for set_number
+                document.getElementById("set_number").value = setNumber;
+
+                // Submit the form
+                document.getElementById("UploadForm").submit();
+            } else {
+                alert("Set number is required!");
+            }
         } else {
-            alert("Set number is required!");
+            // If the sample-paper-solution is not checked, submit the form as usual
+            document.getElementById("UploadForm").submit();
         }
-    } else {
-        // If the sample-paper-solution is not checked, submit the form as usual
-        document.getElementById("UploadForm").submit();
-    }
     }
 
     // Add the event listener to the submit button
