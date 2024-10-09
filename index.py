@@ -1491,18 +1491,19 @@ def get_role_id(role: str):
     else:
         raise ValueError("Invalid role")
 
-@app.get("static/register.html", response_class=HTMLResponse)
-async def get_form():
-    with open("static/register.html", 'rb') as f:
-        content = f.read()
-        return content.decode('utf-8')
-
+# @app.get("static/register.html", response_class=HTMLResponse)
+# async def get_form():
+#     with open("static/register.html", 'rb') as f:
+#         content = f.read()s
+#         return content.decode('utf-8')
+    
 @app.post("/register")
 async def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
-    
+    print("this is new user",user)
     # Assign role_id based on the role
     role_id = get_role_id(user.role)
+    print(role_id)
     
     # Create user profile data
     user_profile = {
@@ -1524,13 +1525,22 @@ async def register_user(user: User):
         "role_id": role_id  # Store the role_id
     }
 
-    # Check if the email is already registered
-    if auth_collection.find_one({"email": user.email}):
-        raise HTTPException(status_code=400, detail="User already registered")
+    existing_user = await profiles_collection.find_one({"role": user.role,
+                                                        "email": user.email,
+                                                        "class_name":user.class_name,
+                                                        "institute_id": user.institute_id,
+                                                        "date_of_birth": user.date_of_birth
+                                                        })
+    print(existing_user)
 
-    # Insert data into both collections
-    profiles_collection.insert_one(user_profile)
-    auth_collection.insert_one(auth_data)
+    # Check if the email is already registered
+    # if auth_collection.find_one({"email": user.email}):
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User is already registered")
+    else:
+        # Insert data into both collections
+        profiles_collection.insert_one(user_profile)
+        auth_collection.insert_one(auth_data)
 
     return {"message": "Registration successful"}
 
@@ -2302,8 +2312,60 @@ async def logout(request: Request):
 async def login():
     # Serve the login page (static file or template)
     return {"message": "Login Page"}
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+    instituteId: str
+    role: str
+    dob: str = None  # Optional, only required for students
+
+@app.post("/forgot-password")
+async def forgot_password(request: ForgotPasswordRequest):
+    print("thaats is request",request)
+    user = await profiles_collection.find_one({
+        "email": request.email,
+        "institute_id": request.instituteId,
+        "role": request.role
+    })
+
+    print(user)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Profile not found with the given email, and institute ID")
+    
+    if user:
+        if request.role == "student" and user.get("date_of_birth") != request.dob:
+            raise HTTPException(status_code=400, detail="Invalid credentials")
+    
+    if "_id" in user:
+        user["_id"] = str(user["_id"])  # Convert ObjectId to string
     
 
+    # If valid, allow reset password (or send token/email)
+    return {"success": True, "message": "User verified. You can reset your password.","user":user}
+
+# Pydantic model for reset password request
+class ResetPasswordRequest(BaseModel):
+    email: str
+    role: str  # Include this if necessary
+    newPassword: str
+
+@app.post("/reset-password")
+async def reset_password(request: ResetPasswordRequest):
+    print(f"Received request to reset password for: {request.email}")
+    user = await auth_collection.find_one({"email": request.email})
+    
+    if not user:
+        print(f"User with email {request.email} not found")
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Hash the new password
+    hashed_password = pwd_context.hash(request.newPassword)
+    await auth_collection.update_one({"email": request.email}, {"$set": {"password": hashed_password}})
+    
+    return {"success": True, "message": "Password reset successfully."}
+
+    
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

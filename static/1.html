@@ -10,7 +10,8 @@
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
+            /* Vertically centers the form */
             min-height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
@@ -22,7 +23,6 @@
             text-align: center;
         }
 
-
         form {
             background-color: #fff;
             padding: 20px;
@@ -30,6 +30,8 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px;
+            margin: auto;
+            /* Centers the form horizontally */
         }
 
         form label {
@@ -39,7 +41,9 @@
         }
 
         form select,
-        form input[type="text"] {
+        form input[type="text"],
+        form input[type="file"],
+        form input[type="submit"] {
             width: 100%;
             padding: 10px;
             margin: 8px 0;
@@ -47,26 +51,6 @@
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 16px;
-            resize: both;
-            overflow: auto;
-        }
-
-        form select,
-        form input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        form select,
-        form input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
 
         form input[type="submit"] {
@@ -92,6 +76,58 @@
         .required::after {
             content: " *";
             color: red;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            form {
+                padding: 15px;
+                max-width: 100%;
+                /* Full width on smaller screens */
+                box-shadow: none;
+            }
+
+            form input[type="submit"],
+            form input[type="text"],
+            form input[type="file"],
+            form select {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            form label {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            form {
+                padding: 10px;
+            }
+
+            form input[type="submit"],
+            form input[type="text"],
+            form input[type="file"],
+            form select {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            form label {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -237,9 +273,9 @@
             otherCheckboxes.forEach(checkbox => checkbox.disabled = false);
         }
     }
-    
-     // Function to toggle checkboxes (if needed in the future)
-     function toggleSamplePaper(mainCheckbox) {
+
+    // Function to toggle checkboxes (if needed in the future)
+    function toggleSamplePaper(mainCheckbox) {
         const otherCheckboxes1 = document.querySelectorAll('input[type="checkbox"]:not(#sample-paper-solution)');
         const inputContainer = document.getElementById('input-container');
         if (mainCheckbox.checked) {
@@ -254,7 +290,6 @@
         }
         
     }
-
     // Function to fetch and populate boards
     function fetchBoards() {
         fetch('/get_SchoolBoard')
@@ -439,8 +474,8 @@
     async function submitForm(event) {
         event.preventDefault(); // Prevent the form from submitting the traditional way
 
-        let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'uploadForm'
-     
+        let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'UploadForm'
+
         try {
             const response = await fetch('/submit', {
                 method: 'POST',
@@ -448,13 +483,18 @@
             });
 
             const result = await response.json();
-            console.log("result data found", result);
 
-            if (result.status === "1") {
-                // Show success alert with the message from the server
-                alert(result.message);
+            if (response.ok) {
+                // Check the hasError value from the result
+                if (result.hasError === 1) {
+                    // Success message
+                    alert('File uploaded successfully: ' + result.message);
+                } else {
+                    // Error message
+                    alert('Error: ' + result.message);
+                }
             } else {
-                // Show an error alert if the response is not OK
+                // Show a generic error if the response is not OK
                 alert('Error: ' + result.message);
             }
         } catch (error) {
@@ -466,28 +506,30 @@
 
     function askForSetNumber() {
         // Get the checkbox for sample-paper-solution
-    let samplePaperCheckbox = document.getElementById("sample-paper-solution");
-    
-    if (samplePaperCheckbox.checked) {
-        // Ask the user for the set number
-        let setNumber = prompt("Please enter the set number:");
-        
-        if (setNumber != null && setNumber !== '') {
-            // Set the hidden input value for set_number
-            document.getElementById("set_number").value = setNumber;
-            
-            // Submit the form
-            document.getElementById("UploadForm").submit();
+        let samplePaperCheckbox = document.getElementById("sample-paper-solution");
+
+        if (samplePaperCheckbox.checked) {
+            // Ask the user for the set number
+            let setNumber = prompt("Please enter the set number:");
+
+            if (setNumber != null && setNumber !== '') {
+                // Set the hidden input value for set_number
+                document.getElementById("set_number").value = setNumber;
+
+                // Submit the form
+                document.getElementById("UploadForm").submit();
+            } else {
+                alert("Set number is required!");
+            }
         } else {
-            alert("Set number is required!");
+            // If the sample-paper-solution is not checked, submit the form as usual
+            document.getElementById("UploadForm").submit();
         }
-    } else {
-        // If the sample-paper-solution is not checked, submit the form as usual
-        document.getElementById("UploadForm").submit();
-    }
     }
 
-    document.getElementById('Submit').addEventListener('click', submitForm);  // Assuming your submit button has the ID 'submitButton'
+    // Add the event listener to the submit button
+    document.getElementById('submitButton').addEventListener('click', submitForm);
+
 
 </script>
 </body>

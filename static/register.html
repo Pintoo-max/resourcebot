@@ -115,7 +115,7 @@
 
 <body>
     <div class="container">
-        <h2><i class="fas fa-user-circle"></i> Register</h2>
+        <h2><i class="fas fa-user-plus"></i> Register</h2>
         <form id="registrationForm" onsubmit="return handleRegistration(event)">
             <div class="form-group">
                 <label for="role"><b><i class="fas fa-user-tag"></i> Select Role</b></label>
@@ -194,6 +194,18 @@
     </div>
 
     <script>
+
+        const showPasswordCheckbox = document.querySelector('#showPassword');
+        const passwordInput = document.getElementById('psw');
+        const confirmPasswordInput = document.getElementById('psw-confirm');
+
+        showPasswordCheckbox.addEventListener('change', function () {
+            const type = this.checked ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            confirmPasswordInput.setAttribute('type', type);
+        });
+ 
+
         function updateForm() {
             const role = document.getElementById('role').value;
             const classGroup = document.getElementById('classGroup');
@@ -210,16 +222,11 @@
         }
 
         function handleRegistration(event) {
+            alert("This is the registration page");
             event.preventDefault();
-            const showPasswordCheckbox = document.querySelector('#showPassword');
+
             const password = document.getElementById('psw').value;
             const confirmPassword = document.getElementById('psw-confirm').value;
-
-            showPasswordCheckbox.addEventListener('change', function () {
-                const type = this.checked ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                confirmPasswordInput.setAttribute('type', type);
-            });
 
             if (password !== confirmPassword) {
                 alert("Passwords do not match. Please try again.");
@@ -238,7 +245,7 @@
                 password: password,
             };
 
-            fetch('http://127.0.0.1:8000/register', {
+            fetch('/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -251,7 +258,10 @@
                 })
                 .then(data => {
                     console.log("Response Data:", data); // Log response data
+
                     if (data.message === "Registration successful") {
+                        alert("User Registration successful");
+                        document.getElementById('registrationForm').reset();  // This line clears the form
                         // Redirect to login page
                         window.location.href = "/static/login.html";
                     } else {
@@ -308,7 +318,6 @@
             fetchClasses();
             fetchInstitutes();
         });
-
     </script>
 
 </body>

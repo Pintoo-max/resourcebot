@@ -46,20 +46,28 @@
 
             <div class="dashboard-cards">
                 <div class="card">
-                    <h3>Total Users</h3>
-                    <p>1,200</p>
+                    <h3>Total Boards</h3>
+                    <p>3</p>
                 </div>
                 <div class="card">
-                    <h3>Active Roles</h3>
-                    <p>5</p>
-                </div>
-                <div class="card">
-                    <h3>Institutes</h3>
+                    <h3>Total Classes</h3>
                     <p>15</p>
                 </div>
                 <div class="card">
-                    <h3>Pending Requests</h3>
-                    <p>8</p>
+                    <h3>Total Mediums</h3>
+                    <p>2</p>
+                </div>
+                <div class="card">
+                    <h3>Total Institutes</h3>
+                    <p>10</p>
+                </div>
+                <div class="card">
+                    <h3>Total Subjects</h3>
+                    <p>20</p>
+                </div>
+                <div class="card">
+                    <h3>Pending Approvals</h3>
+                    <p>5</p>
                 </div>
             </div>
 
@@ -81,12 +89,10 @@
                 <div class="graphical-statistics">
                     <h4>Graphical Statistics</h4>
                     <div class="chart-container">
-                        <!-- Example chart (use a chart library like Chart.js for real charts) -->
-                        <canvas id="userGrowthChart"></canvas>
+                        <canvas id="boardInstituteChart" width="400" height="200"></canvas>
                     </div>
                     <div class="chart-container">
-                        <!-- Another example chart -->
-                        <canvas id="roleDistributionChart"></canvas>
+                        <canvas id="mediumPresentFieldChart" width="400" height="200"></canvas>
                     </div>
                 </div>
 
@@ -163,7 +169,6 @@
                 </div>
             </div>
         </div>
-
 
         <div id="roles-section" class="content-section" style="display: none;">
             <h3>Role Management</h3>
@@ -353,9 +358,9 @@
                         <thead>
                             <tr>
                                 <th>S.No.</th>
-                                <th>Board Name</th>
-                                <th>Medium Name</th>
-                                <th>Class Name</th>
+                                <th>Board</th>
+                                <th>Medium</th>
+                                <th>Class</th>
                                 <th>Subject ID</th>
                                 <th>Subject Name</th>
                                 <th>Actions</th>
@@ -451,45 +456,88 @@
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            var ctx1 = document.getElementById('userGrowthChart').getContext('2d');
-            var userGrowthChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'User Growth',
-                        data: [50, 100, 150, 200, 250, 300],
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderWidth: 1
-                    }]
-                }
-            });
 
-            var ctx2 = document.getElementById('roleDistributionChart').getContext('2d');
-            var roleDistributionChart = new Chart(ctx2, {
-                type: 'pie',
-                data: {
-                    labels: ['Admin', 'Editor', 'Viewer', 'Contributor'],
-                    datasets: [{
-                        label: 'Role Distribution',
-                        data: [10, 15, 20, 5],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
+            // Sample data for the charts
+            const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+            const boardData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Boards Registered',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    data: [30, 50, 20, 40, 70, 60, 90],
+                    fill: true,
+                }]
+            };
+
+            const mediumData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Mediums Available',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    data: [15, 25, 20, 35, 30, 45, 60],
+                    fill: true,
+                }]
+            };
+
+            // Configurations for the charts
+            const configBoard = {
+                type: 'line',
+                data: boardData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Months'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Boards'
+                            }
+                        }
+                    }
                 }
-            });
+            };
+
+            const configMedium = {
+                type: 'line',
+                data: mediumData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Months'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Mediums'
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Create the charts
+            const boardInstituteChart = new Chart(
+                document.getElementById('boardInstituteChart'),
+                configBoard
+            );
+
+            const mediumPresentFieldChart = new Chart(
+                document.getElementById('mediumPresentFieldChart'),
+                configMedium
+            );
+
+
 
             document.addEventListener('DOMContentLoaded', function () {
                 const dashboardLink = document.getElementById('dashboard-link');
@@ -1468,9 +1516,9 @@
                                     const row = document.createElement('tr');
                                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${subject.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
-                        <td>${subject.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
                         <td>${subject.board_name || 'Unknown Board'}</td> <!-- Display Board Name -->
+                        <td>${subject.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
+                        <td>${subject.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
                         <td>${subject.subject_id || 'Unknown subject_ID'}</td> <!-- Display Subject ID -->
                         <td>${subject.subject_name || 'Unknown Subject'}</td> <!-- Display Subject Name -->
                         <td class="action-icons">
@@ -1941,9 +1989,9 @@
                                 const row = document.createElement('tr');
                                 row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${topic.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
-                        <td>${topic.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
                         <td>${topic.board_name || 'Unknown Board'}</td> <!-- Display Board Name -->
+                        <td>${topic.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
+                        <td>${topic.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
                         <td>${topic.subject_name || 'Unknown Subject'}</td> <!-- Display Subject Name -->
                         <td>${topic.topic_name || 'Unknown subject_ID'}</td> <!-- Display Topic Name -->
                         <td class="action-icons">
