@@ -512,7 +512,7 @@
 
                 </div>
 
-                <div class="form-row">
+                <!--<div class="form-row">
                     <div class="form-group">
                         <label for="previous_year">Previous Year</label>
                         <select id="previous_year" name="previous_year" required>
@@ -521,7 +521,7 @@
                             <option value="select">Previous Year 2022</option>
                         </select>
                     </div>
-                </div>
+                </div>-->
 
         </div>
 
@@ -1487,7 +1487,7 @@
         questionsDiv.innerHTML += `
             <p>
                 <a href="${documentData.file_path}" target="_blank">
-                    ${index + 1}: ${documentData.board_name} Sample Paper for class ${documentData.grade_name} ${documentData.subject_name} set number ${documentData.set_number}
+                    ${index + 1}: ${documentData.board_name} Sample Paper for class ${documentData.grade_name} ${documentData.subject_name} set number ${documentData.set_number} Year ${documentData.paper_year}
                 </a>
             </p>
         `;

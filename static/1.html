@@ -98,7 +98,7 @@
 
 <body>
     <form action="/submit" method="post" enctype="multipart/form-data" id="UploadForm">
-        <h2>CONTENTS</h2>
+        <h2>CONTENTS </h2>
         <label for="board" class="required">Board</label>
         <select id="board" name="board" required>
             <option value="">Select</option>
@@ -171,21 +171,43 @@
 
         <div class="task">
             <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
-                onclick="toggleSamplePaper(this)">
+                   onclick="toggleSamplePaper(this)">
             <label for="sample-paper-solution">Sample Paper</label>
+        
+            <div id="input-container" style="margin-top: 10px; display: none; margin-left:20px;">
+                <select id="prev_years" name="prev_years" style="width:150px; height:30px; padding:0px; font-size:15px; margin-right: 10px;">
+                    <option value="">Select Year</option>
+                    <!-- Use JavaScript to populate the last 6 years -->
+                </select>
+        
+                <input type="number" id="set_number" name="set_number" value="" style="width:130px; height:30px; display:inline-block;" placeholder="set number">
+            </div>
         </div>
+        
 
 
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="file" accept=".doc,.pdf" required>
 
-        <input type="hidden" id="set_number" name="set_number" value="">
+       
 
-        <input type="submit" value="Submit" onclick="askForSetNumber()">
+        <input type="submit" value="Submit" >
     </form>
 </body>
 
 <script>
+
+    // Get the current year
+    const currentYear = new Date().getFullYear();
+    const prev_years = document.getElementById('prev_years');
+
+    // Populate the dropdown with the last 6 years
+    for (let i = 0; i < 6; i++) {
+        const yearOption = document.createElement('option');
+        yearOption.value = currentYear - i;
+        yearOption.text = currentYear - i;
+        prev_years.add(yearOption);
+    }
     // Function to handle board selection change and manage medium disabling
     function handleBoardChange() {
         const boardSelect = document.getElementById('board');
@@ -219,14 +241,18 @@
      // Function to toggle checkboxes (if needed in the future)
      function toggleSamplePaper(mainCheckbox) {
         const otherCheckboxes1 = document.querySelectorAll('input[type="checkbox"]:not(#sample-paper-solution)');
+        const inputContainer = document.getElementById('input-container');
         if (mainCheckbox.checked) {
             otherCheckboxes1.forEach(checkbox => {
                 checkbox.checked = false;
                 checkbox.disabled = true;
             });
+            inputContainer.style.display = 'block'; 
         } else {
             otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);
+            inputContainer.style.display = 'none'; 
         }
+        
     }
 
     // Function to fetch and populate boards
@@ -410,7 +436,7 @@
         document.getElementById('subject').addEventListener('change', fetchTopics);
     });
 
-    async function submitForm(event) {alert("1111");
+    async function submitForm(event) {
         event.preventDefault(); // Prevent the form from submitting the traditional way
 
         let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'uploadForm'
