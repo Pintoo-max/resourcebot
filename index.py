@@ -299,16 +299,16 @@ async def form_uplaod(
             new_data = {
                 "unique_code": unique_code,
                 "timestamp": timestamp,
-                "board": int(board),
+                "board": board,
                 "board_name": board_name,
                 "medium_name": medium_name,
-                "medium": int(medium),
-                "grade": int(grade),
+                "medium": medium,
+                "grade": grade,
                 "class_name": class_name,
-                "subject": int(subject),
+                "subject": subject,
                 "subject_name": subject_name,
                 "topic_name": topic_name,
-                "lesson": int(lesson)
+                "lesson": lesson
                 
             }
 
@@ -1280,11 +1280,11 @@ async def get_questions_and_answers(
 
     # Construct the query
     query = {
-        "board": int(board),
-        "medium": int(medium),
-        "grade": int(grade),
-        "subject": int(subject),
-        "lesson": int(lesson),
+        "board": board,
+        "medium":medium,
+        "grade": grade,
+        "subject":subject,
+        "lesson": lesson,
         "tasks": {"$in": tasks.split(",")}
     }
 
