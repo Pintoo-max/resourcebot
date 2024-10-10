@@ -601,6 +601,7 @@ async def store_task_data(task_type, questions_and_answers,collection,filename,n
         elif task_type == 'match-the-column':
             column_a_key = f"column_a{idx}"
             column_b_key = f"column_b{idx}"
+            formatted_questions_and_answers[question_key] = "Match the following"
             formatted_questions_and_answers[column_a_key] = qa['column_a']
             formatted_questions_and_answers[column_b_key] = qa['column_b']
             formatted_questions_and_answers[answer_key] = qa['answers']
