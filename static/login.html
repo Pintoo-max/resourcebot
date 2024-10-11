@@ -97,23 +97,6 @@
             text-decoration: underline;
         }
 
-        /* .container-footer button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            margin: 8px 0;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: opacity 0.3s, transform 0.3s;
-        }
-
-        .container-footer button:hover {
-            background-color: #0056b3;
-        } */
-
         .hidden {
             display: none;
         }
@@ -134,28 +117,60 @@
             text-decoration: underline;
         }
 
-        /* .input-icon {
-            position: relative;
-        }
+        /* Responsive Design */
+        @media screen and (max-width: 600px) {
+            body {
+                justify-content: center;
+                align-items: center;
+                height: auto;
+                min-height: 100vh;
+                /* Ensure the body height fills the screen */
+                padding: 20px 0;
+                background-image: linear-gradient(to right, #007bff, #00c6ff);
+            }
 
-        .input-icon input,
-        .input-icon select {
-            padding-left: 20px;
-        }
+            .container {
+                max-width: 90%;
+                margin-top: 0;
+                /* Center it vertically */
+                padding: 15px;
+                border-radius: 8px;
+            }
 
-        .input-icon i {
-            position: absolute;
-            left: 10px;
-            top: 12px;
-            color: #007bff;
-            font-size: 18px;
-        } */
+            h2 {
+                font-size: 24px;
+            }
+
+            label {
+                font-size: 16px;
+            }
+
+            input[type=text],
+            input[type=password],
+            select {
+                padding: 10px;
+                font-size: 16px;
+            }
+
+            button {
+                padding: 8px 12px;
+                font-size: 16px;
+            }
+
+            .container-footer a {
+                font-size: 16px;
+            }
+
+            .forgot-password a {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h2><i class="fas fa-user-circle"></i>Login</h2>
+        <h2><i class="fas fa-user-circle"></i> Login</h2>
         <form id="loginForm" onsubmit="return handleLogin(event)">
             <i class="fas fa-user-tag"></i>
             <label for="role"><b>Select Role</b></label>
@@ -191,13 +206,13 @@
         </form>
 
         <div id="registrationLink" class="container-footer hidden">
-            <a href="register.html" style="font-size: 18px;">New User? Register Here</a>
+            <a href="/static/register.html" style="font-size: 18px;">New User? Register Here</a>
             <!-- <button onclick="redirectToRegistration()">New User? Register Here</button> -->
         </div>
         </br>
 
         <div class="forgot-password">
-            <a href="forgot-password.html" style="font-size: 18px;">Forgot Password?</a>
+            <a href="/static/forgot-password.html" style="font-size: 18px;">Forgot Password?</a>
         </div>
     </div>
 
@@ -207,18 +222,23 @@
             const roleSelect = document.getElementById('role');
             roleSelect.addEventListener('change', updateForm);
 
-            const togglePassword = document.querySelector('#togglePassword');
-            const passwordInput = document.querySelector('#psw');
+            // Select the elements
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('passwordInput');
 
-            togglePassword.addEventListener('click', function () {
-                // Toggle the type attribute
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
+            // Ensure both elements exist
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function () {
+                    // Toggle the type attribute
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
 
-                // Toggle the icon
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
-            });
+                    // Toggle the icon class
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+
+            }
         });
 
         function updateForm() {
@@ -247,10 +267,54 @@
 
             //alert("this is email",email);
 
-            // Email validation
+            // // Email validation
+            // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // if (!emailPattern.test(email)) {
+            //     alert("Invalid email format");
+            //     return false;
+            // }
+
+            // if (role_id === '1') {
+            //     // Admin login
+            //     const loginSuccess = await performAdminLogin(email, password, role_id);
+
+            //     if (loginSuccess) {
+            //         //alert("Valid credentials.");
+            //         window.location.href = "/static/admin_dashboard.html";
+            //     } else {
+            //         alert("Invalid credentials. Please try again.");
+            //     }
+            // }
+            // else {
+            //     // Check if the user exists before performing login
+            //     // const userExists = await checkUser(email);
+
+            //     // if (!userExists) {
+            //     //     alert("Invalid credentials. Please register first.");
+            //     //     redirectToRegistration();
+            //     // } else {
+            //     const loginSuccess = await performLogin(email, password, instituteId, role_id);
+            //     if (loginSuccess) {
+            //         //alert("Valid credentials.");
+            //         window.location.href = "/static/example_screen.html";
+            //     } else {
+            //         alert("Invalid credentials. Please register first.");
+            //         redirectToRegistration();
+
+            //     }
+            // }
+
+
+            // Validate email format
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 alert("Invalid email format");
+                return false;
+            }
+
+            // Validate institute ID only if the role is not Admin
+            if (role_id !== '1' && (!instituteId || instituteId.trim() === '')) {
+                alert("Institute ID is required for Teachers and Students.");
                 return false;
             }
 
@@ -259,31 +323,26 @@
                 const loginSuccess = await performAdminLogin(email, password, role_id);
 
                 if (loginSuccess) {
-                    //alert("Valid credentials.");
+                    alert("Admin Login Successfully");
                     window.location.href = "/static/admin_dashboard.html";
                 } else {
                     alert("Invalid credentials. Please try again.");
                 }
-            } 
-            else {
-                // Check if the user exists before performing login
-                // const userExists = await checkUser(email);
-
-                // if (!userExists) {
-                //     alert("Invalid credentials. Please register first.");
-                //     redirectToRegistration();
-                // } else {
-                    const loginSuccess = await performLogin(email, password, instituteId, role_id);
-                    if (loginSuccess) {
-                        //alert("Valid credentials.");
-                        window.location.href = "/static/example_screen.html";
-                    } else {
-                        alert("Invalid credentials. Please register first.");
-                        redirectToRegistration();
-                        
-                    }
+            } else {
+                // Student/Teacher login
+                const loginSuccess = await performLogin(email, password, instituteId, role_id);
+                if (loginSuccess) {
+                    alert("User Login Successfully");
+                    window.location.href = "/static/example_screen.html";
+                }
+                else {
+                    // This handles incorrect credentials or unregistered users
+                    alert("User details are incorrect. Please try again or else registration as new user")
+                    redirectToRegistration();
                 }
             }
+        }
+
         // }
 
         async function checkUser(email) {
@@ -295,14 +354,14 @@
                     },
                     body: JSON.stringify({
                         email: email,
-                        institute_id: document.getElementById('institute-id').value,
+                        unique_institute_id: document.getElementById('institute-id').value,  // Fixed typo here
                     })
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok');
 
                 const data = await response.json();
-                return data.message === "User exists";
+                return data.message === "User exists";  // Assuming the backend will return this message when user exists
             } catch (error) {
                 console.error('Error checking user existence:', error);
                 return false;
@@ -318,21 +377,29 @@
                     },
                     body: JSON.stringify({
                         email: email,
-                        institute_id: instituteId,
+                        unique_institute_id: instituteId,  // Ensure this matches the server expectation
                         role_id: role_id,
                         password: password
                     })
                 });
 
-                if (!response.ok) throw new Error('Network response was not ok');
+                // Log the response status for debugging
+                console.log('Response Status:', response.status);
+
+                if (!response.ok) {
+                    const errorData = await response.json();  // Get error details
+                    throw new Error(errorData.detail || 'Network response was not ok');  // Use the error detail message
+                }
 
                 const data = await response.json();
                 return data.message === "Login successful";
             } catch (error) {
                 console.error('Error performing login:', error);
+                // alert(error.message);  // Show error message in an alert
                 return false;
             }
         }
+
 
         async function performAdminLogin(email, password, role_id) {
             try {

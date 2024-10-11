@@ -27,7 +27,7 @@ app = FastAPI()
 
 MONGO_DETAILS = "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/"
 client = AsyncIOMotorClient(MONGO_DETAILS)
-database = client.State_Board
+# database = client.State_Board
 db = client['user_database']
 # files_collection = database.get_collection("question_database")
 
@@ -44,13 +44,14 @@ topic_collection = db['topic']
 # Secret key for signing sessions
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
-def get_collection(class_name: str) -> Collection:
-    collection_name = f"class_{class_name}"
-    print(collection_name)
-    return database[collection_name]
+# def get_collection(class_name: str) -> Collection:
+#     collection_name = f"class_{class_name}"
+#     print(collection_name)
+#     return database[collection_name]
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 @app.get("/", response_class=HTMLResponse)
 async def get_form():
@@ -67,6 +68,33 @@ async def get_form():
 async def get_form():
     with open("static/register.html") as f:
         return f.read()
+
+async def get_or_create_database(board_name: str):
+    # Get the list of existing databases
+    existing_databases = await client.list_database_names()
+    
+    # Check if the selected board's database already exists
+    if board_name in existing_databases:
+        db = client[board_name]
+        print(f"Using existing database: '{board_name}'")
+    else:
+        # Create the new database if it does not exist
+        db = client[board_name]
+        print(f"Created new database: '{board_name}'")
+    
+    return db
+
+async def get_collection(board_name: str, class_name: str) -> Collection:
+    collection_name = f"class_{class_name}"
+    print(f"Accessing collection: {collection_name} in database: {board_name}")
+
+    # Get or create the database
+    db = await get_or_create_database(board_name)
+
+    # Get the collection from the database
+    collection = db[collection_name]
+    
+    return collection
 
 @app.post("/submit")
 async def form_uplaod(
@@ -85,6 +113,7 @@ async def form_uplaod(
     print(board)
     print(medium)
     print("This is subject")
+    
   
     if tasks=='text-book-solution':
         print(tasks)
@@ -115,8 +144,12 @@ async def form_uplaod(
         print(existing_grade)
         class_name = existing_grade["classs_name"]
 
-        collection = get_collection(class_name)
-        print(collection)
+        db = await get_or_create_database(board_name)
+        print("This is db", db)
+
+        # Get the collection using both the board name and class name
+        collection = await get_collection(board_name, class_name)  # Pass both arguments
+        print("This is collection", collection)
 
        # if file.content_type == 'application/pdf':  # If it's already a PDF
            # with open(file_path, "wb") as buffer:
@@ -130,7 +163,6 @@ async def form_uplaod(
         
         #else:
           #  print(f"Error: Unsupported file type '{file.content_type}'. Only PDF or HTML supported for conversion.")
-
        
         document = {
                 "board": board,
@@ -149,7 +181,13 @@ async def form_uplaod(
 
         print("This is detect formatresult collection")
         print(result)
-        return {"file_id": str(result.inserted_id), "message": "File uploaded and saved successfully", "filename": new_filename}
+        # return {"file_id": str(result.inserted_id), "message": "File uploaded and saved successfully", "filename": new_filename}
+        return {
+                "status" : "1",
+                "file_id": str(result.inserted_id), 
+                "message": "File uploaded and saved successfully", 
+                "filename": new_filename
+        }
 
        
 
@@ -178,8 +216,16 @@ async def form_uplaod(
         print(existing_subject)
         subject_name = existing_subject["subject_name"]
 
-        collection = get_collection(class_name)
-        print(collection)
+        # collection = get_collection(class_name)
+        # print(collection)
+
+        db = await get_or_create_database(board_name)
+        print("This is db", db)
+
+        # Get the collection using both the board name and class name
+        collection = await get_collection(board_name, class_name)  # Pass both arguments
+        print("This is collection", collection)
+
         # Check for existing files with the same base filename
         existing_file = await collection.find_one({"filename": new_filename,"paper_year":prev_years})
 
@@ -226,10 +272,15 @@ async def form_uplaod(
             result = await collection.insert_one(document)
             #print("Document to insert:", document)
 
-            print("This is detect formatresult collection")
+            print("This is detect format result collection")
             print(result)
            # return {"status": "1", "message": "File uploaded successfully"}
-            return {"file_id": str(result.inserted_id), "message": "File uploaded and saved successfully", "filename": new_filename}
+            return {
+                "status" : "1",
+                "file_id": str(result.inserted_id), 
+                "message": "File uploaded and saved successfully", 
+                "filename": new_filename
+                }
 
 
     else:
@@ -293,7 +344,14 @@ async def form_uplaod(
             #print("Generated filename:", new_filename)
 
            # print("This is collection2")
-            collection = get_collection(class_name)
+            # collection = get_collection(class_name)
+
+            db = await get_or_create_database(board_name)
+            print("This is db", db)
+
+            # Get the collection using both the board name and class name
+            collection = await get_collection(board_name, class_name)  # Pass both arguments
+            print("This is collection", collection)
            # print(collection)
 
             new_data = {
@@ -315,7 +373,6 @@ async def form_uplaod(
             response = await store_task_data(task_type, processed_data,collection,new_filename,new_data)
         if(response['status']=="1"):
             return {
-                
                 "message": "File content uploaded successfully",
                 "filename": new_filename,
                 "status": response['status']  # Send the hasError flag
@@ -1272,7 +1329,10 @@ async def get_questions_and_answers(
     # Validate limit
     if limit is not None and limit < 1:
         raise HTTPException(status_code=422, detail="Limit must be at least 1")
-    
+
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    print(existing_board)
+    board_name = existing_board["board_name"]
 
     existing_grade = await class_collection.find_one({"classs_id": int(grade)})
     print(existing_grade)
@@ -1290,8 +1350,15 @@ async def get_questions_and_answers(
 
     print("Query:", query)
     
-    # Get the collection based on grade
-    collection = get_collection(class_name)
+    # # Get the collection based on grade
+    # collection = get_collection(class_name)
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    # Get the collection using both the board name and class name
+    collection = await get_collection(board_name, class_name)  # Pass both arguments
+    print("This is collection", collection)
+    
     if collection is None:
         raise HTTPException(status_code=404, detail="Collection not found")
 
@@ -1387,13 +1454,25 @@ async def get_questions_and_answers(
    
 
     print("Query:", query)
+
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    print(existing_board)
+    board_name = existing_board["board_name"]
+
     existing_grade = await class_collection.find_one({"classs_id": int(grade)})
     print(existing_grade)
     class_name = existing_grade["classs_name"]
 
-    collection = get_collection(class_name)
+    # collection = get_collection(class_name)
    # print(collection)
     # Get the collection based on grade
+
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    # Get the collection using both the board name and class name
+    collection = await get_collection(board_name, class_name)  # Pass both arguments
+    print("This is collection", collection)
    
     if collection is None:
         raise HTTPException(status_code=404, detail="Collection not found")
@@ -1432,13 +1511,25 @@ async def get_questions_and_answers(
    
 
     print("Query:", query)
+
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    print(existing_board)
+    board_name = existing_board["board_name"]
+
     existing_grade = await class_collection.find_one({"classs_id": int(grade)})
     print(existing_grade)
     class_name = existing_grade["classs_name"]
 
-    collection = get_collection(class_name)
+    # collection = get_collection(class_name)
    # print(collection)
     # Get the collection based on grade
+
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    # Get the collection using both the board name and class name
+    collection = await get_collection(board_name, class_name)  # Pass both arguments
+    print("This is collection", collection)
    
     if collection is None:
         raise HTTPException(status_code=404, detail="Collection not found")
@@ -1471,7 +1562,7 @@ class User(BaseModel):
     surname: str
     institute_name: str
     class_name: str
-    institute_id: str
+    unique_institute_id: str
     date_of_birth: str
     email: str
     password: str
@@ -1497,7 +1588,6 @@ def get_role_id(role: str):
 #         content = f.read()s
 #         return content.decode('utf-8')
     
-@app.post("/register")
 async def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
     print("this is new user",user)
@@ -1512,7 +1602,7 @@ async def register_user(user: User):
         "surname": user.surname,
         "institute_name": user.institute_name,
         "class_name": user.class_name,
-        "institute_id": user.institute_id,
+        "unique_institute_id": user.unique_institute_id,
         "date_of_birth": user.date_of_birth,
         "email": user.email
     }
@@ -1522,13 +1612,14 @@ async def register_user(user: User):
         "role": user.role,
         "email": user.email,
         "password": hashed_password,
-        "role_id": role_id  # Store the role_id
+        "role_id": role_id,  # Store the role_id
+        "unique_institute_id": user.unique_institute_id
     }
 
     existing_user = await profiles_collection.find_one({"role": user.role,
                                                         "email": user.email,
                                                         "class_name":user.class_name,
-                                                        "institute_id": user.institute_id,
+                                                        "unique_institute_id": user.unique_institute_id,
                                                         "date_of_birth": user.date_of_birth
                                                         })
     print(existing_user)
@@ -1553,22 +1644,24 @@ class StudentTeacherLoginData(BaseModel):
     email: str
     role_id: int
     password: str
+    unique_institute_id: str
 
 @app.post("/student-teacher-login")
 async def student_teacher_login(data: StudentTeacherLoginData):
-    # Query to find user in auth collection by email and role_id
-   
-    user_auth = await auth_collection.find_one({"email": data.email, "role_id": data.role_id})
+    user_auth = await auth_collection.find_one({
+        "email": data.email,
+        "role_id": data.role_id,
+        "unique_institute_id": data.unique_institute_id
+    })
 
-    if user_auth:
-        # Verify the entered password against the stored hashed password
-        if pwd_context.verify(data.password, user_auth['password']):
-            return {"message": "Login successful"}
-        else:
-            raise HTTPException(status_code=401, detail="Incorrect password")
-    else:
-        return {"message": "User not found. Please register first."}
+    # Check if user exists
+    if not user_auth:
+        raise HTTPException(status_code=404, detail="User not found. Please check your email, institute ID, or role.")
 
+    if not pwd_context.verify(data.password, user_auth['password']):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    return {"message": "Login successful"}
     
 @app.post("/admin-login")
 async def admin_login(data: LoginData):

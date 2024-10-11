@@ -128,7 +128,7 @@
             <div class="form-group hidden" id="classGroup">
                 <label for="class"><b><i class="fas fa-school"></i> Class</b></label>
                 <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
-                <select id="class" name="class" required>
+                <select id="class" name="class">
                     <option value="select">Select Class</option>
                 </select>
             </div>
@@ -204,7 +204,7 @@
             passwordInput.setAttribute('type', type);
             confirmPasswordInput.setAttribute('type', type);
         });
- 
+
 
         function updateForm() {
             const role = document.getElementById('role').value;
@@ -239,7 +239,7 @@
                 surname: document.getElementById('surname').value,
                 institute_name: document.getElementById('institute-name').value,
                 class_name: document.getElementById('class').value,
-                institute_id: document.getElementById('institute-id').value,
+                unique_institute_id: document.getElementById('institute-id').value,
                 date_of_birth: document.getElementById('date_of_birth').value,
                 email: document.getElementById('email').value,
                 password: password,
@@ -308,6 +308,7 @@
                         const option = document.createElement('option');
                         option.value = instituteItem.institute_id;
                         option.textContent = instituteItem.institute_name;
+                        // option.value = instituteItem.unique_institute_id;
                         instituteInput.appendChild(option);
                     });
                 })

@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <title>Form Example</title>
     <style>
         body {
@@ -36,8 +38,9 @@
 
         form label {
             margin-left: 8px;
-            font-size: 15px;
+            font-size: 18px;
             font-weight: bold;
+            font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
         form select,
@@ -51,6 +54,7 @@
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 16px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
         form input[type="submit"] {
@@ -58,6 +62,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
         form input[type="submit"]:hover {
@@ -71,6 +76,8 @@
         .task label {
             margin-left: 8px;
             font-weight: normal;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 18px;
         }
 
         .required::after {
@@ -134,7 +141,7 @@
 
 <body>
     <form action="/submit" method="post" enctype="multipart/form-data" id="UploadForm">
-        <h2>CONTENTS </h2>
+        <h2>CONTENTS</h2>
         <label for="board" class="required">Board</label>
         <select id="board" name="board" required>
             <option value="">Select</option>
@@ -219,15 +226,14 @@
                 <input type="number" id="set_number" name="set_number" value="" style="width:130px; height:30px; display:inline-block;" placeholder="set number">
             </div>
         </div>
-        
-
 
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="file" accept=".doc,.pdf" required>
 
-       
+        <input type="submit" id="submitButton" value="Submit">
 
-        <input type="submit" value="Submit" >
+        <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
+
     </form>
 </body>
 
@@ -244,6 +250,7 @@
         yearOption.text = currentYear - i;
         prev_years.add(yearOption);
     }
+
     // Function to handle board selection change and manage medium disabling
     function handleBoardChange() {
         const boardSelect = document.getElementById('board');
@@ -251,7 +258,7 @@
         const gradeSelect = document.getElementById('grade');
 
         // Disable medium select if IB or CB is selected
-        if (boardSelect.value === '2' || boardSelect.value === '3') {
+        if (boardSelect.value === 'CBSE' || boardSelect.value === 'ICSE') {
             mediumSelect.disabled = true;
             mediumSelect.value = ''; // Reset medium select
             gradeSelect.disabled = false; // Enable class selection if board is selected
@@ -290,6 +297,7 @@
         }
         
     }
+
     // Function to fetch and populate boards
     function fetchBoards() {
         fetch('/get_SchoolBoard')
@@ -475,30 +483,43 @@
         event.preventDefault(); // Prevent the form from submitting the traditional way
 
         let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'UploadForm'
-
+        alert("this is form");
         try {
             const response = await fetch('/submit', {
                 method: 'POST',
                 body: formData
             });
 
-            const result = await response.json();
+            const result = await response.json(); // Parse the JSON response
 
-            if (response.ok) {
-                // Check the hasError value from the result
-                if (result.hasError === 1) {
-                    // Success message
-                    alert('File uploaded successfully: ' + result.message);
+            // Ensure the response is OK (status code 200-299)
+            if (result && typeof result.hasError !== 'undefined') {
+                if (result.hasError == 1) {
+                    // Check if the file was newly created or appended
+                    if (result.message.includes('appended')) {
+                        // File content was appended (updated)
+                        alert('File content appended successfully: ' + result.filename);
+                    } else if (result.message.includes('created')) {
+                        // New file was created and uploaded
+                        alert('File created and uploaded successfully: ' + result.filename);
+                    } else {
+                        // Catch-all success message if neither 'appended' nor 'created' are found
+                        alert('File processed successfully: ' + result.filename);
+                    }
+                    // Reload the page after displaying the success message
+                window.location.reload();
                 } else {
-                    // Error message
+                    // If result.hasError is not 1 (indicating an error)
                     alert('Error: ' + result.message);
+                    console.error('Error response from server:', result);
                 }
             } else {
-                // Show a generic error if the response is not OK
-                alert('Error: ' + result.message);
+                alert('Error: Something went wrong with the server response.');
+                console.error('Invalid server response:', result);
             }
-        } catch (error) {
-            // Handle any network or other errors
+        }
+        catch (error) {
+            // Catch any network or processing errors
             alert('An error occurred while submitting the form.');
             console.error('Error:', error);
         }
@@ -530,6 +551,13 @@
     // Add the event listener to the submit button
     document.getElementById('submitButton').addEventListener('click', submitForm);
 
+    function confirmLogout() {
+        const confirmLogout = confirm("Will be redirected to the admin dashboard?");
+        if (confirmLogout) {
+            // Redirect to login page
+            window.location.href = '/static/admin_dashboard.html'; // Change 'login.html' to your actual login page URL
+        }
+    }
 
 </script>
 </body>
