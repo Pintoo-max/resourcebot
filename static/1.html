@@ -214,16 +214,18 @@
 
         <div class="task">
             <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
-                   onclick="toggleSamplePaper(this)">
+                onclick="toggleSamplePaper(this)">
             <label for="sample-paper-solution">Sample Paper</label>
-        
+
             <div id="input-container" style="margin-top: 10px; display: none; margin-left:20px;">
-                <select id="prev_years" name="prev_years" style="width:150px; height:30px; padding:0px; font-size:15px; margin-right: 10px;">
+                <select id="prev_years" name="prev_years"
+                    style="width:150px; height:30px; padding:0px; font-size:15px; margin-right: 10px;">
                     <option value="">Select Year</option>
                     <!-- Use JavaScript to populate the last 6 years -->
                 </select>
-        
-                <input type="number" id="set_number" name="set_number" value="" style="width:130px; height:30px; display:inline-block;" placeholder="set number">
+
+                <input type="number" id="set_number" name="set_number" value=""
+                    style="width:130px; height:30px; display:inline-block;" placeholder="set number">
             </div>
         </div>
 
@@ -290,12 +292,12 @@
                 checkbox.checked = false;
                 checkbox.disabled = true;
             });
-            inputContainer.style.display = 'block'; 
+            inputContainer.style.display = 'block';
         } else {
             otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);
-            inputContainer.style.display = 'none'; 
+            inputContainer.style.display = 'none';
         }
-        
+
     }
 
     // Function to fetch and populate boards
@@ -493,23 +495,23 @@
             const result = await response.json(); // Parse the JSON response
 
             // Ensure the response is OK (status code 200-299)
-            if (result && typeof result.hasError !== 'undefined') {
-                if (result.hasError == 1) {
+            if (result && typeof result.status !== 'undefined') {
+                if (result.status == '1') {  // Check if the status is 1 (indicating success)
                     // Check if the file was newly created or appended
                     if (result.message.includes('appended')) {
                         // File content was appended (updated)
                         alert('File content appended successfully: ' + result.filename);
                     } else if (result.message.includes('created')) {
                         // New file was created and uploaded
-                        alert('File created and uploaded successfully: ' + result.filename);
+                        alert('All Selected: ' + result.filename);
                     } else {
                         // Catch-all success message if neither 'appended' nor 'created' are found
                         alert('File processed successfully: ' + result.filename);
                     }
                     // Reload the page after displaying the success message
-                window.location.reload();
+                    window.location.reload();
                 } else {
-                    // If result.hasError is not 1 (indicating an error)
+                    // If result.status is not 1 (indicating an error)
                     alert('Error: ' + result.message);
                     console.error('Error response from server:', result);
                 }
@@ -517,6 +519,7 @@
                 alert('Error: Something went wrong with the server response.');
                 console.error('Invalid server response:', result);
             }
+
         }
         catch (error) {
             // Catch any network or processing errors

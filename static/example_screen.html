@@ -321,46 +321,165 @@
             /* Change color on hover */
         }
 
+        /* Text styling */
+        span {
+            font-size: 40px;
+            font-weight: bold;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            letter-spacing: 5px;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            background: linear-gradient(90deg, #A7D3E0, #A0D9B5);
+        }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
+
+        /* General mobile adjustments for 750px and below */
+        @media (max-width: 750px) {
+
+            /* General mobile adjustments for 750px and below */
             .container {
                 flex-direction: column;
+                width: 90%;
+                padding: 0;
+                margin: auto;
+            }
+
+            .form-section,
+            .output-section {
+                width: 90%;
+                margin: 0 auto;
+                padding: 10px;
+            }
+
+            .output-section {
+                margin-top: 10px;
+                font-size: 16px;
+            }
+
+            .columns-wrapper {
+                flex-direction: column;
+                margin-bottom: 15px;
+            }
+
+            .column {
+                width: 90%;
+                margin-bottom: 15px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .buttons-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .left-buttons,
+            .right-buttons {
                 width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .left-buttons button,
+            .right-buttons button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .left-buttons button:last-child,
+            .right-buttons button:last-child {
+                margin-bottom: 0;
+            }
+
+            img {
+                max-width: 60px;
+                height: 60px;
+                margin-right: 15px;
+            }
+
+            span {
+                font-size: 32px;
+                letter-spacing: 3px;
+                padding: 8px;
+            }
+
+
+        }
+
+
+
+        /* Adjustments for screens smaller than 450px */
+        @media (max-width: 450px) {
+
+            /* General mobile adjustments for 450px and below */
+            .container {
+                flex-direction: column;
+                width: 95%;
+                padding: 0;
+                margin: auto;
             }
 
             .form-section,
             .output-section {
                 width: 95%;
-                /* Full width on mobile */
-                margin: 0;
-                /* Remove margin */
-                padding: 15px;
-                /* Adjust padding */
+                margin: 0 auto;
+                padding: 10px;
             }
 
             .output-section {
-                margin-top: 20px;
-                /* Space between sections */
+                margin-top: 8px;
                 font-size: 14px;
-                /* Adjust font size */
+                /* Further reduce font size for very small screens */
             }
 
             .columns-wrapper {
                 flex-direction: column;
-                /* Stacks columns vertically on smaller screens */
+                margin-bottom: 10px;
             }
 
             .column {
-                min-width: auto;
-                /* Allows columns to take up full width */
-                margin-bottom: 20px;
-                /* Adds space below each column */
+                width: 95%;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
-            .column:last-child {
+            .buttons-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .left-buttons,
+            .right-buttons {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .left-buttons button,
+            .right-buttons button {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .left-buttons button:last-child,
+            .right-buttons button:last-child {
                 margin-bottom: 0;
-                /* Removes margin below the last column */
+            }
+
+            img {
+                max-width: 50px;
+                height: 50px;
+                margin-right: 0;
+                margin-bottom: 10px;
+                /* Add space below the image when stacked */
+            }
+
+            span {
+                font-size: 24px;
+                letter-spacing: 2px;
+                padding: 6px;
+                text-align: center;
+                /* Center the text when stacked */
             }
         }
     </style>
@@ -372,38 +491,27 @@
         <div class="output-section">
             <!-- Add the image and text side by side -->
             <div style="
-        display: flex; 
-    align-items: center; 
-    justify-content: center; /* Centers the content horizontally */
-    margin-bottom: 10px; /* Reduced margin */
-    padding: 10px; /* Reduced padding */
-    background: #f5f5f5; /* Light background color for contrast */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-">
+                display: flex;
+                align-items: center;
+                justify-content: center; /* Centers the content horizontally */
+                margin-bottom: 10px; /* Reduced margin */
+                padding: 10px; /* Reduced padding */
+                background: #f5f5f5; /* Light background color for contrast */
+                border-radius: 10px; /* Rounded corners */
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+                flex-wrap: wrap; /* Allows the image and text to wrap on smaller screens */
+            ">
                 <!-- Image -->
                 <img src="/images/atslogo.jpeg" alt="Description of image" style="
-            max-width: 80px; 
-            height: 80px; 
-            margin-right: 20px; /* Increased margin for more spacing */
-            border-radius: 50%; /* Makes the image circular */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adds a shadow to the image */
-        ">
+                    max-width: 80px;
+                    height: 80px;
+                    margin-right: 20px; /* Increased margin for more spacing */
+                    border-radius: 50%; /* Makes the image circular */
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adds a shadow to the image */
+                ">
 
                 <!-- Text next to the image -->
-                <span style="
-        font-size: 40px; 
-        font-weight: bold; 
-        font-family: Georgia, 'Times New Roman', Times, serif; 
-        letter-spacing: 5px; /* Adjusts spacing between letters */
-        color: #333; /* Solid text color */
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */ 
-        padding: 10px; 
-        display: inline-block; 
-         background: linear-gradient(90deg, #A7D3E0, #A0D9B5); /* Soft gradient color */
-    
-        
-    ">
+                <span>
                     KNOWLEDGE OASIS
                 </span>
             </div>
@@ -506,15 +614,6 @@
                 </div>
 
                 <div class="task">
-                    <input type="checkbox" id="name-the-following" name="tasks" value="name-the-following">
-                    <label for="name-the-following">Name the Following</label>
-                    <div class="limit-controls">
-                        <input type="number" id="name-the-following_limit" name="limit_name-the-following" min="0"
-                            value="">
-                    </div>
-                </div>
-
-                <div class="task">
                     <input type="checkbox" id="match-the-column" name="tasks" value="match-the-column">
                     <label for="match-the-column">Match the Column</label>
                     <div class="limit-controls">
@@ -522,6 +621,14 @@
                     </div>
                 </div>
 
+                <div class="task">
+                    <input type="checkbox" id="name-the-following" name="tasks" value="name-the-following">
+                    <label for="name-the-following">Name the Following</label>
+                    <div class="limit-controls">
+                        <input type="number" id="name-the-following_limit" name="limit_name-the-following" min="0"
+                            value="">
+                    </div>
+                </div>
 
                 <div class="task">
                     <input type="checkbox" id="give-reasons" name="tasks" value="give-reasons">
@@ -536,6 +643,22 @@
                     <label for="answer-in-one-word">Answers in One Word</label>
                     <div class="limit-controls">
                         <input type="number" id="answer-in-one-word_limit" name="limit_ans-one-word" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="short-answers" name="tasks" value="short-answers">
+                    <label for="short-answers">Short Answers</label>
+                    <div class="limit-controls">
+                        <input type="number" id="short-answers_limit" name="limit_short-answers" min="0" value="">
+                    </div>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="long-answers" name="tasks" value="long-answers">
+                    <label for="long-answers">Long Answers</label>
+                    <div class="limit-controls">
+                        <input type="number" id="long-answers_limit" name="limit_long-answers" min="0" value="">
                     </div>
                 </div>
 
@@ -558,22 +681,6 @@
                 </div>
 
                 <div class="task">
-                    <input type="checkbox" id="short-answers" name="tasks" value="short-answers">
-                    <label for="short-answers">Short Answers</label>
-                    <div class="limit-controls">
-                        <input type="number" id="short-answers_limit" name="limit_short-answers" min="0" value="">
-                    </div>
-                </div>
-
-                <div class="task">
-                    <input type="checkbox" id="long-answers" name="tasks" value="long-answers">
-                    <label for="long-answers">Long Answers</label>
-                    <div class="limit-controls">
-                        <input type="number" id="long-answers_limit" name="limit_long-answers" min="0" value="">
-                    </div>
-                </div>
-
-                <div class="task">
                     <input type="checkbox" id="text-book-solution" name="tasks" value="text-book-solution"
                         onchange="toggleCheckboxes(this)">
                     <label for="text-book-solution">Test Book Solutions</label>
@@ -583,15 +690,10 @@
                     </div> -->
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="previous_year">Previous Year</label>
-                        <select id="previous_year" name="previous_year" required>
-                            <option value="select">Select</option>
-                            <option value="select">Previous Year 2023</option>
-                            <option value="select">Previous Year 2022</option>
-                        </select>
-                    </div>
+                <div class="task">
+                    <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
+                        onchange="toggleSamplePaper(this)">
+                    <label for="sample-paper-solution">Sample Paper</label>
                 </div>
 
                 <br>
@@ -643,11 +745,37 @@
             fetchSubjects();
         }
 
+        // function toggleCheckboxes(mainCheckbox) {
+        //     const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#text-book-solution)');
+        //     otherCheckboxes.forEach(checkbox => {
+        //         checkbox.disabled = mainCheckbox.checked;
+        //     });
+        // }
+
         function toggleCheckboxes(mainCheckbox) {
             const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#text-book-solution)');
             otherCheckboxes.forEach(checkbox => {
-                checkbox.disabled = mainCheckbox.checked;
+                if (mainCheckbox.checked) {
+                    checkbox.disabled = true;  // Disable the other checkboxes
+                    checkbox.checked = false;  // Uncheck the other checkboxes
+                } else {
+                    checkbox.disabled = false;  // Enable the other checkboxes
+                }
             });
+
+        }
+
+        // Function to toggle checkboxes (if needed in the future)
+        function toggleSamplePaper(mainCheckbox) {
+            const otherCheckboxes1 = document.querySelectorAll('input[type="checkbox"]:not(#sample-paper-solution)');
+            if (mainCheckbox.checked) {
+                otherCheckboxes1.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+                });
+            } else {
+                otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);
+            }
         }
 
         // Function to fetch and populate boards
@@ -885,7 +1013,26 @@
 
         // Fetch and display questions when the "Question" button is clicked
         document.getElementById('addQuestionBtn').addEventListener('click', async () => {
-            await fetchQuestionsAndAnswers(); // Fetch questions and answers
+            const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+            // Extract and store the IDs of checked checkboxes
+            const checkedIds = [];
+            checkboxes.forEach((checkbox) => {
+                checkedIds.push(checkbox.id);
+            });
+
+            // Check if the length is 1 and the id is 'text-book-solution'
+            if (checkedIds.length === 1 && checkedIds[0] === 'text-book-solution') {
+                await fetchTextbookSolution();
+            }
+            else {
+                if (checkedIds.length === 1 && checkedIds[0] === 'sample-paper-solution') {
+                    await fetchSamplePaper();
+                } else {
+
+                    await fetchQuestionsAndAnswers();
+                }
+            }
 
             // Show all the questions and hide the answers initially
             document.querySelectorAll('.questionsDiv').forEach(questionsDiv => {
@@ -1381,6 +1528,159 @@
                 printWindow.print();
             });
         })
+
+
+        async function fetchTextbookSolution() {
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+            const board = document.getElementById('board').value;
+            const medium = document.getElementById('medium').value;
+            const grade = document.getElementById('grade').value;
+            console.log("This is grade", grade);
+            const subject = document.getElementById('subject').value;
+            const lesson = document.getElementById('lesson').value;
+
+            // Define a function to handle the fetching and displaying of questions and answers
+
+            // Validate required fields
+            if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select') {
+                console.error('Please select all required fields');
+                return;
+            }
+
+            // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+            // Construct the query string
+            const queryParams = new URLSearchParams({
+                board: board,
+                medium: medium,
+                grade: grade,
+                subject: subject,
+                lesson: lesson,
+                tasks: 'text-book-solution',
+
+            });
+            console.log("This is query:", queryParams.toString());
+
+            try {
+                const response = await fetch(`/get_textbook-solution?${queryParams.toString()}`);
+                // console.log("Response:", response);
+                const result = await response.json();
+                // console.log("Results: ", result);
+
+
+                if (response.ok) {
+                    const documentData = result.document;
+                    const baseUrl = window.location.origin + "/";
+                    console.log('path', "upload/textbook_pdf/" + documentData.filename);
+                    var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
+                    console.log("upload path", pathname);
+                    // Get the element with the id "data"
+                    const dataContainer = document.getElementById('data');
+
+                    // Clear the existing content in the data container
+                    dataContainer.innerHTML = '';
+
+                    // Create an iframe to embed the PDF
+                    const pdfIframe = document.createElement('iframe');
+                    pdfIframe.src = documentData.file_path.replace(/\\/g, '/');
+                    //pdfIframe.src = baseUrl +"upload/textbook_pdf/"+documentData.filename+".pdf";
+                    pdfIframe.width = '100%';
+                    pdfIframe.height = '100%'; // You can adjust this height as per your design
+
+                    // Append the iframe to the data container directly
+                    dataContainer.appendChild(pdfIframe);
+
+                }
+                else {
+                    alert("No questions and answers found for selected tasks");
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+
+        }
+
+        async function fetchSamplePaper() {
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+            const board = document.getElementById('board').value;
+            const medium = document.getElementById('medium').value;
+            const grade = document.getElementById('grade').value;
+
+            const subject = document.getElementById('subject').value;
+
+
+            // Define a function to handle the fetching and displaying of questions and answers
+
+            // Validate required fields
+            if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select') {
+                console.error('Please select all required fields');
+                return;
+            }
+
+            // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+            // Construct the query string
+            const queryParams = new URLSearchParams({
+                board: board,
+                medium: medium,
+                grade: grade,
+                subject: subject,
+
+                tasks: 'sample-paper-solution',
+
+            });
+            console.log("This is query:", queryParams.toString());
+
+            try {
+                const response = await fetch(`/get_SamplePaper-solution?${queryParams.toString()}`);
+                // console.log("Response:", response);
+                const result = await response.json();
+                console.log("Results: ", result);
+
+
+                if (response.ok) {
+                    const documentsArray = result.document;
+
+                    // Create a div for questions
+                    const questionsDiv = document.createElement('div');
+                    questionsDiv.classList.add('questionsDiv');
+
+                    // Add a title for the questions
+                    questionsDiv.innerHTML = `<h3>Sample Papers</h3>`;
+
+                    // Check if documentsArray is an array and contains data
+                    if (Array.isArray(documentsArray) && documentsArray.length > 0) {
+                        // Loop through each document in the array
+                        documentsArray.forEach((documentData, index) => {
+                            // Create a link for the sample paper
+                            questionsDiv.innerHTML += `
+<p>
+    <a href="${documentData.file_path}" target="_blank">
+        ${index + 1}: ${documentData.board_name} Sample Paper for class ${documentData.grade_name} ${documentData.subject_name} set number ${documentData.set_number} Year ${documentData.paper_year}
+    </a>
+</p>
+`;
+
+                            questionsDiv.innerHTML += `<hr>`; // Add a separator between each document
+                        });
+                    }
+                    // Append the questions div to the container
+                    dataContainer.appendChild(questionsDiv);
+
+                }
+                else {
+                    alert("No sample paper is yet available");
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
     </script>
 </body>
 

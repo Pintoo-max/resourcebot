@@ -1,1 +1,0 @@
-mongodb+srv://rvscret:Runthistown@1@bankinfo.b85dspa.mongodb.net/
