@@ -325,7 +325,7 @@
                     // Populate the institute dropdown
                     institutes.forEach(instituteItem => {
                         const option = document.createElement('option');
-                        option.value = instituteItem.unique_institute_ids; // Set institute_id as value
+                        option.value = instituteItem.unique_institute_id; // Set institute_id as value
                         option.textContent = instituteItem.institute_name;
                         instituteInput.appendChild(option);
                     });

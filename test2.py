@@ -1,4 +1,5 @@
 import random
+import string
 from typing import Dict, List, Optional, Tuple
 from urllib import request
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query, Request, Body
@@ -774,7 +775,7 @@ def process_section(task_type, lines):
                 "answers": answers
             })
 
-       
+
 
     elif task_type == 'multiple-choice-questions':
         current_question = {}
@@ -783,8 +784,8 @@ def process_section(task_type, lines):
                 if current_question:
                     processed_data.append(current_question)
                 current_question = {"question": line.strip(), "options": [], "answer": ""}
-            elif re.match(r'^[A-D]\)\s*(.*)$', line):  # Option Line
-                option_match = re.match(r'^[A-D]\)\s*(.*)$', line)
+            elif re.match(r'^[A-Da-d]\)\s*(.*)$', line):  # Option Line
+                option_match = re.match(r'^[A-Da-d]\)\s*(.*)$', line)
                 current_question["options"].append(option_match.group(1).strip())
             elif re.match(r'^Answer:\s*(.*)$', line):  # Answer Line
                 answer_match = re.match(r'^Answer:\s*(.*)$', line)
@@ -821,7 +822,7 @@ def process_section(task_type, lines):
                 current_explanation = ""
 
             # Option Line (e.g., "A) True", "B) False")
-            option_match = re.match(r'^[A-B]\)\s*(.*)$', line)
+            option_match = re.match(r'^[A-Ba-b]\)\s*(.*)$', line)
             if option_match:
                 current_options.append(option_match.group(1).strip())  # Append option to list
 
@@ -1675,7 +1676,7 @@ async def delete_board(board_id: int):
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 class Medium(BaseModel):
-    mediumName: str    
+    mediumName: str   
 
 @app.post("/add_medium")
 async def medium_added(medium: Medium):
@@ -1764,6 +1765,12 @@ async def delete_medium(medium_id: int):
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 
+# # Function to generate random uppercase alphanumeric string for unique institute ID
+def generate_unique_institute_id(length=5):
+    # Use only uppercase letters and digits
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(characters, k=length))
+
 class Institute(BaseModel):
     instituteName: str    
 
@@ -1772,7 +1779,7 @@ async def institute_added(institute: Institute):
    
     existing_institute = await institute_collection.find_one({"institute_name": institute.instituteName})
     if existing_institute:
-        return {"message": "Medium already registered"}
+        return {"message": "Institute already registered"}
     
     last_record = await institute_collection.find_one(sort=[("institute_id", DESCENDING)])
 
@@ -1781,10 +1788,13 @@ async def institute_added(institute: Institute):
     else:
         new_id = 1
 
-    # Create user profile data
+    unique_institute_id = generate_unique_institute_id()
+
+    # Create user profile data with both numeric and alphanumeric IDs
     institute_profile = {
         "institute_name": institute.instituteName,
-        "institute_id":new_id
+        "institute_id": new_id,
+        "unique_institute_id": unique_institute_id  # Now with uppercase letters and numbers
     }
    
     institute_collection.insert_one(institute_profile)

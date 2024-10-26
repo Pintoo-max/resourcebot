@@ -51,8 +51,77 @@
             /* Break long words */
         }
 
+        /* h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+
+        .logout-icon{
+            margin-left: 90%;           
+            color : grey;
+            font-size: 36px;
+        } */
+
+        /* .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+        }
+
+        .header h3 {
+            font-size: 35px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
         h3 {
             margin-top: 0;
+            color: #4CAF50;
+        }
+
+        .logout-icon {
+            color: grey;
+            font-size: 30px;
+            cursor: pointer;
+        } */
+
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .logo {
+            max-width: 80px;
+            height: 80px;
+            margin-right: 20px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h3 {
+            margin: 0;
+            color: #4CAF50;
+            font-size: 36px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            flex-grow: 1;
+            /* Makes the title take available space */
+            text-align: center;
+        }
+
+        .logout-icon {
+            color: grey;
+            font-size: 30px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .logout-icon:hover {
             color: #4CAF50;
         }
 
@@ -60,12 +129,16 @@
             border: 1px solid #e0e4e8;
             padding: 20px;
             border-radius: 8px;
-            height: 700px;
+            height: 650px;
             /* Adjusted height to 300px for visibility */
             background-color: #f7f9fa;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
             overflow-y: auto;
             /* Enable vertical scrolling */
+        }
+
+        .output h3 {
+            color: #28a745;
         }
 
         /* Specific styling for questionsDiv */
@@ -127,7 +200,6 @@
             transform: scale(1.05);
         }
 
-
         /* Right side buttons: "Print" and "Download" */
         .right-buttons {
             display: flex;
@@ -149,7 +221,6 @@
             opacity: 0.8;
             transform: scale(1.05);
         }
-
 
         .form-row {
             display: flex;
@@ -179,10 +250,10 @@
             font-size: 20px;
         }
 
-        .form-section h3 {
+        /* .form-section h3 {
             font-size: 30px;
             font-family: Georgia, 'Times New Roman', Times, serif;
-        }
+        } */
 
         .form-group.task label {
             margin-left: 4px;
@@ -217,8 +288,6 @@
             font-size: 20px;
         }
 
-
-
         .task {
             display: flex;
             align-items: center;
@@ -239,9 +308,17 @@
 
         .limit-controls {
             display: flex;
-            width: 75px;
-
+            align-items: center;
+            /* Center vertically */
+            margin-left: 10px;
+            /* Space between label and input field */
         }
+
+        .limit-controls input[type="number"] {
+            width: 65px;
+            /* Fixed width for consistency */
+        }
+
 
         input[type="number"] {
             width: 10px;
@@ -308,18 +385,18 @@
             transition: all 0.3s ease-in-out;
         }
 
-        .logout-icon {
+        /* .logout-icon {
             font-size: 36px;
             /* Increase size of the icon */
-            color: #333;
+        /* color: #333;
             cursor: pointer;
-            display: inline-block;
+            display: inline-block; 
         }
 
-        .logout-icon:hover {
+        /* .logout-icon:hover {
             color: #007bff;
-            /* Change color on hover */
-        }
+            /* Change color on hover 
+        }*/
 
         /* Text styling */
         span {
@@ -391,11 +468,11 @@
                 margin-bottom: 0;
             }
 
-            img {
+            /* img {
                 max-width: 60px;
                 height: 60px;
                 margin-right: 15px;
-            }
+            } */
 
             span {
                 font-size: 32px;
@@ -403,10 +480,43 @@
                 padding: 8px;
             }
 
+            .header {
+                display: flex;
+                flex-direction: row;
+                /* Keep items in a single line */
+                align-items: center;
+                justify-content: space-between;
+                /* Space out elements */
+                padding: 10px 10px;
+                width: 95%;
+                /* Full width to avoid wrapping */
+            }
+
+            .logo {
+                max-width: 60px;
+                height: 60px;
+                margin-right: 10px;
+                /* Reduced spacing for a compact layout */
+            }
+
+            h3 {
+                font-size: 24px;
+                /* Slightly reduce font size for smaller screens */
+                flex-grow: 1;
+                text-align: center;
+                /* Center-align text */
+                margin: 0;
+                /* Remove extra margin */
+            }
+
+            .logout-icon {
+                font-size: 20px;
+                /* Reduce icon size */
+                margin-left: 10px;
+                /* Add slight margin for spacing */
+            }
 
         }
-
-
 
         /* Adjustments for screens smaller than 450px */
         @media (max-width: 450px) {
@@ -466,20 +576,33 @@
                 margin-bottom: 0;
             }
 
-            img {
+            /* img {
                 max-width: 50px;
                 height: 50px;
                 margin-right: 0;
                 margin-bottom: 10px;
                 /* Add space below the image when stacked */
-            }
+
 
             span {
                 font-size: 24px;
                 letter-spacing: 2px;
                 padding: 6px;
                 text-align: center;
-                /* Center the text when stacked */
+
+            }
+
+            h3 {
+                font-size: 24px;
+                /* Further reduce heading size for extra small screens */
+                text-align: center;
+                /* Center text on very small screens */
+            }
+
+            .logout-icon {
+                font-size: 20px;
+                /* Further reduce icon size */
+
             }
         }
     </style>
@@ -488,20 +611,9 @@
 <body>
     <div class="container">
 
-        <div class="output-section">
-            <!-- Add the image and text side by side -->
-            <div style="
-                display: flex;
-                align-items: center;
-                justify-content: center; /* Centers the content horizontally */
-                margin-bottom: 10px; /* Reduced margin */
-                padding: 10px; /* Reduced padding */
-                background: #f5f5f5; /* Light background color for contrast */
-                border-radius: 10px; /* Rounded corners */
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-                flex-wrap: wrap; /* Allows the image and text to wrap on smaller screens */
-            ">
-                <!-- Image -->
+        <!-- Form Section -->
+        <div class="form-section">
+            <!-- <div class="header"> 
                 <img src="/images/atslogo.jpeg" alt="Description of image" style="
                     max-width: 80px;
                     height: 80px;
@@ -509,47 +621,21 @@
                     border-radius: 50%; /* Makes the image circular */
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adds a shadow to the image */
                 ">
+                <h3>CONTENTS</h3>
+                <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
+            </div>  -->
 
-                <!-- Text next to the image -->
-                <span>
-                    KNOWLEDGE OASIS
-                </span>
+            <div class="header">
+                <!-- Image -->
+                <img src="/images/atslogo.jpeg" alt="Logo" class="logo">
+
+                <!-- Title -->
+                <h3>CONTENTS</h3>
+
+                <!-- Logout Icon -->
+                <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
             </div>
-
-            <div class="output" id="data">
-                <h3>Fetched Questions And Answers will appear here .....</h3>
-                <!-- Questions section -->
-                <div class="questionsDiv" id="questionsDiv">
-
-                    <!-- Fetched questions will be displayed here -->
-                </div>
-
-                <!-- Answers section -->
-                <div class="answersDiv" id="answersDiv" style="display: none;">
-
-                    <!-- Fetched answers will be displayed here -->
-                </div>
-            </div>
-
-            <div class="buttons-container">
-                <!-- Left side buttons: "Add Question" and "Add Answer" -->
-                <div class="left-buttons">
-                    <button id="addQuestionBtn">Question</button>
-                    <button id="addAnswerBtn" disabled>Answers</button>
-                </div>
-
-                <!-- Right side buttons: "Print" and "Download" -->
-                <div class="right-buttons">
-                    <button id="printBtn">Print</button>
-                    <button id="downloadBtn">Download</button>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Form Section -->
-        <div class="form-section">
-            <h3>CONTENTS</h3>
+            <br>
             <form onsubmit="fetchQuestionsAndAnswers(); return false;">
                 <div class="form-row">
                     <div class="form-group">
@@ -699,16 +785,83 @@
                 <br>
 
                 <!-- Logout icon container -->
-                <div class="form-row">
+                <!-- <div class="form-row">
                     <div class="form-group">
                         <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
-
                     </div>
-                </div>
-                <!-- Fetch button -->
-                <!-- <button type="submit">Fetch Questions and Answers</button> -->
+                </div> -->
+
             </form>
         </div>
+
+        <div class="output-section">
+            <!-- Add the image and text side by side -->
+            <div style="
+                display: flex;
+                align-items: center;
+                justify-content: center; /* Centers the content horizontally */
+                margin-bottom: 10px; /* Reduced margin */
+                padding: 10px; /* Reduced padding */
+                background: #f5f5f5; /* Light background color for contrast */
+                border-radius: 10px; /* Rounded corners */
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+                flex-wrap: wrap; /* Allows the image and text to wrap on smaller screens */
+            ">
+                <!-- Text next to the image -->
+                <span>
+                    KNOWLEDGE OASIS
+                </span>
+            </div>
+
+            <div class="output" id="data">
+                <h3>Fetched Questions And Answers will appear here .....</h3>
+                <!-- Questions section -->
+                <div class="questionsDiv" id="questionsDiv">
+
+                    <!-- Fetched questions will be displayed here -->
+                </div>
+
+                <!-- Answers section -->
+                <div class="answersDiv" id="answersDiv" style="display: none;">
+
+                    <!-- Fetched answers will be displayed here -->
+                </div>
+            </div>
+
+            <!-- <div class="buttons-container"> -->
+            <!-- Left side buttons: "Add Question" and "Add Answer" -->
+            <!-- <div class="left-buttons">
+                    <button id="addQuestionBtn">Question</button>
+                    <button id="addAnswerBtn" disabled>Answers</button>
+                </div> -->
+
+            <!-- Right side buttons: "Print" and "Download" -->
+            <!-- <div class="right-buttons">
+                    <button id="printBtn">Print</button>
+                    <button id="downloadBtn">Download</button>
+                </div>
+            </div>  -->
+
+            <div class="buttons-container">
+                <!-- Left side buttons: "Add Question" and "Add Answer" -->
+                <div class="left-buttons">
+                    <button id="addQuestionBtn">Question</button>
+                    <button id="addAnswerBtn" disabled>Answers</button>
+                    <button id="textbookSolutionBtn" style="display: none;">Click To Fetch TextBook Solution</button>
+                    <button id="samplePaperBtn" style="display: none;">Click To Fetch Question Bank</button>
+
+                </div>
+
+                <!-- Right side buttons: "Print" and "Download" -->
+                <div class="right-buttons">
+                    <button id="printBtn">Print</button>
+                    <button id="downloadBtn">Download</button>
+                </div>
+            </div>
+            <h3 style="font-family: Georgia, 'Times New Roman', Times, serif;
+            position: relative; text-align: center; color: #4A90E2; font-size: 20px;">@Ayyan Tech-Edu Systems Pvt.Ltd </h3>
+        </div>
+
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -778,6 +931,14 @@
             }
         }
 
+        // Initialize global mapping objects
+        const mappings = {
+            boards: {},
+            mediums: {},
+            grades: {},
+            subjects: {},
+            lessons: {},
+        };
         // Function to fetch and populate boards
         function fetchBoards() {
             fetch('/get_SchoolBoard')
@@ -792,6 +953,9 @@
                         option.value = boardItem.board_id;
                         option.textContent = boardItem.board_name;
                         boardInput.appendChild(option);
+
+                        // Store the board name by ID
+                        mappings.boards[boardItem.board_id] = boardItem.board_name;
                     });
                 })
                 .catch(error => console.error('Error fetching boards:', error));
@@ -811,6 +975,8 @@
                         option.value = mediumItem.medium_id;
                         option.textContent = mediumItem.medium_name;
                         mediumInput.appendChild(option);
+
+                        mappings.mediums[mediumItem.medium_id] = mediumItem.medium_name;
                     });
                 })
                 .catch(error => console.error('Error fetching mediums:', error));
@@ -830,6 +996,8 @@
                         option.value = classItem.classs_id;
                         option.textContent = classItem.classs_name;
                         classInput.appendChild(option);
+
+                        mappings.grades[classItem.classs_id] = classItem.classs_name;
                     });
                 })
                 .catch(error => console.error('Error fetching classes:', error));
@@ -906,6 +1074,8 @@
                         option.value = subItem.subject_id; // Adjust based on actual keys
                         option.textContent = subItem.subject_name; // Adjust based on actual keys
                         subjectInput.appendChild(option);
+
+                        mappings.subjects[subItem.subject_id] = subItem.subject_name;
                     });
 
                 })
@@ -999,6 +1169,8 @@
                         option.value = topicItem.topic_id; // Adjust based on actual keys
                         option.textContent = topicItem.topic_name; // Adjust based on actual keys
                         topicInput.appendChild(option);
+
+                        mappings.lessons[topicItem.topic_id] = topicItem.topic_name;
                     });
 
                 })
@@ -1009,10 +1181,58 @@
                 });
         }
 
-        //  Fetch wala part hai quetsiona and answers
+        //  Add my shaazi for checkbox if selected text-book-solution and ample paper
+        // //  Fetch wala part hai quetsiona and answers
 
-        // Fetch and display questions when the "Question" button is clicked
-        document.getElementById('addQuestionBtn').addEventListener('click', async () => {
+        // // Fetch and display questions when the "Question" button is clicked
+        // document.getElementById('addQuestionBtn').addEventListener('click', async () => {
+        //     const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+        //     // Extract and store the IDs of checked checkboxes
+        //     const checkedIds = [];
+        //     checkboxes.forEach((checkbox) => {
+        //         checkedIds.push(checkbox.id);
+        //     });
+
+        //     // Check if the length is 1 and the id is 'text-book-solution'
+        //     if (checkedIds.length === 1 && checkedIds[0] === 'text-book-solution') {
+        //         await fetchTextbookSolution();
+        //     }
+        //     else {
+        //         if (checkedIds.length === 1 && checkedIds[0] === 'sample-paper-solution') {
+        //             await fetchSamplePaper();
+        //         } else {
+
+        //             await fetchQuestionsAndAnswers();
+        //         }
+        //     }
+
+        //     // Show all the questions and hide the answers initially
+        //     document.querySelectorAll('.questionsDiv').forEach(questionsDiv => {
+        //         questionsDiv.style.display = 'block'; // Show all questions
+        //     });
+
+        //     document.querySelectorAll('.answersDiv').forEach(answersDiv => {
+        //         answersDiv.style.display = 'none'; // Hide all answers by default
+        //     });
+
+        //     // Enable the "Answer" button now that questions are fetched
+        //     document.getElementById('addAnswerBtn').disabled = false;
+        // });
+
+        // // Show answers when the "Answer" button is clicked
+        // document.getElementById('addAnswerBtn').addEventListener('click', () => {
+        //     document.querySelectorAll('.questionsDiv').forEach(questionsDiv => {
+        //         questionsDiv.style.display = 'none'; // Hide all questions
+        //     });
+
+        //     document.querySelectorAll('.answersDiv').forEach(answersDiv => {
+        //         answersDiv.style.display = 'block'; // Show all answers
+        //     });
+        // });
+
+        // Fetch for sample paper part
+        document.getElementById('samplePaperBtn').addEventListener('click', async () => {
             const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
 
             // Extract and store the IDs of checked checkboxes
@@ -1021,18 +1241,39 @@
                 checkedIds.push(checkbox.id);
             });
 
-            // Check if the length is 1 and the id is 'text-book-solution'
+            // Check if the selected checkbox is only for the sample paper solution
+            if (checkedIds.length === 1 && checkedIds[0] === 'sample-paper-solution') {
+                await fetchSamplePaper();
+            } else {
+                await fetchQuestionsAndAnswers();
+            }
+        });
+
+        // Fetch for TextBookSolution part
+        document.getElementById('textbookSolutionBtn').addEventListener('click', async () => {
+            const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+            // Extract and store the IDs of checked checkboxes
+            const checkedIds = [];
+            checkboxes.forEach((checkbox) => {
+                checkedIds.push(checkbox.id);
+            });
+
+            // Check if the selected checkbox is only for the TextBookSolution
             if (checkedIds.length === 1 && checkedIds[0] === 'text-book-solution') {
                 await fetchTextbookSolution();
-            }
-            else {
-                if (checkedIds.length === 1 && checkedIds[0] === 'sample-paper-solution') {
-                    await fetchSamplePaper();
-                } else {
 
-                    await fetchQuestionsAndAnswers();
-                }
+            } else {
+                await fetchQuestionsAndAnswers();
             }
+        });
+
+
+        //  Fetch wala part hai quetsiona and answers
+
+        // Fetch and display questions when the "Question" button is clicked
+        document.getElementById('addQuestionBtn').addEventListener('click', async () => {
+            await fetchQuestionsAndAnswers(); // Fetch questions and answers
 
             // Show all the questions and hide the answers initially
             document.querySelectorAll('.questionsDiv').forEach(questionsDiv => {
@@ -1060,212 +1301,214 @@
 
         // Shazzi ma;am ka code haii
         // Important part hai
-        async function fetchQuestionsAndAnswers() {
-            let selectedTasks = [];
+        // async function fetchQuestionsAndAnswers() {
+        //     let selectedTasks = [];
 
-            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                const taskId = checkbox.id; // Get the ID of the selected checkbox
-                const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
+        //     document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+        //         const taskId = checkbox.id; // Get the ID of the selected checkbox
+        //         const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
 
-                if (limitInput) { // Check if the number input exists
-                    const limitValue = limitInput.value; // Get the value of the number input
-                    selectedTasks.push({ id: taskId, limit: limitValue }); // Store the checkbox ID and limit value
-                }
-            });
+        //         if (limitInput) { // Check if the number input exists
+        //             const limitValue = limitInput.value; // Get the value of the number input
+        //             selectedTasks.push({ id: taskId, limit: limitValue }); // Store the checkbox ID and limit value
+        //         }
+        //     });
 
-            console.log("Selected tasks with limits:", selectedTasks);
+        //     console.log("Selected tasks with limits:", selectedTasks);
 
-            // Clear previous data before starting to append new results
-            const dataContainer = document.getElementById('data');
-            dataContainer.innerHTML = '';
+        //     // Clear previous data before starting to append new results
+        //     const dataContainer = document.getElementById('data');
+        //     dataContainer.innerHTML = '';
 
-            // Ensure there are selected tasks
-            if (selectedTasks.length === 0) {
-                dataContainer.innerHTML = '<p>No tasks selected.</p>';
-                return;
-            }
+        //     // Ensure there are selected tasks
+        //     if (selectedTasks.length === 0) {
+        //         dataContainer.innerHTML = '<p>No tasks selected.</p>';
+        //         return;
+        //     }
 
-            // Define a function to handle the fetching and displaying of questions and answers
-            const fetchAndDisplayResults = async (sTask) => {
-                const board = document.getElementById('board').value;
-                const medium = document.getElementById('medium').value;
-                const grade = document.getElementById('grade').value;
-                console.log("This is grade", grade);
-                const subject = document.getElementById('subject').value;
-                const lesson = document.getElementById('lesson').value;
-                const tasks = sTask.id;
-
-
-                let limit = sTask.limit;
-
-                // Validate limit
-                limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '' : parseInt(limit);
-                console.log("This is limit", limit);
-
-                // Validate required fields
-                if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select' || limit === 'select') {
-                    console.error('Please select all required fields');
-                    return;
-                }
-
-                // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
-                // Construct the query string
-                const queryParams = new URLSearchParams({
-                    board: board,
-                    medium: medium,
-                    grade: grade,
-                    subject: subject,
-                    lesson: lesson,
-                    tasks: tasks,
-                    limit: limit,
-                });
-                console.log("This is query:", queryParams.toString());
-
-                try {
-                    const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
-                    console.log("Response:", response);
-                    const result = await response.json();
-                    console.log("Results: ", result);
+        //     // Define a function to handle the fetching and displaying of questions and answers
+        //     const fetchAndDisplayResults = async (sTask) => {
+        //         const board = document.getElementById('board').value;
+        //         const medium = document.getElementById('medium').value;
+        //         const grade = document.getElementById('grade').value;
+        //         console.log("This is grade", grade);
+        //         const subject = document.getElementById('subject').value;
+        //         const lesson = document.getElementById('lesson').value;
+        //         const tasks = sTask.id;
 
 
-                    if (response.ok) {
-                        if (result.questions_and_answers) {
-                            console.log("Before:", result.questions_and_answers);
-                            const questionsAndAnswers = result.questions_and_answers;
-                            console.log("This is the question&answers", questionsAndAnswers);
+        //         let limit = sTask.limit;
 
-                            const questionArray = [];
-                            const answerArray = [];
-                            const optionsArray = [];
-                            const explanationArray = [];
-                            const column_aArray = [];
-                            const column_bArray = [];
+        //         // Validate limit
+        //         limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '' : parseInt(limit);
+        //         console.log("This is limit", limit);
 
-                            // Loop through the questions and answers
-                            questionsAndAnswers.forEach(qa => {
-                                if (qa.question) {
-                                    questionArray.push(qa.question); // Add question to questionArray
-                                }
-                                if (qa.answer) {
-                                    answerArray.push(qa.answer); // Add answer to answerArray
-                                }
-                                if (qa.options) {
-                                    optionsArray.push(qa.options); // Add answer to answerArray
-                                }
-                                if (qa.explanation) {
-                                    explanationArray.push(qa.explanation); // Add answer to answerArray
-                                }
-                                if (qa.column_a) {
-                                    column_aArray.push(qa.column_a); // Add answer to answerArray
-                                }
-                                if (qa.column_b) {
-                                    column_bArray.push(qa.column_b); // Add answer to answerArray
-                                }
-                            });
+        //         // Validate required fields
+        //         if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select' || limit === 'select') {
+        //             console.error('Please select all required fields');
+        //             return;
+        //         }
 
-                            console.log("This is questionArray", questionArray);
-                            console.log("This is answerArray", answerArray);
-                            console.log("This is optionArray", optionsArray);
-                            console.log("This is columnaArray", column_aArray);
-                            console.log("This is columnbArray", column_bArray);
-                            console.log("This is explanationArray", explanationArray);
+        //         // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+        //         // Construct the query string
+        //         const queryParams = new URLSearchParams({
+        //             board: board,
+        //             medium: medium,
+        //             grade: grade,
+        //             subject: subject,
+        //             lesson: lesson,
+        //             tasks: tasks,
+        //             limit: limit,
+        //         });
+        //         console.log("This is query:", queryParams.toString());
 
-                            // Create a div for questions
-                            const questionsDiv = document.createElement('div');
-                            questionsDiv.classList.add('questionsDiv');
+        //         try {
+        //             const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
+        //             console.log("Response:", response);
+        //             const result = await response.json();
+        //             console.log("Results: ", result);
 
-                            // Transform the sTask.id to capitalize first letter and replace hyphens with spaces
-                            let formattedTaskId = sTask.id.replace(/-/g, ' ').charAt(0).toUpperCase() + sTask.id.replace(/-/g, ' ').slice(1);
 
-                            questionsDiv.innerHTML = `<h3>${formattedTaskId} <br> Question List</h3>`;
+        //             if (response.ok) {
+        //                 if (result.questions_and_answers) {
+        //                     console.log("Before:", result.questions_and_answers);
+        //                     const questionsAndAnswers = result.questions_and_answers;
+        //                     console.log("This is the question&answers", questionsAndAnswers);
 
-                            // Loop through the questions and answers array
-                            questionsAndAnswers.forEach((qa, index) => {
-                                // Display the question
-                                questionsDiv.innerHTML += `<p>Question ${index + 1}: ${qa.question}</p>`;
+        //                     const questionArray = [];
+        //                     const answerArray = [];
+        //                     const optionsArray = [];
+        //                     const explanationArray = [];
+        //                     const column_aArray = [];
+        //                     const column_bArray = [];
 
-                                // Display the options if they exist
-                                if (qa.options && qa.options.length > 0) {
-                                    questionsDiv.innerHTML += `Options:`;
-                                    qa.options.forEach(option => {
-                                        questionsDiv.innerHTML += `</br>`;
-                                        questionsDiv.innerHTML += `${option}`;
-                                    });
-                                    questionsDiv.innerHTML += ``;
-                                }
+        //                     // Loop through the questions and answers
+        //                     questionsAndAnswers.forEach(qa => {
+        //                         if (qa.question) {
+        //                             questionArray.push(qa.question); // Add question to questionArray
+        //                         }
+        //                         if (qa.answer) {
+        //                             answerArray.push(qa.answer); // Add answer to answerArray
+        //                         }
+        //                         if (qa.options) {
+        //                             optionsArray.push(qa.options); // Add answer to answerArray
+        //                         }
+        //                         if (qa.explanation) {
+        //                             explanationArray.push(qa.explanation); // Add answer to answerArray
+        //                         }
+        //                         if (qa.column_a) {
+        //                             column_aArray.push(qa.column_a); // Add answer to answerArray
+        //                         }
+        //                         if (qa.column_b) {
+        //                             column_bArray.push(qa.column_b); // Add answer to answerArray
+        //                         }
+        //                     });
 
-                                // Create a wrapper div for columns
-                                let columnsWrapper = '<div class="columns-wrapper">';
+        //                     console.log("This is questionArray", questionArray);
+        //                     console.log("This is answerArray", answerArray);
+        //                     console.log("This is optionArray", optionsArray);
+        //                     console.log("This is columnaArray", column_aArray);
+        //                     console.log("This is columnbArray", column_bArray);
+        //                     console.log("This is explanationArray", explanationArray);
 
-                                // Display column_a if it exists
-                                if (qa.column_a && qa.column_a.length > 0) {
-                                    columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
-                                    qa.column_a.forEach((a, i) => {
-                                        columnsWrapper += `<li>${a}</li>`;
-                                    });
-                                    columnsWrapper += '</ul></div>';
-                                }
+        //                     // Create a div for questions
+        //                     const questionsDiv = document.createElement('div');
+        //                     questionsDiv.classList.add('questionsDiv');
 
-                                // Display column_b if it exists
-                                if (qa.column_b && qa.column_b.length > 0) {
-                                    columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
-                                    qa.column_b.forEach((b, i) => {
-                                        columnsWrapper += `<li>${b}</li>`;
-                                    });
-                                    columnsWrapper += '</ul></div>';
-                                }
+        //                     // Transform the sTask.id to capitalize first letter and replace hyphens with spaces
+        //                     let formattedTaskId = sTask.id.replace(/-/g, ' ').charAt(0).toUpperCase() + sTask.id.replace(/-/g, ' ').slice(1);
 
-                                columnsWrapper += '</div>';
+        //                     questionsDiv.innerHTML = `<h3>${formattedTaskId} <br> Question List</h3>`;
 
-                                questionsDiv.innerHTML += columnsWrapper;
-                            });
+        //                     // Loop through the questions and answers array
+        //                     questionsAndAnswers.forEach((qa, index) => {
+        //                         // Display the question
+        //                         questionsDiv.innerHTML += `<p>Question ${index + 1}: ${qa.question}</p>`;
 
-                            // Add a separator after the questions list
-                            questionsDiv.innerHTML += `<hr>`;
+        //                         // Display the options if they exist
+        //                         if (qa.options && qa.options.length > 0) {
+        //                             questionsDiv.innerHTML += `Options:`;
+        //                             qa.options.forEach(option => {
+        //                                 questionsDiv.innerHTML += `</br>`;
+        //                                 questionsDiv.innerHTML += `${option}`;
+        //                             });
+        //                             questionsDiv.innerHTML += ``;
+        //                         }
 
-                            // Append the questions div to the container
-                            dataContainer.appendChild(questionsDiv);
+        //                         // Create a wrapper div for columns
+        //                         let columnsWrapper = '<div class="columns-wrapper">';
 
-                            // Create a div for answers
-                            const answersDiv = document.createElement('div');
-                            answersDiv.classList.add('answersDiv');
-                            answersDiv.innerHTML = `<h3>${formattedTaskId} <br> Answer List</h3>`;
+        //                         // Display column_a if it exists
+        //                         if (qa.column_a && qa.column_a.length > 0) {
+        //                             columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
+        //                             qa.column_a.forEach((a, i) => {
+        //                                 columnsWrapper += `<li>${a}</li>`;
+        //                             });
+        //                             columnsWrapper += '</ul></div>';
+        //                         }
 
-                            // Loop through the answers array
-                            questionsAndAnswers.forEach((ans, index) => {
-                                // Display the answer
-                                answersDiv.innerHTML += `<p>Answer ${index + 1}: ${ans.answer}</p>`;
+        //                         // Display column_b if it exists
+        //                         if (qa.column_b && qa.column_b.length > 0) {
+        //                             columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
+        //                             qa.column_b.forEach((b, i) => {
+        //                                 columnsWrapper += `<li>${b}</li>`;
+        //                             });
+        //                             columnsWrapper += '</ul></div>';
+        //                         }
 
-                                // Display the explanation if it exists
-                                if (ans.explanation && ans.explanation.length > 0) {
-                                    answersDiv.innerHTML += `<p>Explanation: ${ans.explanation}</p>`;
-                                }
-                            });
+        //                         columnsWrapper += '</div>';
 
-                            // Add a separator after the answers list
-                            answersDiv.innerHTML += `<hr>`;
+        //                         questionsDiv.innerHTML += columnsWrapper;
+        //                     });
 
-                            // Append the answers div to the container
-                            dataContainer.appendChild(answersDiv);
+        //                     // Add a separator after the questions list
+        //                     questionsDiv.innerHTML += `<hr>`;
 
-                            // Initially, hide the answers div
-                            answersDiv.style.display = 'none';
-                        }
-                    }
-                    else {
-                        alert("No questions and answers found for selected tasks");
-                    }
+        //                     // Append the questions div to the container
+        //                     dataContainer.appendChild(questionsDiv);
 
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            };
+        //                     // Create a div for answers
+        //                     const answersDiv = document.createElement('div');
+        //                     answersDiv.classList.add('answersDiv');
+        //                     answersDiv.innerHTML = `<h3>${formattedTaskId} <br> Answer List</h3>`;
 
-            // Fetch and display results for each selected task
-            for (const sTask of selectedTasks) {
-                await fetchAndDisplayResults(sTask);
-            }
-        }
+        //                     // Loop through the answers array
+        //                     questionsAndAnswers.forEach((ans, index) => {
+        //                         // Display the answer
+        //                         answersDiv.innerHTML += `<p>Answer ${index + 1}: ${ans.answer}</p>`;
+
+        //                         // Display the explanation if it exists
+        //                         if (ans.explanation && ans.explanation.length > 0) {
+        //                             answersDiv.innerHTML += `<p>Explanation: ${ans.explanation}</p>`;
+        //                         }
+        //                     });
+
+        //                     // Add a separator after the answers list
+        //                     answersDiv.innerHTML += `<hr>`;
+
+        //                     // Append the answers div to the container
+        //                     dataContainer.appendChild(answersDiv);
+
+        //                     // Initially, hide the answers div
+        //                     answersDiv.style.display = 'none';
+        //                 }
+        //             }
+        //             else {
+        //                 alert("No questions and answers found for selected tasks");
+        //             }
+
+        //         } catch (error) {
+        //             console.error("Error fetching data:", error);
+        //         }
+        //     };
+
+        //     // Fetch and display results for each selected task
+        //     for (const sTask of selectedTasks) {
+        //         await fetchAndDisplayResults(sTask);
+        //     }
+        // }
+
+        // Shazzi code end here.
 
         /* async function fetchQuestionsAndAnswers() {
             let selectedTasks = [];
@@ -1421,7 +1664,8 @@
             const confirmLogout = confirm("Are you sure you want to log out?");
             if (confirmLogout) {
                 // Redirect to login page
-                window.location.href = '/static/login.html'; // Change 'login.html' to your actual login page URL
+                // window.location.href = '/static/option_screen.html'; 
+                window.location.href = '/static/option_screen.html';// Change 'login.html' to your actual login page URL
             }
         }
 
@@ -1550,6 +1794,8 @@
                 return;
             }
 
+            let heading = false;
+
             // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
             // Construct the query string
             const queryParams = new URLSearchParams({
@@ -1581,6 +1827,16 @@
 
                     // Clear the existing content in the data container
                     dataContainer.innerHTML = '';
+                    
+                    if (!heading) {
+                        dataContainer.innerHTML += 
+                        ` <h3>Board: ${mappings.boards[board]} 
+                            Medium: ${mappings.mediums[medium]} 
+                            Class: ${mappings.grades[grade]} 
+                            Subject: ${mappings.subjects[subject]} 
+                            Lesson: ${mappings.lessons[lesson]}<h3>`;
+                        heading = true;
+                    }
 
                     // Create an iframe to embed the PDF
                     const pdfIframe = document.createElement('iframe');
@@ -1600,20 +1856,16 @@
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
-
         }
 
         async function fetchSamplePaper() {
-
             // Clear previous data before starting to append new results
             const dataContainer = document.getElementById('data');
             dataContainer.innerHTML = '';
             const board = document.getElementById('board').value;
             const medium = document.getElementById('medium').value;
             const grade = document.getElementById('grade').value;
-
             const subject = document.getElementById('subject').value;
-
 
             // Define a function to handle the fetching and displaying of questions and answers
 
@@ -1623,6 +1875,8 @@
                 return;
             }
 
+            let heading = false;
+
             // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
             // Construct the query string
             const queryParams = new URLSearchParams({
@@ -1630,7 +1884,6 @@
                 medium: medium,
                 grade: grade,
                 subject: subject,
-
                 tasks: 'sample-paper-solution',
 
             });
@@ -1642,16 +1895,23 @@
                 const result = await response.json();
                 console.log("Results: ", result);
 
-
                 if (response.ok) {
                     const documentsArray = result.document;
 
+                    if (!heading) {
+                        dataContainer.innerHTML += 
+                        ` <h3>Board: ${mappings.boards[board]} 
+                            Medium: ${mappings.mediums[medium]} 
+                            Class: ${mappings.grades[grade]} 
+                            Subject: ${mappings.subjects[subject]} <h3>`;
+                        heading = true;
+                    }
                     // Create a div for questions
                     const questionsDiv = document.createElement('div');
                     questionsDiv.classList.add('questionsDiv');
 
                     // Add a title for the questions
-                    questionsDiv.innerHTML = `<h3>Sample Papers</h3>`;
+                    questionsDiv.innerHTML = `<h3>Question Bank</h3>`;
 
                     // Check if documentsArray is an array and contains data
                     if (Array.isArray(documentsArray) && documentsArray.length > 0) {
@@ -1680,6 +1940,358 @@
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
+        }
+
+        // Previous code fro worksheet, sample-paper and textbook solutions
+        // // Get the screen type from the URL query parameters
+        // function getScreenType() {
+        //     const urlParams = new URLSearchParams(window.location.search);
+        //     return urlParams.get('screen'); // Returns 'worksheet', 'sample-paper', or 'textbook-solutions'
+        // }
+
+        // function toggleCheckboxVisibility() {
+        //     const screenType = getScreenType();
+
+        //     // Get checkboxes by their IDs
+        //     const worksheetCheckboxes = [
+        //         document.getElementById('fill-in-the-blanks'),
+        //         document.getElementById('match-the-column'),
+        //         document.getElementById('name-the-following'),
+        //         document.getElementById('give-reasons'),
+        //         document.getElementById('answer-in-one-word'),
+        //         document.getElementById('short-answers'),
+        //         document.getElementById('long-answers'),
+        //         document.getElementById('multiple-choice-questions'),
+        //         document.getElementById('true-false')
+        //     ];
+        //     const textbookSolutionsCheckbox = document.getElementById('text-book-solution');
+        //     const samplePaperCheckbox = document.getElementById('sample-paper-solution');
+
+        //     // Show/hide checkboxes based on the screen type
+        //     if (screenType === 'worksheet') {
+        //         worksheetCheckboxes.forEach(checkbox => {
+        //             checkbox.parentElement.style.display = 'flex'; // Ensure it remains a flex container
+        //             checkbox.disabled = false; // Enable the checkboxes
+        //             const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+        //             if (limitField) {
+        //                 limitField.style.width = '60px'; // Set fixed width (adjust as necessary)
+        //                 limitField.disabled = false; // Enable limit field
+        //             }
+        //         });
+        //         textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions checkbox
+        //         samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper checkbox
+        //     }
+        //     else if (screenType === 'textbook-solutions') {
+        //         // Show only the textbook solutions checkbox, hide others
+        //         worksheetCheckboxes.forEach(checkbox => {
+        //             // checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
+        //             checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+        //             const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+        //             if (limitField) {
+        //                 limitField.disabled = true; // Disable limit field for worksheet checkboxes
+        //             }
+        //         });
+        //         textbookSolutionsCheckbox.parentElement.style.display = 'flex'; // Show textbook solutions checkbox
+        //         samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper
+        //     }
+        //     else if (screenType === 'sample-paper') {
+        //         // Show only the sample paper checkbox, hide others
+        //         worksheetCheckboxes.forEach(checkbox => {
+        //             // checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
+        //             checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+        //             const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+        //             if (limitField) {
+        //                 limitField.disabled = true; // Disable limit field for worksheet checkboxes
+        //             }
+        //         });
+        //         textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions
+        //         samplePaperCheckbox.parentElement.style.display = 'flex'; // Show sample paper checkbox
+        //     }
+        // }
+
+        // // Call the function when the page loads
+        // window.onload = toggleCheckboxVisibility;
+
+
+        // Get the screen type from the URL query parameters
+        function getScreenType() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('screen'); // Returns 'worksheet', 'sample-paper', or 'textbook-solutions'
+        }
+
+        function toggleCheckboxVisibility() {
+            const screenType = getScreenType();
+
+            // Get checkboxes by their IDs
+            const worksheetCheckboxes = [
+                document.getElementById('fill-in-the-blanks'),
+                document.getElementById('match-the-column'),
+                document.getElementById('name-the-following'),
+                document.getElementById('give-reasons'),
+                document.getElementById('answer-in-one-word'),
+                document.getElementById('short-answers'),
+                document.getElementById('long-answers'),
+                document.getElementById('multiple-choice-questions'),
+                document.getElementById('true-false')
+            ];
+            const textbookSolutionsCheckbox = document.getElementById('text-book-solution');
+            const samplePaperCheckbox = document.getElementById('sample-paper-solution');
+
+            // Get the new buttons
+            const textbookSolutionBtn = document.getElementById('textbookSolutionBtn');
+            const samplePaperBtn = document.getElementById('samplePaperBtn');
+            const addQuestionBtn = document.getElementById('addQuestionBtn');
+            const addAnswerBtn = document.getElementById('addAnswerBtn');
+
+            // Show/hide checkboxes based on the screen type
+            if (screenType === 'worksheet') {
+                worksheetCheckboxes.forEach(checkbox => {
+                    checkbox.parentElement.style.display = 'flex'; // Ensure it remains a flex container
+                    checkbox.disabled = false; // Enable the checkboxes
+                    const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+                    if (limitField) {
+                        limitField.style.width = '60px'; // Set fixed width (adjust as necessary)
+                        limitField.disabled = false; // Enable limit field
+                    }
+                });
+                textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions checkbox
+                samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper checkbox
+
+                // Hide Textbook Solutions and Sample Paper buttons
+                textbookSolutionBtn.style.display = 'none';
+                samplePaperBtn.style.display = 'none';
+            }
+            else if (screenType === 'textbook-solutions') {
+                // Show only the textbook solutions checkbox, hide others
+                worksheetCheckboxes.forEach(checkbox => {
+                    // checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
+                    checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+                    const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+                    if (limitField) {
+                        limitField.disabled = true; // Disable limit field for worksheet checkboxes
+                    }
+                });
+                textbookSolutionsCheckbox.parentElement.style.display = 'flex'; // Show textbook solutions checkbox
+                samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper
+
+                // Show Textbook Solution button, hide Sample Paper button
+                textbookSolutionBtn.style.display = 'inline-block';
+                samplePaperBtn.style.display = 'none';
+                addQuestionBtn.style.display = 'none';
+                addAnswerBtn.style.display = 'none';
+            }
+            else if (screenType === 'sample-paper') {
+                // Show only the sample paper checkbox, hide sothers
+                worksheetCheckboxes.forEach(checkbox => {
+                    // checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
+                    checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+                    const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+                    if (limitField) {
+                        limitField.disabled = true; // Disable limit field for worksheet checkboxes
+                    }
+                });
+                textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions
+                samplePaperCheckbox.parentElement.style.display = 'flex'; // Show sample paper checkbox
+
+                const lessonField = document.getElementById('lesson');
+                if (lessonField) {
+                    lessonField.disabled = true;
+                }
+                // Hide Textbook Solution button, show Sample Paper button
+                textbookSolutionBtn.style.display = 'none';
+                addQuestionBtn.style.display = 'none';
+                addAnswerBtn.style.display = 'none';
+                samplePaperBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = toggleCheckboxVisibility;
+
+    </script>
+
+    <script>
+        async function fetchQuestionsAndAnswers() {
+            let selectedTasks = [];
+            let totalResults = 0; // Track total results
+
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const taskId = checkbox.id; // Get the ID of the selected checkbox
+                const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
+
+                if (limitInput) { // Check if the number input exists
+                    const limitValue = limitInput.value; // Get the value of the number input
+                    selectedTasks.push({ id: taskId, limit: limitValue }); // Store the checkbox ID and limit value
+                }
+            });
+
+            console.log("Selected tasks with limits:", selectedTasks);
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+
+            // Ensure there are selected tasks
+            if (selectedTasks.length === 0) {
+                dataContainer.innerHTML = '<p>No tasks selected.</p>';
+                return;
+            }
+
+            const allQuestionsAndAnswers = []; // To store the combined results
+            let heading = false;
+
+            // Define a function to handle the fetching and displaying of questions and answers
+            const fetchAndDisplayResults = async (sTask) => {
+                if (totalResults >= 36) return; // Stop fetching if total results reached 25
+
+                const board = document.getElementById('board').value;
+                const medium = document.getElementById('medium').value;
+                const grade = document.getElementById('grade').value;
+                const subject = document.getElementById('subject').value;
+                const lesson = document.getElementById('lesson').value;
+                const tasks = sTask.id;
+
+                let limit = sTask.limit;
+
+                // Validate limit
+                limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '30' : parseInt(limit);
+                limit = Math.min(limit, 36 - totalResults); // Adjust limit to avoid exceeding 25
+                console.log("This is limit", limit);
+
+                // Validate required fields
+                if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select') {
+                    console.error('Please select all required fields');
+                    return;
+                }
+
+                // Construct the query string
+                const queryParams = new URLSearchParams({
+                    board: board,
+                    medium: medium,
+                    grade: grade,
+                    subject: subject,
+                    lesson: lesson,
+                    tasks: tasks,
+                    limit: limit, // Adjusted limit per task
+                });
+                console.log("This is query:", queryParams.toString());
+
+                try {
+                    const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
+                    const result = await response.json();
+
+                    if (response.ok && result.questions_and_answers) {
+                        const questionsAndAnswers = result.questions_and_answers;
+
+                        // Calculate how many results we can still take before reaching 25
+                        const remainingSlots = 36 - totalResults;
+                        const limitedQuestionsAndAnswers = questionsAndAnswers.slice(0, remainingSlots);
+
+                        // Increment the total results counter
+                        totalResults += limitedQuestionsAndAnswers.length;
+
+                        allQuestionsAndAnswers.push(...limitedQuestionsAndAnswers);
+
+                        if (!heading) {
+                            dataContainer.innerHTML += `<h3>Board: ${mappings.boards[board]} 
+                            Medium: ${mappings.mediums[medium]} 
+                            Class: ${mappings.grades[grade]} 
+                            Subject: ${mappings.subjects[subject]} 
+                            Lesson: ${mappings.lessons[lesson]}<h3>`;
+                            heading = true;
+                        }
+
+                        // Display the limited questions and answers in the DOM
+                        const questionsDiv = document.createElement('div');
+                        questionsDiv.classList.add('questionsDiv');
+
+                        // Format task ID (e.g., "fill-in-the-blank" => "Fill In The Blank")
+                        let formattedTaskId = sTask.id.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+
+                        // Add task-specific heading
+                        questionsDiv.innerHTML = `<h3>${formattedTaskId} - Questions</h3>`;
+
+                        limitedQuestionsAndAnswers.forEach((qa, index) => {
+                            questionsDiv.innerHTML += `<p><strong>Q ${index + 1}:</strong> ${qa.question}</p>`;
+
+                            // If there are options, display them
+                            if (qa.options && qa.options.length > 0) {
+                                questionsDiv.innerHTML += `<p>Options:</p><ul>`;
+                                const optionLabels = ['A', 'B', 'C', 'D']; // Labels for options
+                                qa.options.forEach((option, index) => {
+                                    const label = optionLabels[index] || ''; // Get label based on index, if available
+                                    questionsDiv.innerHTML += `<li>${label}. ${option}</li>`;
+                                });
+                                questionsDiv.innerHTML += `</ul>`;
+                            }
+
+                            // If there are columns for matching questions
+                            let columnsWrapper = '<div class="columns-wrapper">';
+                            if (qa.column_a && qa.column_a.length > 0) {
+                                columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
+                                qa.column_a.forEach((a) => {
+                                    columnsWrapper += `<li>${a}</li>`;
+                                });
+                                columnsWrapper += '</ul></div>';
+                            }
+                            if (qa.column_b && qa.column_b.length > 0) {
+                                columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
+                                qa.column_b.forEach((b) => {
+                                    columnsWrapper += `<li>${b}</li>`;
+                                });
+                                columnsWrapper += '</ul></div>';
+                            }
+                            columnsWrapper += '</div>';
+                            questionsDiv.innerHTML += columnsWrapper;
+                        });
+
+                        // Append questions to the container
+                        dataContainer.appendChild(questionsDiv);
+
+                        // Create a div for answers
+                        const answersDiv = document.createElement('div');
+                        answersDiv.classList.add('answersDiv');
+                        answersDiv.innerHTML = `<h3>${formattedTaskId} - Answer's</h3>`;
+
+                        // Loop through the answers array
+                        limitedQuestionsAndAnswers.forEach((ans, index) => {
+                            // Display the answer
+                            answersDiv.innerHTML += `<p>A ${index + 1}: ${ans.answer}</p>`;
+
+                            // Display the explanation if it exists
+                            if (ans.explanation && ans.explanation.length > 0) {
+                                answersDiv.innerHTML += `<p>Explanation: ${ans.explanation}</p>`;
+                            }
+                        });
+
+                        // Add a separator after the answers list
+                        answersDiv.innerHTML += `<hr>`;
+
+                        // Append the answers div to the container
+                        dataContainer.appendChild(answersDiv);
+
+                        // Initially, hide the answers div
+                        answersDiv.style.display = 'none';
+
+                        console.log("Added questions and answers: ", limitedQuestionsAndAnswers);
+                        console.log("Total results so far: ", totalResults);
+                    } else {
+                        alert("No questions and answers found for selected tasks");
+                    }
+
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
+
+            // Fetch and display results for each selected task
+            for (const sTask of selectedTasks) {
+                await fetchAndDisplayResults(sTask);
+                if (totalResults >= 36) break; // Stop if we have collected 25 results
+            }
+
+            // At this point, `allQuestionsAndAnswers` will contain up to 25 results
+            console.log("Final set of questions and answers: ", allQuestionsAndAnswers);
         }
     </script>
 </body>
