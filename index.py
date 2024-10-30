@@ -65,10 +65,10 @@ async def get_form():
     with open("static/output.html") as f:
         return f.read()
 
-@app.get("/register", response_class=HTMLResponse)
-async def get_form():
-    with open("static/register.html") as f:
-        return f.read()
+# @app.get("/register", response_class=HTMLResponse)
+# async def get_form():
+#     with open("static/register.html") as f:
+#         return f.read()
 
 async def get_or_create_database(board_name: str):
     # Get the list of existing databases
@@ -598,8 +598,8 @@ async def store_task_data(task_type, questions_and_answers, collection, filename
             # Append the filename to the list of inserted filenames
             inserted_filenames.append(filename)
 
-            # Optional: Print here as well if you want immediate feedback
-            print_all_inserted_filenames()  # Print after each insertion
+            # # Optional: Print here as well if you want immediate feedback
+            # print_all_inserted_filenames()  # Print after each insertion
             
             return {
                 "status": "1",
@@ -700,7 +700,8 @@ def process_section(task_type, lines):
            # Find the position of 'Answer:'
           
             # Find the position of the question, ignoring the numbering
-            question_match = re.match(r'^\d+\.\s*(.*)', line)
+            # question_match = re.match(r'^\d+\.\s*(.*)', line)
+            question_match = re.match(r'^(?:\d+[.:]\s*)?(.*)', line)
             if question_match:
                 question = question_match.group(1).strip()  # Extract the question part
 
@@ -713,8 +714,7 @@ def process_section(task_type, lines):
                         "question": question,
                         "answer": answer
                     })
-
-            
+  
 
     elif task_type == 'match-the-column':
         match_pairs = []
@@ -775,15 +775,15 @@ def process_section(task_type, lines):
                 "answers": answers
             })
 
-
-
     elif task_type == 'multiple-choice-questions':
         current_question = {}
-        for line in lines:
-            if re.match(r'^\d+\.\s*(.*)$', line):  # Question Line
+        for line in lines: 
+            if re.match(r'^\d+[.:]\s*(.*)',line):  # Question Line
+            # if re.match(r'^(?:\d+[.:]\s*)?(.*)', line):  # Question Line
                 if current_question:
-                    processed_data.append(current_question)
-                current_question = {"question": line.strip(), "options": [], "answer": ""}
+                    processed_data.append(current_question)  
+                question_text = re.match(r'^\d+[.:]\s*(.*)', line).group(1)  # Extract only the question text
+                current_question = {"question": question_text.strip(), "options": [], "answer": "", "explanation": ""}
             elif re.match(r'^[A-Da-d]\)\s*(.*)$', line):  # Option Line
                 option_match = re.match(r'^[A-Da-d]\)\s*(.*)$', line)
                 current_question["options"].append(option_match.group(1).strip())
@@ -804,8 +804,8 @@ def process_section(task_type, lines):
         current_explanation = ""
 
         for i, line in enumerate(lines):
-            # Match the statement followed by choices
-            statement_match = re.match(r'^\d+\.\s*(.*)', line)
+            # Match the statement followed by choices r'^\d+\.\s*(.*)'
+            statement_match = re.match(r'^\d+\.\s*(.*)$', line)
             
             if statement_match:
                 if current_statement and current_answer and current_explanation:
@@ -846,8 +846,8 @@ def process_section(task_type, lines):
         current_question = ""  # Track the current question
         current_answer = ""  # Track the current answer
         for i, line in enumerate(lines):
-            # Match questions based on numbered format
-            question_match = re.match(r'^\d+\.\s*(.*)', line)
+            
+            question_match = re.match(r'^\d*+\.\s*(.*)$', line)
             
             if question_match:
                 # If there was a previous question, save it with its answer
@@ -890,265 +890,265 @@ def extract_text_from_doc(file_contents: bytes) -> str:
         text += para.text + "\n"
     return text
 
-def detect_format(line, next_line):
-    """Detect the format of the question based on the line content."""
-    line = line.strip()
-    next_line = next_line.strip()
+# def detect_format(line, next_line):
+#     """Detect the format of the question based on the line content."""
+#     line = line.strip()
+#     next_line = next_line.strip()
     
-    if re.match(r'^\d+\.', line):
-        if next_line.startswith("Answer:"):
-            print("Format found: question and answer")
-            return 'question_answer'
-        # if re.match(r'^[A-Da-d]\.', next_line) or re.match(r'^[1-4]\.', next_line):
-        #     print("Format found: mcq")
-        #     return 'mcq'
+#     if re.match(r'^\d+\.', line):
+#         if next_line.startswith("Answer:"):
+#             print("Format found: question and answer")
+#             return 'question_answer'
+#         # if re.match(r'^[A-Da-d]\.', next_line) or re.match(r'^[1-4]\.', next_line):
+#         #     print("Format found: mcq")
+#         #     return 'mcq'
 
-        # for Mcq
-        if re.match(r'^\d+\.', line):
-        # Check if the next line starts with an option (A), (B), (C), (D)
-            if re.match(r'^[A-D]\)', next_line):
-                print("Format found: mcq")
-                return 'mcq'
-            elif next_line.startswith("Answer:"):
-                print("Format found: question_answer with answer line")
-                return 'mcq'
-            elif next_line.startswith("Explanation:"):
-                print("Format found: expanation ")
-                return 'mcq'
+#         # for Mcq
+#         if re.match(r'^\d+\.', line):
+#         # Check if the next line starts with an option (A), (B), (C), (D)
+#             if re.match(r'^[A-D]\)', next_line):
+#                 print("Format found: mcq")
+#                 return 'mcq'
+#             elif next_line.startswith("Answer:"):
+#                 print("Format found: question_answer with answer line")
+#                 return 'mcq'
+#             elif next_line.startswith("Explanation:"):
+#                 print("Format found: expanation ")
+#                 return 'mcq'
             
-            #  For trueorFalse      
-            if re.match(r'^\d+\.', line):
-            # Check if the next line starts with an option (A), (B)
-                if re.match(r'^[A-B]\)', next_line):
-                    print("Format found: trueorfalse")
-                    return 'trueorfalse'
-                elif next_line.startswith("Answer:"):
-                    print("Format found: question_answer with answer line")
-                    return 'trueorfalse'
-                elif next_line.startswith("Explanation:"):
-                    print("Format found: explanation ")
-                    return 'trueorfalse'
+#             #  For trueorFalse      
+#             if re.match(r'^\d+\.', line):
+#             # Check if the next line starts with an option (A), (B)
+#                 if re.match(r'^[A-B]\)', next_line):
+#                     print("Format found: trueorfalse")
+#                     return 'trueorfalse'
+#                 elif next_line.startswith("Answer:"):
+#                     print("Format found: question_answer with answer line")
+#                     return 'trueorfalse'
+#                 elif next_line.startswith("Explanation:"):
+#                     print("Format found: explanation ")
+#                     return 'trueorfalse'
             
-            # Detecting the format based on presence of columns and answers
-            if re.match(r'^[1-5]\.', line) :
-                print("Format found: matchthecolumn ")
-                return 'matchthecolumn'
-            elif re.match(r'^[A-E]\.', line):
-                print("Format found: matchthecolumn")
-                return 'matchthecolumn'
-            elif line.startswith("Answers"):
-                print("Format found: matchthecolumn")
-                return 'matchthecolumn'
+#             # Detecting the format based on presence of columns and answers
+#             if re.match(r'^[1-5]\.', line) :
+#                 print("Format found: matchthecolumn ")
+#                 return 'matchthecolumn'
+#             elif re.match(r'^[A-E]\.', line):
+#                 print("Format found: matchthecolumn")
+#                 return 'matchthecolumn'
+#             elif line.startswith("Answers"):
+#                 print("Format found: matchthecolumn")
+#                 return 'matchthecolumn'
             
-        return None
+#         return None
 
 
-def extract_question_and_answer(lines, line_index):
-    """Extract question and answer."""
-    line = lines[line_index].strip()
-    question = line[len(re.match(r'^\d+\.', line).group()):].strip()
-    answer_line_index = line_index + 1
-    if answer_line_index < len(lines) and lines[answer_line_index].startswith("Answer:"):
-        answer = lines[answer_line_index][len("Answer:"):].strip()
-        return question, answer
-    return None, None
+# def extract_question_and_answer(lines, line_index):
+#     """Extract question and answer."""
+#     line = lines[line_index].strip()
+#     question = line[len(re.match(r'^\d+\.', line).group()):].strip()
+#     answer_line_index = line_index + 1
+#     if answer_line_index < len(lines) and lines[answer_line_index].startswith("Answer:"):
+#         answer = lines[answer_line_index][len("Answer:"):].strip()
+#         return question, answer
+#     return None, None
 
-def extract_mcq_details(lines, index):
-    """Extract question, options, answer, and explanation for MCQ format."""
-    question = lines[index].strip()
-    options = []
-    answer = None
-    explanation = None
+# def extract_mcq_details(lines, index):
+#     """Extract question, options, answer, and explanation for MCQ format."""
+#     question = lines[index].strip()
+#     options = []
+#     answer = None
+#     explanation = None
 
-    # Loop through the following lines to find options, answer, and explanation
-    for i in range(index + 1, len(lines)):
-        line = lines[i].strip()
+#     # Loop through the following lines to find options, answer, and explanation
+#     for i in range(index + 1, len(lines)):
+#         line = lines[i].strip()
         
-        # Match options (A) option text
-        if re.match(r'^[A-D]\)', line):
-            options.append(line)
+#         # Match options (A) option text
+#         if re.match(r'^[A-Da-d]\)', line):
+#             options.append(line)
         
-        # Match answer line
-        elif line.startswith("Answer:"):
-            answer = line
+#         # Match answer line
+#         elif line.startswith("Answer:"):
+#             answer = line
         
-        # Match explanation line
-        elif line.startswith("Explanation:"):
-            explanation = line
-            break  # Assuming explanation is the last piece of information
+#         # Match explanation line
+#         elif line.startswith("Explanation:"):
+#             explanation = line
+#             break  # Assuming explanation is the last piece of information
 
-    if question and options and answer:
-        return {
-            'question': question,
-            'options': options,
-            'answer': answer,
-            'explanation': explanation
-        }
-    return None
+#     if question and options and answer:
+#         return {
+#             'question': question,
+#             'options': options,
+#             'answer': answer,
+#             'explanation': explanation
+#         }
+#     return None
 
-def extract_trueorfalse_details(lines, index):
-    """Extract question, options, answer, and explanation for MCQ format."""
-    question = lines[index].strip()
-    options = []
-    answer = None
-    explanation = None
+# def extract_trueorfalse_details(lines, index):
+#     """Extract question, options, answer, and explanation for MCQ format."""
+#     question = lines[index].strip()
+#     options = []
+#     answer = None
+#     explanation = None
 
-    # Loop through the following lines to find options, answer, and explanation
-    for i in range(index + 1, len(lines)):
-        line = lines[i].strip()
+#     # Loop through the following lines to find options, answer, and explanation
+#     for i in range(index + 1, len(lines)):
+#         line = lines[i].strip()
         
-        # Match options (A) option text
-        if re.match(r'^[A-B]\)', line):
-            options.append(line)
+#         # Match options (A) option text
+#         if re.match(r'^[A-B]\)', line):
+#             options.append(line)
         
-        # Match answer line
-        elif line.startswith("Answer:"):
-            answer = line
+#         # Match answer line
+#         elif line.startswith("Answer:"):
+#             answer = line
         
-        # Match explanation line
-        elif line.startswith("Explanation:"):
-            explanation = line
-            break  # Assuming explanation is the last piece of information
+#         # Match explanation line
+#         elif line.startswith("Explanation:"):
+#             explanation = line
+#             break  # Assuming explanation is the last piece of information
 
-    if question and options and answer:
-        return {
-            'question': question,
-            'options': options,
-            'answer': answer,
-            'explanation': explanation
-        }
-    return None
+#     if question and options and answer:
+#         return {
+#             'question': question,
+#             'options': options,
+#             'answer': answer,
+#             'explanation': explanation
+#         }
+#     return None
 
 
-def extract_matchthecolumn_details(txts):
-    # print("Lines")
-    # print(lines)
-    """Extracts details from the 'Match the Following' question format."""
+# def extract_matchthecolumn_details(txts):
+#     # print("Lines")
+#     # print(lines)
+#     """Extracts details from the 'Match the Following' question format."""
     
-    column_a = []
-    column_b = []
-    answers = []
-    question = []
+#     column_a = []
+#     column_b = []
+#     answers = []
+#     question = []
 
 
-    # Split the input into sections based on the headers
-    sections = txts.strip().split("\n\n")
+#     # Split the input into sections based on the headers
+#     sections = txts.strip().split("\n\n")
     
-    # Store the sections directly into the desired arrays
-    question = sections[0].strip()
-    column_a = sections[1].splitlines()[1:]  # Exclude the header "Column A"
-    column_b = sections[2].splitlines()[1:]  # Exclude the header "Column B"
-    answers = sections[3].splitlines()[1:]    # Exclude the header "Answer"
+#     # Store the sections directly into the desired arrays
+#     question = sections[0].strip()
+#     column_a = sections[1].splitlines()[1:]  # Exclude the header "Column A"
+#     column_b = sections[2].splitlines()[1:]  # Exclude the header "Column B"
+#     answers = sections[3].splitlines()[1:]    # Exclude the header "Answer"
 
-    # # Display the results
-    # print("Column A:", column_a)
-    # print("Column B:", column_b)
-    # print("Answers:", answers)
+#     # # Display the results
+#     # print("Column A:", column_a)
+#     # print("Column B:", column_b)
+#     # print("Answers:", answers)
 
-    return {
-        'question': question,
-       'column_a': column_a,
-       'column_b': column_b,
-       'answers': answers
-     }
+#     return {
+#         'question': question,
+#        'column_a': column_a,
+#        'column_b': column_b,
+#        'answers': answers
+#      }
    
 
 
-def parse_questions_and_answers(text: str, filename: str):
-    lines = text.strip().split('\n')
-    data = {}
-    heading_set = False
-    question_counter = 1
+# def parse_questions_and_answers(text: str, filename: str):
+#     lines = text.strip().split('\n')
+#     data = {}
+#     heading_set = False
+#     question_counter = 1
 
-    for i in range(len(lines)):
-        line = lines[i].strip()
+#     for i in range(len(lines)):
+#         line = lines[i].strip()
 
-        # Detect heading (only set once)
-        if not heading_set and line.startswith("Chapter:"):
-            data["heading"] = line
-            heading_set = True
-            continue
+#         # Detect heading (only set once)
+#         if not heading_set and line.startswith("Chapter:"):
+#             data["heading"] = line
+#             heading_set = True
+#             continue
 
-        # Check next line for format detection
-        next_line = lines[i + 1].strip() if i + 1 < len(lines) else ""
+#         # Check next line for format detection
+#         next_line = lines[i + 1].strip() if i + 1 < len(lines) else ""
 
-        # Detect format
-        format_detected = detect_format(line, next_line)
-        # print(f"Detected format for line '{line}': {format_detected}")
+#         # Detect format
+#         format_detected = detect_format(line, next_line)
+#         # print(f"Detected format for line '{line}': {format_detected}")
 
-        if format_detected == 'question_answer':
-            print("This is question&answers")
-            question, answer = extract_question_and_answer(lines, i)
-            if question and answer:
-                data[f"question{question_counter}"] = question
-                data[f"answer{question_counter}"] = answer
-                question_counter += 1
-            else:
-                print(f"Failed to extract question or answer for line: {line}")
+#         if format_detected == 'question_answer':
+#             print("This is question&answers")
+#             question, answer = extract_question_and_answer(lines, i)
+#             if question and answer:
+#                 data[f"question{question_counter}"] = question
+#                 data[f"answer{question_counter}"] = answer
+#                 question_counter += 1
+#             else:
+#                 print(f"Failed to extract question or answer for line: {line}")
 
-        elif format_detected == 'mcq' :
-            print("This is mcq format")
-            mcq_data = extract_mcq_details(lines, i)
-            print("This is mcq_data")
-            print(mcq_data)
-            if mcq_data:
-                print("This is in if condition")
-                data[f"question{question_counter}"] = mcq_data['question']
-                data[f"options{question_counter}"] = mcq_data['options']
-                data[f"answer{question_counter}"] = mcq_data['answer']
-                data[f"explanation{question_counter}"] = mcq_data.get('explanation', '')
-                question_counter += 1
-            else:
-                print(f"Failed to extract question,option and answer for line: {line}")
+#         elif format_detected == 'mcq' :
+#             print("This is mcq format")
+#             mcq_data = extract_mcq_details(lines, i)
+#             print("This is mcq_data")
+#             print(mcq_data)
+#             if mcq_data:
+#                 print("This is in if condition")
+#                 data[f"question{question_counter}"] = mcq_data['question']
+#                 data[f"options{question_counter}"] = mcq_data['options']
+#                 data[f"answer{question_counter}"] = mcq_data['answer']
+#                 data[f"explanation{question_counter}"] = mcq_data.get('explanation', '')
+#                 question_counter += 1
+#             else:
+#                 print(f"Failed to extract question,option and answer for line: {line}")
         
-        elif format_detected == 'trueorfalse' :
-            print("This is trueorfasle format")
-            trueorfalse = extract_trueorfalse_details(lines, i)
-            if trueorfalse:
-                print("This is in if condition")
-                data[f"question{question_counter}"] = trueorfalse['question']
-                data[f"options{question_counter}"] =trueorfalse['options']
-                data[f"answer{question_counter}"] = trueorfalse['answer']
-                data[f"explanation{question_counter}"] = trueorfalse.get('explanation', '')
-                question_counter += 1
-            else:
-                print(f"Failed to extract question,option and answer for line: {line}")
+#         elif format_detected == 'trueorfalse' :
+#             print("This is trueorfasle format")
+#             trueorfalse = extract_trueorfalse_details(lines, i)
+#             if trueorfalse:
+#                 print("This is in if condition")
+#                 data[f"question{question_counter}"] = trueorfalse['question']
+#                 data[f"options{question_counter}"] =trueorfalse['options']
+#                 data[f"answer{question_counter}"] = trueorfalse['answer']
+#                 data[f"explanation{question_counter}"] = trueorfalse.get('explanation', '')
+#                 question_counter += 1
+#             else:
+#                 print(f"Failed to extract question,option and answer for line: {line}")
 
-        # elif format_detected == 'matchthecolumn':
-        #     # print("hghkjhjhjkh",extract_matchthecolumn_details)
-        #     matchthefollowing = extract_matchthecolumn_details(text)
-        #     print("This is match the column",matchthefollowing)
-        #     if matchthefollowing:
-        #         print("This is in if condition")
-        #         # Ensure the data is correctly formatted for storage
-        #         data[f"column_a{question_counter}"] = matchthefollowing['column_a']
-        #         data[f"column_b{question_counter}"] = matchthefollowing['column_b']
-        #         data[f"answer{question_counter}"] = matchthefollowing['answers']
-        #         question_counter += 1
-        #     else:
-        #         print(f"Failed to extract column data for format: {format_detected}")
+#         # elif format_detected == 'matchthecolumn':
+#         #     # print("hghkjhjhjkh",extract_matchthecolumn_details)
+#         #     matchthefollowing = extract_matchthecolumn_details(text)
+#         #     print("This is match the column",matchthefollowing)
+#         #     if matchthefollowing:
+#         #         print("This is in if condition")
+#         #         # Ensure the data is correctly formatted for storage
+#         #         data[f"column_a{question_counter}"] = matchthefollowing['column_a']
+#         #         data[f"column_b{question_counter}"] = matchthefollowing['column_b']
+#         #         data[f"answer{question_counter}"] = matchthefollowing['answers']
+#         #         question_counter += 1
+#         #     else:
+#         #         print(f"Failed to extract column data for format: {format_detected}")
 
-    if format_detected == 'matchthecolumn':
-            # print("hghkjhjhjkh",extract_matchthecolumn_details)
-            matchthefollowing = extract_matchthecolumn_details(text)
-            print("This is match the column",matchthefollowing)
-            if matchthefollowing:
-                print("This is in if condition")
-                # Ensure the data is correctly formatted for storage
-                data[f"question{question_counter}"] = matchthefollowing['question']
-                data[f"column_a{question_counter}"] = matchthefollowing['column_a']
-                data[f"column_b{question_counter}"] = matchthefollowing['column_b']
-                data[f"answer{question_counter}"] = matchthefollowing['answers']
-                question_counter += 1
-            else:
-                print(f"Failed to extract column data for format: {format_detected}")
+#     if format_detected == 'matchthecolumn':
+#             # print("hghkjhjhjkh",extract_matchthecolumn_details)
+#             matchthefollowing = extract_matchthecolumn_details(text)
+#             print("This is match the column",matchthefollowing)
+#             if matchthefollowing:
+#                 print("This is in if condition")
+#                 # Ensure the data is correctly formatted for storage
+#                 data[f"question{question_counter}"] = matchthefollowing['question']
+#                 data[f"column_a{question_counter}"] = matchthefollowing['column_a']
+#                 data[f"column_b{question_counter}"] = matchthefollowing['column_b']
+#                 data[f"answer{question_counter}"] = matchthefollowing['answers']
+#                 question_counter += 1
+#             else:
+#                 print(f"Failed to extract column data for format: {format_detected}")
 
-    # Print data to verify its structure
-    print("Data to be stored in database:", data)
+#     # Print data to verify its structure
+#     print("Data to be stored in database:", data)
 
-    # Add filename to the data
-    # data["filename"] = filename
-    return data
+#     # Add filename to the data
+#     # data["filename"] = filename
+#     return data
 
 @app.get("/retrieve", response_class=HTMLResponse)
 async def get_retrieve_page():
@@ -1495,7 +1495,8 @@ def get_role_id(role: str):
 #     with open("static/register.html", 'rb') as f:
 #         content = f.read()s
 #         return content.decode('utf-8')
-    
+
+@app.post("/register")
 async def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
     print("this is new user",user)

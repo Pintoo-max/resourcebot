@@ -222,7 +222,7 @@
         }
 
         function handleRegistration(event) {
-            alert("This is the registration page");
+            //alert("This is the registration page");
             event.preventDefault();
 
             const password = document.getElementById('psw').value;
@@ -259,8 +259,18 @@
                 .then(data => {
                     console.log("Response Data:", data); // Log response data
 
-                    if (data.message === "Registration successful") {
-                        alert("User Registration successful");
+                    if (data.message === "Registration successful") 
+                    {
+                        if (formData.role === 'student'){
+                            alert("Student registration successfully")
+                        }
+                        else if(formData.role === 'teacher'){
+                            alert("Teacher registration successfully")
+                        }
+                        else{
+                            alert("User Registration successfully");
+                        }
+
                         document.getElementById('registrationForm').reset();  // This line clears the form
                         // Redirect to login page
                         window.location.href = "/static/login.html";

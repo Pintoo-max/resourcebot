@@ -118,7 +118,7 @@
         }
 
         /* Responsive Design */
-        @media screen and (max-width: 600px) {
+        @media (max-width: 750px) {
             body {
                 justify-content: center;
                 align-items: center;
@@ -159,6 +159,52 @@
 
             .container-footer a {
                 font-size: 16px;
+            }
+
+            .forgot-password a {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            body {
+                justify-content: center;
+                align-items: center;
+                height: auto;
+                min-height: 100vh;
+                padding: 15px 0;
+                background-image: linear-gradient(to right, #007bff, #00c6ff);
+            }
+
+            .container {
+                max-width: 80%;
+                padding: 10px;
+                border-radius: 6px;
+            }
+
+            h2 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            input[type=text],
+            input[type=password],
+            select {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+
+            .container-footer a {
+                font-size: 14px;
             }
 
             .forgot-password a {

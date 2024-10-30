@@ -46,6 +46,13 @@
         button:hover {
             opacity: 0.8;
         }
+
+        .back-icon {
+            position: relative;
+            left: 180px;
+            font-size: 25px;
+        }
+
     </style>
 </head>
 
@@ -56,8 +63,7 @@
         <button onclick="goToSamplePaper()">Previous Year's Question Bank</button>
         <button onclick="goToTextbookSolutions()">Textbook Solutions</button>
 
-        <i class="fas fa-arrow-left back-icon" onclick="confirmback()" style="position: relative;
-  left: 180px; font-size: 25px;"></i>
+        <i class="fas fa-arrow-circle-left back-icon" onclick="confirmback()"></i>
     </div>
 
     <script>
@@ -75,7 +81,7 @@
         }
 
         function confirmback() {
-            const confirmback = confirm("Are you sure you want to go back");
+            const confirmback = confirm("Are you sure you want to logout?");
             if (confirmback) {
                 // Redirect to login page
                 // window.location.href = '/static/option_screen.html'; 

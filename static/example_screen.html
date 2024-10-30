@@ -7,6 +7,8 @@
     <title>Content Selection</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         body {
@@ -31,7 +33,7 @@
         }
 
         .form-section {
-            width: 50%;
+            width: 45%;
             padding: 20px;
             background-color: #f7f9fa;
             border-left: 1px solid #e0e4e8;
@@ -39,10 +41,10 @@
         }
 
         .output-section {
-            width: 120%;
+            width: 125%;
             padding: 20px;
             background-color: #ffffff;
-            margin-left: 20px;
+            margin-left: 8px;
             overflow: auto;
             /* Allow scrolling */
             word-wrap: break-word;
@@ -94,6 +96,7 @@
             background-color: #f9f9f9;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            flex-wrap: wrap;
         }
 
         .logo {
@@ -119,6 +122,7 @@
             font-size: 30px;
             cursor: pointer;
             transition: color 0.3s;
+            margin-left: 10px;
         }
 
         .logout-icon:hover {
@@ -144,23 +148,27 @@
         /* Specific styling for questionsDiv */
         #questionsDiv {
             display: block;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: medium;
             /* Show questions by default */
         }
 
         /* Specific styling for answersDiv */
         #answersDiv {
             display: none;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: medium;
             /* Hide answers by default */
         }
 
         /* Button styling */
         button {
-            padding: 10px 20px;
+            padding: 10px 15px;
             border: none;
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
-            border-radius: 25px;
+            border-radius: 20px;
             font-size: 14px;
             transition: background-color 0.3s, transform 0.2s;
         }
@@ -174,7 +182,7 @@
         .buttons-container {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: left;
             margin-top: 20px;
         }
 
@@ -190,7 +198,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 16px;
             margin-right: 10px;
             transition: opacity 0.3s, transform 0.3s;
         }
@@ -212,8 +220,8 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 20px;
-            margin-left: 10px;
+            font-size: 16px;
+            margin-right: 10px;
             transition: opacity 0.3s, transform 0.3s;
         }
 
@@ -243,11 +251,11 @@
         .form-group.task input[type="checkbox"] {
             width: calc(100% - 20px);
             padding: 8px;
-            margin-top: 4px;
+            margin-top: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 20px;
+            font-size: 16px;
         }
 
         /* .form-section h3 {
@@ -285,7 +293,7 @@
         .form-section button {
             width: 100%;
             padding: 12px;
-            font-size: 20px;
+            font-size: 16px;
         }
 
         .task {
@@ -418,7 +426,7 @@
             .container {
                 flex-direction: column;
                 width: 90%;
-                padding: 0;
+                padding: 2px;
                 margin: auto;
             }
 
@@ -453,13 +461,13 @@
 
             .left-buttons,
             .right-buttons {
-                width: 100%;
+                width: 95%;
                 margin-bottom: 10px;
             }
 
             .left-buttons button,
             .right-buttons button {
-                width: 100%;
+                width: 95%;
                 margin-bottom: 10px;
             }
 
@@ -478,6 +486,7 @@
                 font-size: 32px;
                 letter-spacing: 3px;
                 padding: 8px;
+                text-align: center;
             }
 
             .header {
@@ -500,13 +509,15 @@
             }
 
             h3 {
-                font-size: 24px;
+                font-size: medium;
                 /* Slightly reduce font size for smaller screens */
                 flex-grow: 1;
-                text-align: center;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                text-align: left;
                 /* Center-align text */
                 margin: 0;
                 /* Remove extra margin */
+                margin-bottom: 12px;
             }
 
             .logout-icon {
@@ -561,13 +572,13 @@
 
             .left-buttons,
             .right-buttons {
-                width: 100%;
+                width: 95%;
                 margin-bottom: 5px;
             }
 
             .left-buttons button,
             .right-buttons button {
-                width: 100%;
+                width: 95%;
                 margin-bottom: 5px;
             }
 
@@ -583,7 +594,6 @@
                 margin-bottom: 10px;
                 /* Add space below the image when stacked */
 
-
             span {
                 font-size: 24px;
                 letter-spacing: 2px;
@@ -593,17 +603,27 @@
             }
 
             h3 {
-                font-size: 24px;
-                /* Further reduce heading size for extra small screens */
-                text-align: center;
+                font-size: medium;
+                /* Slightly reduce font size for smaller screens */
+                flex-grow: 1;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                text-align: left;
+                /* Center-align text */
+                margin: 0;
                 /* Center text on very small screens */
+                margin-bottom: 12px;/
             }
 
             .logout-icon {
-                font-size: 20px;
-                /* Further reduce icon size */
-
+                font-size: 18px;
+                /* Adjust icon size for smaller screens */
+                margin-left: 0;
+                /* Remove margin for better spacing */
+                margin-top: 5px;
+                /* Add some space above the icon */
             }
+
+
         }
     </style>
 </head>
@@ -856,10 +876,14 @@
                 <div class="right-buttons">
                     <button id="printBtn">Print</button>
                     <button id="downloadBtn">Download</button>
+                    <br>
                 </div>
+
             </div>
+            <br>
             <h3 style="font-family: Georgia, 'Times New Roman', Times, serif;
-            position: relative; text-align: center; color: #4A90E2; font-size: 20px;">@Ayyan Tech-Edu Systems Pvt.Ltd </h3>
+            position: relative; text-align: center; color: #4A90E2; font-size: 16px;">@Ayyan Tech-Edu Systems Pvt.Ltd
+            </h3>
         </div>
 
     </div>
@@ -1661,7 +1685,7 @@
         });*/
 
         function confirmLogout() {
-            const confirmLogout = confirm("Are you sure you want to log out?");
+            const confirmLogout = confirm("Are you sure you want to go back?");
             if (confirmLogout) {
                 // Redirect to login page
                 // window.location.href = '/static/option_screen.html'; 
@@ -1788,11 +1812,34 @@
 
             // Define a function to handle the fetching and displaying of questions and answers
 
-            // Validate required fields
+            // // Validate required fields
+            // if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select') {
+            //     console.error('Please select all required fields');
+            //     return;
+            // }
+
+            if (board === 'select') {
+                console.error('Please select a valid board');
+            }
+            if (medium === 'select') {
+                console.error('Please select a valid medium');
+            }
+            if (grade === 'select') {
+                console.error('Please select a valid grade');
+            }
+            if (subject === 'select') {
+                console.error('Please select a valid subject');
+            }
+            if (lesson === 'select') {
+                console.error('Please select a valid lesson');
+            }
+
+            // Stop execution if any field is invalid
             if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select') {
                 console.error('Please select all required fields');
                 return;
             }
+
 
             let heading = false;
 
@@ -1827,16 +1874,17 @@
 
                     // Clear the existing content in the data container
                     dataContainer.innerHTML = '';
-                    
+
                     if (!heading) {
-                        dataContainer.innerHTML += 
-                        ` <h3>Board: ${mappings.boards[board]} 
+                        dataContainer.innerHTML +=
+                            ` <h3>Board: ${mappings.boards[board]} 
                             Medium: ${mappings.mediums[medium]} 
                             Class: ${mappings.grades[grade]} 
                             Subject: ${mappings.subjects[subject]} 
                             Lesson: ${mappings.lessons[lesson]}<h3>`;
                         heading = true;
                     }
+
 
                     // Create an iframe to embed the PDF
                     const pdfIframe = document.createElement('iframe');
@@ -1899,8 +1947,8 @@
                     const documentsArray = result.document;
 
                     if (!heading) {
-                        dataContainer.innerHTML += 
-                        ` <h3>Board: ${mappings.boards[board]} 
+                        dataContainer.innerHTML +=
+                            ` <h3>Board: ${mappings.boards[board]} 
                             Medium: ${mappings.mediums[medium]} 
                             Class: ${mappings.grades[grade]} 
                             Subject: ${mappings.subjects[subject]} <h3>`;
@@ -2154,15 +2202,31 @@
                 let limit = sTask.limit;
 
                 // Validate limit
-                limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '30' : parseInt(limit);
+                limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '36' : parseInt(limit);
                 limit = Math.min(limit, 36 - totalResults); // Adjust limit to avoid exceeding 25
                 console.log("This is limit", limit);
 
-                // Validate required fields
-                if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select') {
-                    console.error('Please select all required fields');
-                    return;
-                }
+                // // Validate required fields
+                // if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select') {
+                //     console.error('Please select all required fields');
+                //     return;
+                // }
+
+                // if (board == 'select') {
+                //     alert('Please select a valid board');
+                // }
+                // if (medium == 'select') {
+                //     alert('Please select a valid medium');
+                // }
+                // if (grade == 'select') {
+                //     alert('Please select a valid grade');
+                // }
+                // if (subject == 'select') {
+                //     alert('Please select a valid subject');
+                // }
+                // if (lesson == 'select') {
+                //     alert('Please select a valid lesson');
+                // }
 
                 // Construct the query string
                 const queryParams = new URLSearchParams({
@@ -2189,6 +2253,11 @@
 
                         // Increment the total results counter
                         totalResults += limitedQuestionsAndAnswers.length;
+                        // alert("This is the totalResults"+totalResults);
+
+                        if (totalResults >= 36) {
+                            alert("Total results have exceeded 36. The current total is: " + totalResults);
+                        }
 
                         allQuestionsAndAnswers.push(...limitedQuestionsAndAnswers);
 
@@ -2208,7 +2277,7 @@
                         // Format task ID (e.g., "fill-in-the-blank" => "Fill In The Blank")
                         let formattedTaskId = sTask.id.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
 
-                        // Add task-specific heading
+                        // Add task-specific heading 
                         questionsDiv.innerHTML = `<h3>${formattedTaskId} - Questions</h3>`;
 
                         limitedQuestionsAndAnswers.forEach((qa, index) => {
@@ -2245,6 +2314,9 @@
                             questionsDiv.innerHTML += columnsWrapper;
                         });
 
+                        // Add a separator after the answers list
+                        questionsDiv.innerHTML += `<hr>`;
+
                         // Append questions to the container
                         dataContainer.appendChild(questionsDiv);
 
@@ -2256,7 +2328,7 @@
                         // Loop through the answers array
                         limitedQuestionsAndAnswers.forEach((ans, index) => {
                             // Display the answer
-                            answersDiv.innerHTML += `<p>A ${index + 1}: ${ans.answer}</p>`;
+                            answersDiv.innerHTML += `<p><strong>A ${index + 1}:</strong> ${ans.answer}</p>`;
 
                             // Display the explanation if it exists
                             if (ans.explanation && ans.explanation.length > 0) {
@@ -2273,10 +2345,37 @@
                         // Initially, hide the answers div
                         answersDiv.style.display = 'none';
 
+                        // Render MathJax math for questions and answers
+                        MathJax.typesetPromise([questionsDiv, answersDiv]).then(() => {
+                            console.log("MathJax rendering complete.");
+                        }).catch((err) => console.error("MathJax rendering failed:", err));
+
                         console.log("Added questions and answers: ", limitedQuestionsAndAnswers);
                         console.log("Total results so far: ", totalResults);
-                    } else {
-                        alert("No questions and answers found for selected tasks");
+
+                    }
+                    else {
+                        if (board === '') {
+                            alert('Please select a valid board');
+                        }
+                        else if (medium === '') {
+                            alert('Please select a valid medium');
+                        }
+                        else if (grade === '') {
+                            alert('Please select a valid grade');
+                        }
+                        else if (subject === '') {
+                            alert('Please select a valid subject');
+                        }
+                        else if (lesson ===  '') {
+                            alert('Please select a valid lesson/chapter');
+                        }
+                        // else if (board == '' || medium == '' || grade == '' || subject == '' || lesson == '' || tasks == '') {
+                        //     console.error('Please select all required fields');
+                        // }
+                        else {
+                            alert("You need to select all the required fields.");
+                        }
                     }
 
                 } catch (error) {
