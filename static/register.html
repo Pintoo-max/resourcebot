@@ -116,7 +116,7 @@
 <body>
     <div class="container">
         <h2><i class="fas fa-user-plus"></i> Register</h2>
-        <form id="registrationForm" onsubmit="return handleRegistration(event)">
+       <form id="registrationForm" onsubmit="return handleRegistration(event)">
             <div class="form-group">
                 <label for="role"><b><i class="fas fa-user-tag"></i> Select Role</b></label>
                 <select name="role" id="role" required onchange="updateForm()">
@@ -131,6 +131,16 @@
                 <select id="class" name="class">
                     <option value="select">Select Class</option>
                 </select>
+            </div> 
+            
+            <div class="form-group hidden" id="teachertypeGroup">
+                <label for="teachertype"><b><i class="fas fa-school"></i> Type</b></label>
+                <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
+                <select id="teachertype" name="teachertype" onchange="updateteacherForm()">
+                    <option value="select">Select type</option>
+                    <option value="registered">Registered</option>
+                    <option value="open">open</option>
+                </select>
             </div>
 
 
@@ -144,15 +154,15 @@
                 <input type="text" placeholder="Enter Last Name" name="surname" id="surname" required>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="institute_name">
                 <label for="institute-name"><b><i class="fas fa-university"></i> Institute Name</b></label>
                 <!-- <input type="text" placeholder="Enter Institute Name" name="institute-name" id="institute-name" required> -->
-                <select id="institute-name" name="institute-name" required>
+                <select id="institute-name" name="institute-name">
                     <option value="select">Select Institute</option>
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="institute_id">
                 <label for="institute-id"><b><i class="fas fa-id-badge"></i> Institute ID</b></label>
                 <input type="text" placeholder="Enter Institute ID" name="institute-id" id="institute-id" readonly>
             </div>
@@ -206,18 +216,42 @@
         });
 
 
+        
         function updateForm() {
-            const role = document.getElementById('role').value;
-            const classGroup = document.getElementById('classGroup');
-            const dobGroup = document.getElementById('dobGroup');
+                const role = document.getElementById('role').value;
+                const classGroup = document.getElementById('classGroup');
+                const teachertypeGroup = document.getElementById('teachertypeGroup');
+                const dobGroup = document.getElementById('dobGroup');
+                const instituteName = document.getElementById('institute_name');
+                const instituteId = document.getElementById('institute_id');
+                
+                // Show or hide fields based on role
+                if (role === 'student') {
+                    classGroup.classList.remove('hidden');
+                    dobGroup.classList.remove('hidden');
+                    instituteName.classList.remove('hidden');
+                    instituteId.classList.remove('hidden');
+                    teachertypeGroup.classList.add('hidden');
+                } else {
+                    classGroup.classList.add('hidden');
+                    teachertypeGroup.classList.remove('hidden');
+                    instituteName.classList.add('hidden');
+                    instituteId.classList.add('hidden');
+                    dobGroup.classList.add('hidden');
+                }
+        }
 
-            // Show or hide fields based on role
-            if (role === 'student') {
-                classGroup.classList.remove('hidden');
-                dobGroup.classList.remove('hidden');
+        function updateteacherForm() {
+            const teachertype = document.getElementById('teachertype').value;
+            const instituteName = document.getElementById('institute_name');
+            const instituteId = document.getElementById('institute_id');
+
+            if (teachertype === 'registered') {
+                instituteName.classList.remove('hidden');
+                instituteId.classList.remove('hidden');
             } else {
-                classGroup.classList.add('hidden');
-                dobGroup.classList.add('hidden');
+                instituteName.classList.add('hidden');
+                instituteId.classList.add('hidden');
             }
         }
 
@@ -236,10 +270,11 @@
             const formData = {
                 role: document.getElementById('role').value,
                 name: document.getElementById('name').value,
+                teachertype: document.getElementById('teachertype').value,
                 surname: document.getElementById('surname').value,
-                institute_name: document.getElementById('institute-name').value,
+                institute_name: document.getElementById('institute-name') ? document.getElementById('institute-name').value : null,
                 class_name: document.getElementById('class').value,
-                unique_institute_id: document.getElementById('institute-id').value,
+                unique_institute_id: document.getElementById('institute-id') ? document.getElementById('institute-id').value : null,
                 date_of_birth: document.getElementById('date_of_birth').value,
                 email: document.getElementById('email').value,
                 password: password,

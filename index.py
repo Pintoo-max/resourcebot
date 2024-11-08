@@ -105,14 +105,14 @@ async def form_uplaod(
     grade: str = Form(...),
     subject: str = Form(...),
    # lesson: str = Form(...),
-    tasks: str = Form(...),
+    tasks: list[str] = Form(...),
     set_number: str = Form(None),  # Accept set number from form
     prev_years: str = Form(None),  # Accept set number from form
     file: UploadFile = File(...),
    ):
    
-    print(board)
-    print(medium)
+    print(f"Tasks selected: {tasks}")
+    print(file)
     print("This is subject")
     
   
@@ -325,7 +325,8 @@ async def form_uplaod(
         lesson = form_data.get('lesson')  # Fetch lesson from form data dynamically
     # Preprocess the document into sections
 
-        task_sections = preprocess_document(text)
+        task_sections = preprocess_document(text,tasks)
+        print(task_sections)
     
     # Process each section and store in the appropriate collection
         for task_type, lines in task_sections.items():
@@ -500,7 +501,11 @@ print("This is insert", inserted_files)
 async def store_task_data(task_type, questions_and_answers, collection, filename, new_data):
     global inserted_files  # Use global to access the dictionary outside the function
     global inserted_filenames  # Use global to access the list of inserted filenames
-    
+
+    # Clear the existing filenames to start fresh for each upload
+    inserted_files.clear()
+    inserted_filenames.append(filename)
+
     # Create a formatted dictionary for questions and answers
     formatted_questions_and_answers = {}
     for idx, qa in enumerate(questions_and_answers, start=1):
@@ -556,6 +561,10 @@ async def store_task_data(task_type, questions_and_answers, collection, filename
             print(f"Updated existing file: {filename}")
             print("All task types:", updated_file["tasks"])
             inserted_files[filename] = updated_file["tasks"]  # Store the filename and task types
+
+            # inserted_filenames.append(filename)  # Add to the list of inserted filenames
+            print_all_inserted_filenames()  # Print after each update
+            
             return {
                 "status": "1",
                 "message": f"File '{filename}' updated successfully.",
@@ -595,17 +604,16 @@ async def store_task_data(task_type, questions_and_answers, collection, filename
             print("All task types:", document["tasks"])
             inserted_files[filename] = document["tasks"]  # Store the filename and task types
 
-            # Append the filename to the list of inserted filenames
-            inserted_filenames.append(filename)
-
-            # # Optional: Print here as well if you want immediate feedback
-            # print_all_inserted_filenames()  # Print after each insertion
+            # # Append the filename to the list of inserted filenames
+            # inserted_filenames.append(filename)
+            print_all_inserted_filenames()  # Print after each insertion
             
             return {
                 "status": "1",
                 "message": f"File '{filename}' inserted successfully.",
-                "task_types": document["tasks"]  # Return the list of task types
+                "task_types": document["tasks"] # Return the list of task types
             }
+
         else:
             print(f"Failed to insert the new file: {filename}")
             return {
@@ -616,78 +624,194 @@ async def store_task_data(task_type, questions_and_answers, collection, filename
 # Function to print all inserted filenames as a single string
 def print_all_inserted_filenames():
     print("\n--- List of Inserted Filenames ---")
-    print(" ".join(inserted_filenames))  # Print all filenames separated by spaces
-    print("\n-----------------------------------")
-
-
+    print(" ".join(inserted_filenames))  # Print all filenames as a space-separated string
+    print("-----------------------------------")
+    inserted_files.clear()
 
 # Function to preprocess the document by dividing into sections
-def preprocess_document(file_content):
+# def preprocess_document(file_content):
+#     task_sections = {}
+#     current_task_type = None
+#     task_content = []
+    
+    
+#     for line in file_content.splitlines():
+#         line = line.strip()
+        
+#         # Identify task headers to define sections
+#         if re.match(r'Fill in the blanks', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'fill-in-the-blanks'
+#             task_content = []
+#         elif re.match(r'Name the following', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'name-the-following'
+#             task_content = []
+#         elif re.match(r'Answer in one Word', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'answer-in-one-word'
+#             task_content = []
+#         elif re.match(r'Match The Following', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'match-the-column'
+#             task_content = []
+#         elif re.match(r'Multiple Choice Question', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'multiple-choice-questions'
+#             task_content = []
+#         elif re.match(r'True or False', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'true-false'
+#             task_content = []
+#         elif re.match(r'Long Answers', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'long-answers'
+#             task_content = []
+#         elif re.match(r'Short Answers', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'short-answers'
+#             task_content = []
+#         elif re.match(r'Give Reasons', line, re.IGNORECASE):
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'give-reasons'
+#             task_content = []
+        
+#         # Append line to current task content
+#         if current_task_type:
+#             task_content.append(line)
+    
+#     # Add the last section
+#     if current_task_type:
+#         task_sections[current_task_type] = task_content
+    
+#     print("task section found ",task_sections)
+#     return task_sections
+
+# def preprocess_document(file_content, selected_tasks):
+#     task_sections = {}
+#     current_task_type = None
+#     task_content = []
+    
+#     for line in file_content.splitlines():
+#         line = line.strip()
+        
+#         # Check if the task header matches the selected tasks
+#         if re.match(r'Fill in the blanks', line, re.IGNORECASE) and 'fill-in-the-blanks' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'fill-in-the-blanks'
+#             task_content = []
+#         elif re.match(r'Name the following', line, re.IGNORECASE) and 'name-the-following' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'name-the-following'
+#             task_content = []
+#         elif re.match(r'Answer in one Word', line, re.IGNORECASE) and 'answer-in-one-word' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'answer-in-one-word'
+#             task_content = []
+#         elif re.match(r'Match The Following', line, re.IGNORECASE) and 'match-the-column' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'match-the-column'
+#             task_content = []
+#         elif re.match(r'Multiple Choice Question', line, re.IGNORECASE) and 'multiple-choice-questions' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'multiple-choice-questions'
+#             task_content = []
+#         elif re.match(r'True or False', line, re.IGNORECASE) and 'true-false' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'true-false'
+#             task_content = []
+#         elif re.match(r'Long Answers', line, re.IGNORECASE) and 'long-answers' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'long-answers'
+#             task_content = []
+#         elif re.match(r'Short Answers', line, re.IGNORECASE) and 'short-answers' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'short-answers'
+#             task_content = []
+#         elif re.match(r'Give Reasons', line, re.IGNORECASE) and 'give-reasons' in selected_tasks:
+#             if current_task_type:
+#                 task_sections[current_task_type] = task_content
+#             current_task_type = 'give-reasons'
+#             task_content = []
+        
+#         # Append line to current task content if the task type is selected
+#         if current_task_type:
+#             task_content.append(line)
+    
+#     # Add the last section
+#     if current_task_type:
+#         task_sections[current_task_type] = task_content
+    
+#     print("task sections found: ", task_sections)
+#     return task_sections
+
+
+def preprocess_document(file_content, selected_tasks):
     task_sections = {}
     current_task_type = None
     task_content = []
     
-    
+    # Define a dictionary mapping headers to task types
+    task_type_map = {
+        r'Fill in the blanks': 'fill-in-the-blanks',
+        r'Name the following': 'name-the-following',
+        r'Answer in one Word': 'answer-in-one-word',
+        r'Match The Following': 'match-the-column',
+        r'Multiple Choice Question': 'multiple-choice-questions',
+        r'True or False': 'true-false',
+        r'Long Answers': 'long-answers',
+        r'Short Answers': 'short-answers',
+        r'Give Reasons': 'give-reasons'
+    }
+
     for line in file_content.splitlines():
         line = line.strip()
         
-        # Identify task headers to define sections
-        if re.match(r'Fill in the blanks', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'fill-in-the-blanks'
-            task_content = []
-        elif re.match(r'Name the following', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'name-the-following'
-            task_content = []
-        elif re.match(r'Answer in one Word', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'answer-in-one-word'
-            task_content = []
-        elif re.match(r'Match The Following', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'match-the-column'
-            task_content = []
-        elif re.match(r'Multiple Choice Question', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'multiple-choice-questions'
-            task_content = []
-        elif re.match(r'True or False', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'true-false'
-            task_content = []
-        elif re.match(r'Long Answers', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'long-answers'
-            task_content = []
-        elif re.match(r'Short Answers', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'short-answers'
-            task_content = []
-        elif re.match(r'Give Reasons', line, re.IGNORECASE):
-            if current_task_type:
-                task_sections[current_task_type] = task_content
-            current_task_type = 'give-reasons'
-            task_content = []
+        # Check if the line is a header for any task type
+        matched_task_type = None
+        for pattern, task_type in task_type_map.items():
+            if re.match(pattern, line, re.IGNORECASE):
+                matched_task_type = task_type
+                break
         
-        # Append line to current task content
-        if current_task_type:
+        # If a new task type header is found and it's in selected_tasks
+        if matched_task_type:
+            # Store current task if it’s selected before switching types
+            if current_task_type and task_content and current_task_type in selected_tasks:
+                task_sections[current_task_type] = task_content
+            
+            # Start a new task section if it's in selected tasks
+            current_task_type = matched_task_type
+            task_content = [line] if matched_task_type in selected_tasks else []
+        
+        # Append line to the current task content if the task type is selected
+        elif current_task_type and task_content is not None:
             task_content.append(line)
     
-    # Add the last section
-    if current_task_type:
+    # Save the last section if it’s in selected tasks
+    if current_task_type and task_content and current_task_type in selected_tasks:
         task_sections[current_task_type] = task_content
     
-    print("task section found ",task_sections)
+    print("task sections found:", task_sections)
     return task_sections
+
 
 # Function to process each section dynamically
 def process_section(task_type, lines):
@@ -699,7 +823,6 @@ def process_section(task_type, lines):
             
            # Find the position of 'Answer:'
           
-            # Find the position of the question, ignoring the numbering
             # question_match = re.match(r'^\d+\.\s*(.*)', line)
             question_match = re.match(r'^(?:\d+[.:]\s*)?(.*)', line)
             if question_match:
@@ -777,26 +900,50 @@ def process_section(task_type, lines):
 
     elif task_type == 'multiple-choice-questions':
         current_question = {}
-        for line in lines: 
-            if re.match(r'^\d+[.:]\s*(.*)',line):  # Question Line
-            # if re.match(r'^(?:\d+[.:]\s*)?(.*)', line):  # Question Line
+        # for line in lines: 
+        #     if re.match(r'^\d+[.:]\s*(.*)',line):  # Question Line
+        #     # if re.match(r'^(?:\d+[.:]\s*)?(.*)', line):  # Question Line
+        #         if current_question:
+        #             processed_data.append(current_question)
+        #         question_text = re.match(r'^\d+[.:]\s*(.*)',line).group(1)  # Extract only the question text
+        #         current_question = {"question": question_text.strip(), "options": [], "answer": "", "explanation": ""}
+        #     elif re.match(r'^[A-Da-d]\)\s*(.*)$', line):  # Option Line
+        #         option_match = re.match(r'^[A-Da-d]\)\s*(.*)$', line)
+        #         current_question["options"].append(option_match.group(1).strip())
+        #     elif re.match(r'^Answer:\s*(.*)$', line):  # Answer Line
+        #         answer_match = re.match(r'^Answer:\s*(.*)$', line)
+        #         current_question["answer"] = answer_match.group(1).strip()
+        #     elif re.match(r'^Explanation:\s*(.*)$', line):  # Answer Line
+        #         explanation_match = re.match(r'^Explanation:\s*(.*)$', line)
+        #         current_question["explanation"] = explanation_match.group(1).strip()
+        
+        # if current_question:
+        #     processed_data.append(current_question)
+
+        for line in lines:
+            if re.match(r'^[A-Za-z].*[\?\:]$', line):  # Question Line (Detects a line ending with a question mark)
                 if current_question:
-                    processed_data.append(current_question)  
-                question_text = re.match(r'^\d+[.:]\s*(.*)', line).group(1)  # Extract only the question text
-                current_question = {"question": question_text.strip(), "options": [], "answer": "", "explanation": ""}
+                    processed_data.append(current_question)
+                question_text = line.strip()  # Question text without the number
+                current_question = {"question": question_text, "options": [], "answer": "", "explanation": ""}
+            
             elif re.match(r'^[A-Da-d]\)\s*(.*)$', line):  # Option Line
                 option_match = re.match(r'^[A-Da-d]\)\s*(.*)$', line)
-                current_question["options"].append(option_match.group(1).strip())
+                current_question["options"].append(option_match.group(0).strip())
+            
             elif re.match(r'^Answer:\s*(.*)$', line):  # Answer Line
                 answer_match = re.match(r'^Answer:\s*(.*)$', line)
-                current_question["answer"] = answer_match.group(1).strip()
-            elif re.match(r'^Explanation:\s*(.*)$', line):  # Answer Line
+                current_question["answer"] = answer_match.group(0).strip()
+            
+            elif re.match(r'^Explanation:\s*(.*)$', line):  # Explanation Line
                 explanation_match = re.match(r'^Explanation:\s*(.*)$', line)
-                current_question["explanation"] = explanation_match.group(1).strip()
-        
+                current_question["explanation"] = explanation_match.group(0).strip()
+
+        # Append the last question
         if current_question:
             processed_data.append(current_question)
 
+        
     elif task_type == 'true-false':
         current_statement = ""
         current_options = []
@@ -804,53 +951,58 @@ def process_section(task_type, lines):
         current_explanation = ""
 
         for i, line in enumerate(lines):
-            # Match the statement followed by choices r'^\d+\.\s*(.*)'
-            statement_match = re.match(r'^\d+\.\s*(.*)$', line)
+            line = line.strip()  # Clean up whitespace from the line
+            print(f"Processing line: {line}")  # Debug: Print the current line being processed
             
-            if statement_match:
-                if current_statement and current_answer and current_explanation:
+            # Match the statement (line starting with a character and ending with ".", "?" or ":")
+            if re.match(r'^[A-Za-z].*[\.\?:]$', line) and not line.startswith("Answer:") and not line.startswith("Explanation:"):
+                # If there is a previous statement with all necessary data, save it
+                if current_statement and current_options and current_answer and current_explanation:
                     processed_data.append({
                         "statement": current_statement.strip(),
-                        "options": current_options,  # Add the list of options here
+                        "options": current_options,
                         "answer": current_answer.strip(),
                         "explanation": current_explanation.strip()
                     })
+                    print("Appended a statement to processed_data")  # Debug: Confirm data appending
                 
-                current_statement = statement_match.group(1).strip()  # Start new statement
-                current_options = []  # Initialize as a list to store options
+                # Start a new statement
+                current_statement = line
+                current_options = []
                 current_answer = ""
                 current_explanation = ""
 
-            # Option Line (e.g., "A) True", "B) False")
-            option_match = re.match(r'^[A-Ba-b]\)\s*(.*)$', line)
-            if option_match:
-                current_options.append(option_match.group(1).strip())  # Append option to list
+            # Option lines, such as "A) True" or "B) False"
+            elif re.match(r'^[A-Ba-b]\)\s*(.*)$', line):
+                current_options.append(line.strip())
 
+            # Extract the answer line
             elif line.startswith("Answer:"):
-                current_answer = line[len("Answer:"):].strip()  # Extract the answer
-            
+                current_answer = line[len("Answer:"):].strip()
+
+            # Extract the explanation line
             elif line.startswith("Explanation:"):
-                current_explanation = line[len("Explanation:"):].strip()  # Extract the explanation
-            
-        # Append the last statement after the loop ends
-        if current_statement and current_answer and current_explanation:
+                current_explanation = line[len("Explanation:"):].strip()
+
+        # Append the final set if complete
+        if current_statement and current_options and current_answer and current_explanation:
             processed_data.append({
                 "statement": current_statement.strip(),
-                "options": current_options,  # Add the list of options here
+                "options": current_options,
                 "answer": current_answer.strip(),
                 "explanation": current_explanation.strip()
             })
 
-
+    
     elif task_type == 'long-answers' or task_type == 'short-answers':
         current_question = ""  # Track the current question
         current_answer = ""  # Track the current answer
-        for i, line in enumerate(lines):
-            
-            question_match = re.match(r'^\d*+\.\s*(.*)$', line)
+        for line in lines:
+        # Match a question line
+            question_match = re.match(r'^(?!Answer:)(.*)', line.strip())
             
             if question_match:
-                # If there was a previous question, save it with its answer
+                # If there was a previous question-answer, save it
                 if current_question and current_answer:
                     processed_data.append({
                         "question": current_question.strip(),
@@ -858,21 +1010,21 @@ def process_section(task_type, lines):
                     })
                 
                 # Start a new question
-                current_question = question_match.group(1).strip()
-                current_answer = ""  # Reset the current answer for the new question
-            
-            elif line.startswith("Answer:"):
-                # Append the answer, as it may be long or multiline
-                current_answer += line[len("Answer:"):].strip()
+                current_question = question_match.group(0).strip()
+                current_answer = ""  # Reset the answer for the new question
 
-        # Append the final question-answer pair after looping
+            # Match the answer line
+            elif line.startswith("Answer:"):
+                current_answer += line[len("Answer:"):].strip()  # Append the answer
+
+        # Append the final question-answer pair after the loop ends
         if current_question and current_answer:
             processed_data.append({
                 "question": current_question.strip(),
                 "answer": current_answer.strip()
             })
 
-   # print("processd data",processed_data)
+        print("the processed_data",processed_data)
     return processed_data 
 
 def extract_text_from_pdf(file_contents: bytes) -> str:
@@ -1412,11 +1564,8 @@ async def get_questions_and_answers(
         "medium": medium,
         "grade": grade,
         "subject": subject,
-        
         "tasks": tasks
     }
-
-   
 
     print("Query:", query)
 
@@ -1474,6 +1623,7 @@ class User(BaseModel):
     date_of_birth: str
     email: str
     password: str
+    teachertype: str
 
 class Board(BaseModel):
     boardName: str
@@ -1508,6 +1658,7 @@ async def register_user(user: User):
     user_profile = {
         "role": user.role,
         "name": user.name,
+        "teachertype": user.teachertype,
         "surname": user.surname,
         "institute_name": user.institute_name,
         "class_name": user.class_name,
@@ -1773,7 +1924,7 @@ def generate_unique_institute_id(length=5):
     return ''.join(random.choices(characters, k=length))
 
 class Institute(BaseModel):
-    instituteName: str    
+    instituteName: str   
 
 @app.post("/add_institute")
 async def institute_added(institute: Institute):

@@ -118,7 +118,7 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 750px) {
+        @media screen and (max-width: 600px) {
             body {
                 justify-content: center;
                 align-items: center;
@@ -165,52 +165,6 @@
                 font-size: 12px;
             }
         }
-
-        @media (max-width: 450px) {
-            body {
-                justify-content: center;
-                align-items: center;
-                height: auto;
-                min-height: 100vh;
-                padding: 15px 0;
-                background-image: linear-gradient(to right, #007bff, #00c6ff);
-            }
-
-            .container {
-                max-width: 80%;
-                padding: 10px;
-                border-radius: 6px;
-            }
-
-            h2 {
-                font-size: 20px;
-                margin-bottom: 15px;
-            }
-
-            label {
-                font-size: 14px;
-            }
-
-            input[type=text],
-            input[type=password],
-            select {
-                padding: 8px;
-                font-size: 14px;
-            }
-
-            button {
-                padding: 8px 10px;
-                font-size: 14px;
-            }
-
-            .container-footer a {
-                font-size: 14px;
-            }
-
-            .forgot-password a {
-                font-size: 12px;
-            }
-        }
     </style>
 </head>
 
@@ -227,7 +181,17 @@
                 <option value="2">Teacher</option>
             </select>
 
+            
             <div id="studentTeacherFields">
+                <div class="form-group hidden" id="teachertypeGroup">
+                    <label for="teachertype"><b><i class="fas fa-school"></i> Type</b></label>
+                    <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
+                    <select id="teachertype" name="teachertype" onchange="updateteacherForm()">
+                        <option value="select">Select type</option>
+                        <option value="registered">Registered</option>
+                        <option value="open">open</option>
+                    </select>
+                </div>
                 <div id="instField" class="hidden input-icon">
                     <i class="fas fa-id-badge"></i>
                     <label for="institute-id"><b>Institute ID</b></label>
@@ -293,17 +257,37 @@
             const passwordField = document.getElementById('passwordField');
             const registrationLink = document.getElementById('registrationLink');
             const emailField = document.getElementById('email');
+            const teachertypeGroup = document.getElementById('teachertypeGroup');
 
             // Check the role and update the form accordingly
             if (role === '1') {
                 document.getElementById('instField').style.display = 'none';
                 registrationLink.classList.add('hidden'); // Hide registration link for Admins
-            } else {
+                teachertypeGroup.classList.add('hidden');
+            } else if(role === '2'){
+                document.getElementById('instField').style.display = 'none';
+                teachertypeGroup.classList.remove('hidden');
+                registrationLink.classList.remove('hidden'); // Show registration link for Teachers and Students
+            }else {
                 document.getElementById('instField').style.display = 'block';
+                teachertypeGroup.classList.add('hidden');
                 registrationLink.classList.remove('hidden'); // Show registration link for Teachers and Students
             }
         }
 
+        function updateteacherForm() {
+            const teachertype = document.getElementById('teachertype').value;
+           // const instituteName = document.getElementById('institute_name');
+            const instituteId = document.getElementById('instField');
+
+            if (teachertype == 'registered') {
+               
+                document.getElementById('instField').style.display = 'block';
+            } else {
+               
+                document.getElementById('instField').style.display = 'none';
+            }
+        }
         async function handleLogin(event) {
             event.preventDefault();
             const role_id = document.getElementById('role').value;
@@ -359,7 +343,7 @@
             }
 
             // Validate institute ID only if the role is not Admin
-            if (role_id !== '1' && (!instituteId || instituteId.trim() === '')) {
+            if (role_id == '3' && (!instituteId || instituteId.trim() === '')) {
                 alert("Institute ID is required for Teachers and Students.");
                 return false;
             }
@@ -379,7 +363,7 @@
                 const loginSuccess = await performLogin(email, password, instituteId, role_id);
                 if (loginSuccess) {
                     alert("User Login Successfully");
-                    window.location.href = "/static/option_screen.html";
+                    window.location.href = "/static/example_screen.html";
                 }
                 else {
                     // This handles incorrect credentials or unregistered users

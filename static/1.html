@@ -183,7 +183,7 @@
             <label for="match-the-column">Match the Column</label>
         </div>
         <div class="task">
-            <input type="checkbox" id="give-reasons" name="tasks" value="give-scientific-reasons">
+            <input type="checkbox" id="give-reasons" name="tasks" value="give-reasons">
             <label for="give-reasons">Give Reasons</label>
         </div>
         <div class="task">
@@ -485,7 +485,7 @@
         event.preventDefault(); // Prevent the form from submitting the traditional way
 
         let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'UploadForm'
-        alert("this is form");
+        alert("Document is getting uploaded.....");
         try {
             const response = await fetch('/submit', {
                 method: 'POST',
@@ -494,6 +494,11 @@
 
             const result = await response.json(); // Parse the JSON response
 
+            // Clear any previous alert or message display
+            if (document.getElementById("message")) {
+                document.getElementById("message").textContent = ''; // Clear previous message content if using an HTML element
+            }
+            
             // Ensure the response is OK (status code 200-299)
             if (result && typeof result.status !== 'undefined') {
                 if (result.status == '1') {  // Check if the status is 1 (indicating success)

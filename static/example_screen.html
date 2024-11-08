@@ -12,20 +12,20 @@
 
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background-color: #f4f7f6;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            height: 100vh;
+            height: 85%;
             color: #333;
         }
 
         .container {
             display: flex;
-            width: 90%;
+            width: 85%;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -97,6 +97,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             flex-wrap: wrap;
+            margin-bottom: 20px;
+            /* Space below header */
         }
 
         .logo {
@@ -109,9 +111,9 @@
 
         .header h3 {
             margin: 0;
-            color: #4CAF50;
-            font-size: 36px;
-            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: blueviolet;
+            font-size: 24px;
+            font-family: Arial, Helvetica, sans-serif;
             flex-grow: 1;
             /* Makes the title take available space */
             text-align: center;
@@ -133,7 +135,7 @@
             border: 1px solid #e0e4e8;
             padding: 20px;
             border-radius: 8px;
-            height: 650px;
+            height: 750px;
             /* Adjusted height to 300px for visibility */
             background-color: #f7f9fa;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -265,6 +267,7 @@
 
         .form-group.task label {
             margin-left: 4px;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         .form-group.task input[type="checkbox"] {
@@ -277,11 +280,14 @@
             font-weight: bold;
             margin-bottom: 5px;
             display: inline-block;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         form {
             display: flex;
             flex-direction: column;
+            margin-top: 25px;
+            /* Space above form */
         }
 
         form p {
@@ -410,12 +416,48 @@
         span {
             font-size: 40px;
             font-weight: bold;
-            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-family: Arial, Helvetica, sans-serif;
             letter-spacing: 5px;
             color: #333;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
             padding: 10px;
             background: linear-gradient(90deg, #A7D3E0, #A0D9B5);
+        }
+
+        .button-options {
+            display: flex;
+            gap: 10px;
+            justify-content: space-around;
+            /* Evenly spaced buttons */
+            margin-bottom: 20px;
+            /* Space below buttons */
+        }
+
+        .option-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-button.selected {
+            background-color: #06402B;
+            /* Different color to indicate selection */
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .option-button:active {
+            transform: translateY(2px);
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-button:hover {
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4);
         }
 
 
@@ -512,7 +554,7 @@
                 font-size: medium;
                 /* Slightly reduce font size for smaller screens */
                 flex-grow: 1;
-                font-family: Georgia, 'Times New Roman', Times, serif;
+                font-family: Arial, Helvetica, sans-serif;
                 text-align: left;
                 /* Center-align text */
                 margin: 0;
@@ -530,7 +572,7 @@
         }
 
         /* Adjustments for screens smaller than 450px */
-        @media (max-width: 450px) {
+        @media (max-width: 400px) {
 
             /* General mobile adjustments for 450px and below */
             .container {
@@ -594,6 +636,45 @@
                 margin-bottom: 10px;
                 /* Add space below the image when stacked */
 
+            /* Adjust button options for small screens */
+            .button-options {
+                display: flex;
+                flex-direction: column;
+                /* Stack buttons vertically */
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .button-options .option-button {
+                width: 100%;
+                /* Make buttons take full width */
+                padding: 12px;
+                /* Adjust padding for touch targets */
+                margin-bottom: 10px;
+                /* Add space between buttons */
+                font-size: 14px;
+                /* Adjust font size */
+            }
+
+            .button-options .option-button:last-child {
+                margin-bottom: 0;
+                /* Remove bottom margin for the last button */
+            }
+
+            /* Adjust button appearance on small screens */
+            .option-button {
+                font-size: 16px;
+                /* Slightly smaller font size for mobile */
+                padding: 10px;
+            }
+
+            /* Optionally, adjust the "selected" state if needed */
+            .option-button.selected {
+                background-color: #4CAF50;
+                /* Example background change */
+                color: white;
+            }
+
             span {
                 font-size: 24px;
                 letter-spacing: 2px;
@@ -606,7 +687,7 @@
                 font-size: medium;
                 /* Slightly reduce font size for smaller screens */
                 flex-grow: 1;
-                font-family: Georgia, 'Times New Roman', Times, serif;
+                font-family: Arial, Helvetica, sans-serif;
                 text-align: left;
                 /* Center-align text */
                 margin: 0;
@@ -648,32 +729,35 @@
             <div class="header">
                 <!-- Image -->
                 <img src="/images/atslogo.jpeg" alt="Logo" class="logo">
-
                 <!-- Title -->
-                <h3>CONTENTS</h3>
-
+                <h3>STUDY CONTENT</h3>
                 <!-- Logout Icon -->
                 <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
             </div>
-            <br>
+
+
+            <div class="button-options">
+                <button id="worksheetButton" class="option-button selected"
+                    onclick="selectScreenType('worksheet')">Worksheet</button>
+                <button id="questionBankButton" class="option-button"
+                    onclick="selectScreenType('sample-paper')">Question Paper</button>
+                <button id="textbookSolutionsButton" class="option-button"
+                    onclick="selectScreenType('textbook-solutions')">Textbook Solutions</button>
+            </div>
+
+
             <form onsubmit="fetchQuestionsAndAnswers(); return false;">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="board" class="required">Board</label>
                         <select id="board" name="board" required>
                             <option value="select">Select</option>
-                            <!-- <option value="MSB">State Board</option>
-                            <option value="CB">CBSE</option>
-                            <option value="IB">ICSE</option> -->
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="medium">Medium</label>
                         <select id="medium" name="medium">
                             <option value="select">Select</option>
-                            <!-- <option value="en_m">English</option>
-                            <option value="hi_m">Hindi</option>
-                            <option value="ma_m">Marathi</option> -->
                         </select>
                     </div>
                 </div>
@@ -683,12 +767,6 @@
                         <label for="grade" class="required">Class</label>
                         <select id="grade" name="grade" required>
                             <option value="select">Select</option>
-                            <!-- <option value="5">Class 5</option>
-                            <option value="6">Class 6</option>
-                            <option value="7">Class 7</option>
-                            <option value="8">Class 8</option>
-                            <option value="9">Class 9</option>
-                            <option value="10">Class 10</option> -->
                         </select>
                     </div>
 
@@ -708,8 +786,7 @@
                         </select>
                     </div>
                 </div>
-
-
+                <br>
                 <label for="task" class="required">Select the Question Type</label>
                 <div class="task">
                     <input type="checkbox" id="fill-in-the-blanks" name="tasks" value="fill-in-the-blanks">
@@ -894,6 +971,7 @@
             fetchClasses();
             //fetchSubjects();
             //fetchTopics();
+            document.getElementById('board').addEventListener('change', fetchMediums);
             document.getElementById('board').addEventListener('change', handleBoardChange);
             // document.getElementById('medium').addEventListener('change', fetchSubjects);
             // document.getElementById('grade').addEventListener('change', fetchSubjects);
@@ -912,7 +990,7 @@
             var boardSelect = document.getElementById('board');
             var mediumSelect = document.getElementById('medium');
 
-            if (boardSelect.value === 'IB' || boardSelect.value === 'CB') {
+            if (boardSelect.value === 'CBSE' || boardSelect.value === 'ICSE') {
                 mediumSelect.disabled = true;
                 mediumSelect.value = 'select'; // Reset medium select
             } else {
@@ -931,29 +1009,29 @@
 
         function toggleCheckboxes(mainCheckbox) {
             const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#text-book-solution)');
-            otherCheckboxes.forEach(checkbox => {
-                if (mainCheckbox.checked) {
-                    checkbox.disabled = true;  // Disable the other checkboxes
+            if (mainCheckbox.checked) {
+                otherCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = false;  // Disable the other checkboxes
                     checkbox.checked = false;  // Uncheck the other checkboxes
-                } else {
-                    checkbox.disabled = false;  // Enable the other checkboxes
-                }
-            });
-
+                });
+            } else {
+                otherCheckboxes.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+            }
         }
 
-        // Function to toggle checkboxes (if needed in the future)
+        // Function to toggle checkboxes for sample paper solution
         function toggleSamplePaper(mainCheckbox) {
             const otherCheckboxes1 = document.querySelectorAll('input[type="checkbox"]:not(#sample-paper-solution)');
             if (mainCheckbox.checked) {
                 otherCheckboxes1.forEach(checkbox => {
                     checkbox.checked = false;
-                    checkbox.disabled = true;
+                    checkbox.disabled = false; // Disable the other checkboxes
                 });
             } else {
-                otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);
+                otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
             }
         }
+
 
         // Initialize global mapping objects
         const mappings = {
@@ -969,7 +1047,7 @@
                 .then(response => response.json())
                 .then(boards => {
                     const boardInput = document.getElementById('board');
-                    boardInput.innerHTML = '<option value="">Select Board</option>';
+                    boardInput.innerHTML = '<option value="select">Select Board</option>';
 
                     // Populate the board dropdown
                     boards.forEach(boardItem => {
@@ -991,7 +1069,7 @@
                 .then(response => response.json())
                 .then(mediums => {
                     const mediumInput = document.getElementById('medium');
-                    mediumInput.innerHTML = '<option value="">Select Medium</option>';
+                    mediumInput.innerHTML = '<option value="select">Select Medium</option>';
 
                     // Populate the medium dropdown
                     mediums.forEach(mediumItem => {
@@ -1012,7 +1090,7 @@
                 .then(response => response.json())
                 .then(classes => {
                     const classInput = document.getElementById('grade');
-                    classInput.innerHTML = '<option value="">Select Class</option>';
+                    classInput.innerHTML = '<option value="select">Select Class</option>';
 
                     // Populate the class dropdown
                     classes.forEach(classItem => {
@@ -1089,7 +1167,7 @@
                     const subjectInput = document.getElementById('subject');
 
                     // Clear previous options
-                    subjectInput.innerHTML = '<option value="">Select Subject</option>';
+                    subjectInput.innerHTML = '<option value="select">Select Subject</option>';
 
                     // Iterate through the array and create option elements
                     subject.forEach(subItem => {
@@ -1185,7 +1263,7 @@
                     const topicInput = document.getElementById('lesson');
 
                     // Clear previous options
-                    topicInput.innerHTML = '<option value="">Select Topic</option>';
+                    topicInput.innerHTML = '<option value="select">Select Topic</option>';
 
                     // Iterate through the array and create option elements
                     topics.forEach(topicItem => {
@@ -1685,11 +1763,11 @@
         });*/
 
         function confirmLogout() {
-            const confirmLogout = confirm("Are you sure you want to go back?");
+            const confirmLogout = confirm("Are you sure you want to logout?");
             if (confirmLogout) {
                 // Redirect to login page
                 // window.location.href = '/static/option_screen.html'; 
-                window.location.href = '/static/option_screen.html';// Change 'login.html' to your actual login page URL
+                window.location.href = '/static/login.html';// Change 'login.html' to your actual login page URL
             }
         }
 
@@ -2061,91 +2139,222 @@
         // window.onload = toggleCheckboxVisibility;
 
 
-        // Get the screen type from the URL query parameters
+        // // Get the screen type from the URL query parameters
+        // function getScreenType() {
+        //     const selectedOption = document.querySelector('input[name="option"]:checked');
+        //     return selectedOption ? selectedOption.value : null;
+        // }
+
+        // function toggleCheckboxVisibility() {
+        //     const screenType = getScreenType();
+
+        //     // Get checkboxes by their IDs
+        //     const worksheetCheckboxes = [
+        //         document.getElementById('fill-in-the-blanks'),
+        //         document.getElementById('match-the-column'),
+        //         document.getElementById('name-the-following'),
+        //         document.getElementById('give-reasons'),
+        //         document.getElementById('answer-in-one-word'),
+        //         document.getElementById('short-answers'),
+        //         document.getElementById('long-answers'),
+        //         document.getElementById('multiple-choice-questions'),
+        //         document.getElementById('true-false')
+        //     ];
+        //     const textbookSolutionsCheckbox = document.getElementById('text-book-solution');
+        //     const samplePaperCheckbox = document.getElementById('sample-paper-solution');
+
+        //     // Get the new buttons
+        //     const textbookSolutionBtn = document.getElementById('textbookSolutionBtn');
+        //     const samplePaperBtn = document.getElementById('samplePaperBtn');
+        //     const addQuestionBtn = document.getElementById('addQuestionBtn');
+        //     const addAnswerBtn = document.getElementById('addAnswerBtn');
+
+        //     // Show/hide checkboxes based on the screen type
+        //     if (screenType === 'worksheet') {
+        //         worksheetCheckboxes.forEach(checkbox => {
+        //             checkbox.parentElement.style.display = 'flex'; // Ensure it remains a flex container
+        //             checkbox.disabled = false; // Enable the checkboxes
+        //             const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+        //             if (limitField) {
+        //                 limitField.style.width = '60px'; // Set fixed width (adjust as necessary)
+        //                 limitField.disabled = false; // Enable limit field
+        //             }
+        //         });
+        //         textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions checkbox
+        //         samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper checkbox
+
+        //         // Hide Textbook Solutions and Sample Paper buttons
+        //         textbookSolutionBtn.style.display = 'none';
+        //         samplePaperBtn.style.display = 'none';
+        //         addQuestionBtn.style.display = 'inline-block';
+        //         addAnswerBtn.style.display = 'inline-block';
+        //     }
+        //     else if (screenType === 'textbook-solutions') {
+        //         // Show only the textbook solutions checkbox, hide others
+        //         worksheetCheckboxes.forEach(checkbox => {
+        //             checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
+        //             checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+        //             const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+        //             if (limitField) {
+        //                 limitField.disabled = true; // Disable limit field for worksheet checkboxes
+        //             }
+        //         });
+        //         textbookSolutionsCheckbox.parentElement.style.display = 'flex'; // Show textbook solutions checkbox
+        //         samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper
+
+        //         // Show Textbook Solution button, hide Sample Paper button
+        //         textbookSolutionBtn.style.display = 'inline-block';
+        //         samplePaperBtn.style.display = 'none';
+        //         addQuestionBtn.style.display = 'none';
+        //         addAnswerBtn.style.display = 'none';
+        //     }
+        //     else if (screenType === 'sample-paper') {
+        //         // Show only the sample paper checkbox, hide sothers
+        //         worksheetCheckboxes.forEach(checkbox => {
+        //             checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
+        //             checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+        //             const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+        //             if (limitField) {
+        //                 limitField.disabled = true; // Disable limit field for worksheet checkboxes
+        //             }
+        //         });
+        //         textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions
+        //         samplePaperCheckbox.parentElement.style.display = 'flex'; // Show sample paper checkbox
+
+        //         const lessonField = document.getElementById('lesson');
+        //         if (lessonField) {
+        //             lessonField.disabled = true;
+        //         }
+        //         // Hide Textbook Solution button, show Sample Paper button
+        //         textbookSolutionBtn.style.display = 'none';
+        //         addQuestionBtn.style.display = 'none';
+        //         addAnswerBtn.style.display = 'none';
+        //         samplePaperBtn.style.display = 'inline-block';
+        //     }
+        // }
+
+        // // Call the function when the page loads
+        // window.onload = toggleCheckboxVisibility;
+
+        // Define the checkboxes array at the top of your script
+        const worksheetCheckboxes = [
+            document.getElementById('fill-in-the-blanks'),
+            document.getElementById('match-the-column'),
+            document.getElementById('name-the-following'),
+            document.getElementById('give-reasons'),
+            document.getElementById('answer-in-one-word'),
+            document.getElementById('short-answers'),
+            document.getElementById('long-answers'),
+            document.getElementById('multiple-choice-questions'),
+            document.getElementById('true-false')
+        ];
+        const textbookSolutionsCheckbox = document.getElementById('text-book-solution');
+        const samplePaperCheckbox = document.getElementById('sample-paper-solution');
+
+        // Define buttons here to make them accessible in the toggle function
+        const textbookSolutionBtn = document.getElementById('textbookSolutionBtn');
+        const samplePaperBtn = document.getElementById('samplePaperBtn');
+        const addQuestionBtn = document.getElementById('addQuestionBtn');
+        const addAnswerBtn = document.getElementById('addAnswerBtn');
+
+        let selectedScreenType = 'worksheet'; // Default selection
+
+        function selectScreenType(type) {
+            selectedScreenType = type;
+            toggleCheckboxVisibility();
+            resetFormFields();  // Reset the form fields on screen type change
+            clearOutput();      // Clear the output section
+            fetchQuestionsAndAnswers();  // Fetch new output based on the selected screen type
+        }
+
+        function resetFormFields() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+            document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+            document.querySelectorAll('select').forEach(select => select.value = 'select');
+        }
+
+        function clearOutput() {
+            // document.getElementById('questionsDiv').innerHTML = '';
+            // document.getElementById('answersDiv').innerHTML = '';
+            document.getElementById('data').innerHTML = '';
+        }
+
         function getScreenType() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('screen'); // Returns 'worksheet', 'sample-paper', or 'textbook-solutions'
+            return selectedScreenType;
         }
 
         function toggleCheckboxVisibility() {
             const screenType = getScreenType();
 
-            // Get checkboxes by their IDs
-            const worksheetCheckboxes = [
-                document.getElementById('fill-in-the-blanks'),
-                document.getElementById('match-the-column'),
-                document.getElementById('name-the-following'),
-                document.getElementById('give-reasons'),
-                document.getElementById('answer-in-one-word'),
-                document.getElementById('short-answers'),
-                document.getElementById('long-answers'),
-                document.getElementById('multiple-choice-questions'),
-                document.getElementById('true-false')
-            ];
-            const textbookSolutionsCheckbox = document.getElementById('text-book-solution');
-            const samplePaperCheckbox = document.getElementById('sample-paper-solution');
+            // Remove "selected" class from all buttons
+            document.getElementById("worksheetButton").classList.remove("selected");
+            document.getElementById("questionBankButton").classList.remove("selected");
+            document.getElementById("textbookSolutionsButton").classList.remove("selected");
 
-            // Get the new buttons
-            const textbookSolutionBtn = document.getElementById('textbookSolutionBtn');
-            const samplePaperBtn = document.getElementById('samplePaperBtn');
-            const addQuestionBtn = document.getElementById('addQuestionBtn');
-            const addAnswerBtn = document.getElementById('addAnswerBtn');
-
-            // Show/hide checkboxes based on the screen type
-            if (screenType === 'worksheet') {
+            // Add "selected" class to the active button
+            if (screenType === "worksheet") {
+                document.getElementById("worksheetButton").classList.add("selected");
                 worksheetCheckboxes.forEach(checkbox => {
-                    checkbox.parentElement.style.display = 'flex'; // Ensure it remains a flex container
-                    checkbox.disabled = false; // Enable the checkboxes
+                    checkbox.parentElement.style.display = 'flex';
+                    checkbox.disabled = false;
                     const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
                     if (limitField) {
-                        limitField.style.width = '60px'; // Set fixed width (adjust as necessary)
-                        limitField.disabled = false; // Enable limit field
+                        limitField.style.width = '60px';
+                        limitField.disabled = false;
                     }
                 });
-                textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions checkbox
-                samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper checkbox
+                textbookSolutionsCheckbox.parentElement.style.display = 'none';
+                samplePaperCheckbox.parentElement.style.display = 'none';
 
-                // Hide Textbook Solutions and Sample Paper buttons
                 textbookSolutionBtn.style.display = 'none';
                 samplePaperBtn.style.display = 'none';
+                addQuestionBtn.style.display = 'inline-block';
+                addAnswerBtn.style.display = 'inline-block';
+
+                const lessonField = document.getElementById('lesson');
+                if (lessonField) {
+                    lessonField.disabled = false;
+                }
             }
-            else if (screenType === 'textbook-solutions') {
-                // Show only the textbook solutions checkbox, hide others
+            else if (screenType === "textbook-solutions") {
+                document.getElementById("textbookSolutionsButton").classList.add("selected");
                 worksheetCheckboxes.forEach(checkbox => {
-                    // checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
-                    checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+                    checkbox.parentElement.style.display = 'none';
+                    checkbox.disabled = false;
                     const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
                     if (limitField) {
-                        limitField.disabled = true; // Disable limit field for worksheet checkboxes
+                        limitField.disabled = true;
                     }
                 });
-                textbookSolutionsCheckbox.parentElement.style.display = 'flex'; // Show textbook solutions checkbox
-                samplePaperCheckbox.parentElement.style.display = 'none'; // Hide sample paper
-
-                // Show Textbook Solution button, hide Sample Paper button
+                textbookSolutionsCheckbox.parentElement.style.display = 'flex';
+                samplePaperCheckbox.parentElement.style.display = 'none';
                 textbookSolutionBtn.style.display = 'inline-block';
                 samplePaperBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
+
+                const lessonField = document.getElementById('lesson');
+                if (lessonField) {
+                    lessonField.disabled = false;
+                }
+
             }
-            else if (screenType === 'sample-paper') {
-                // Show only the sample paper checkbox, hide sothers
+            else if (screenType === "sample-paper") {
+                document.getElementById("questionBankButton").classList.add("selected");
                 worksheetCheckboxes.forEach(checkbox => {
-                    // checkbox.parentElement.style.display = 'none'; // Hide all worksheet checkboxes
-                    checkbox.disabled = true; // Disable the checkboxes to indicate inactivity
+                    checkbox.parentElement.style.display = 'none';
+                    checkbox.disabled = false;
                     const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
                     if (limitField) {
-                        limitField.disabled = true; // Disable limit field for worksheet checkboxes
+                        limitField.disabled = true;
                     }
                 });
-                textbookSolutionsCheckbox.parentElement.style.display = 'none'; // Hide textbook solutions
-                samplePaperCheckbox.parentElement.style.display = 'flex'; // Show sample paper checkbox
-
+                textbookSolutionsCheckbox.parentElement.style.display = 'none';
+                samplePaperCheckbox.parentElement.style.display = 'flex';
                 const lessonField = document.getElementById('lesson');
                 if (lessonField) {
                     lessonField.disabled = true;
                 }
-                // Hide Textbook Solution button, show Sample Paper button
                 textbookSolutionBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
@@ -2153,9 +2362,8 @@
             }
         }
 
-        // Call the function when the page loads
+        // Call the function on page load to set the default selected button
         window.onload = toggleCheckboxVisibility;
-
     </script>
 
     <script>
@@ -2181,7 +2389,7 @@
 
             // Ensure there are selected tasks
             if (selectedTasks.length === 0) {
-                dataContainer.innerHTML = '<p>No tasks selected.</p>';
+                dataContainer.innerHTML = '<p>Fetched Questions And Answers will appear here .....</p>';
                 return;
             }
 
@@ -2355,27 +2563,7 @@
 
                     }
                     else {
-                        if (board === '') {
-                            alert('Please select a valid board');
-                        }
-                        else if (medium === '') {
-                            alert('Please select a valid medium');
-                        }
-                        else if (grade === '') {
-                            alert('Please select a valid grade');
-                        }
-                        else if (subject === '') {
-                            alert('Please select a valid subject');
-                        }
-                        else if (lesson ===  '') {
-                            alert('Please select a valid lesson/chapter');
-                        }
-                        // else if (board == '' || medium == '' || grade == '' || subject == '' || lesson == '' || tasks == '') {
-                        //     console.error('Please select all required fields');
-                        // }
-                        else {
-                            alert("You need to select all the required fields.");
-                        }
+                        alert("You need to select all the required fields.");
                     }
 
                 } catch (error) {
