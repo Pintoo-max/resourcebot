@@ -460,6 +460,27 @@
             box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4);
         }
 
+        .loading {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+
 
         /* General mobile adjustments for 750px and below */
         @media (max-width: 750px) {
@@ -1888,36 +1909,21 @@
             const subject = document.getElementById('subject').value;
             const lesson = document.getElementById('lesson').value;
 
-            // Define a function to handle the fetching and displaying of questions and answers
+            let missingFields = [];
 
-            // // Validate required fields
-            // if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select') {
-            //     console.error('Please select all required fields');
-            //     return;
-            // }
+            // Check each field and add the field name to the missingFields array if not selected
+            if (board === 'select') missingFields.push("Board");
+            if (medium === 'select') missingFields.push("Medium");
+            if (grade === 'select') missingFields.push("Class");
+            if (subject === 'select') missingFields.push("Subject");
+            if (lesson === 'select') missingFields.push("Chapter/Topic");
 
-            if (board === 'select') {
-                console.error('Please select a valid board');
-            }
-            if (medium === 'select') {
-                console.error('Please select a valid medium');
-            }
-            if (grade === 'select') {
-                console.error('Please select a valid grade');
-            }
-            if (subject === 'select') {
-                console.error('Please select a valid subject');
-            }
-            if (lesson === 'select') {
-                console.error('Please select a valid lesson');
-            }
-
-            // Stop execution if any field is invalid
-            if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select') {
-                console.error('Please select all required fields');
+            // Show alert if any field is missing
+            if (missingFields.length > 0) {
+                alert("Please select the following fields: " + missingFields.join(", "));
+                console.error('Missing fields:', missingFields);
                 return;
             }
-
 
             let heading = false;
 
@@ -1934,6 +1940,10 @@
             });
             console.log("This is query:", queryParams.toString());
 
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading');
+            dataContainer.appendChild(loadingDiv);
+
             try {
                 const response = await fetch(`/get_textbook-solution?${queryParams.toString()}`);
                 // console.log("Response:", response);
@@ -1942,13 +1952,15 @@
 
 
                 if (response.ok) {
+                    dataContainer.removeChild(loadingDiv);
+
                     const documentData = result.document;
                     const baseUrl = window.location.origin + "/";
                     console.log('path', "upload/textbook_pdf/" + documentData.filename);
                     var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
                     console.log("upload path", pathname);
                     // Get the element with the id "data"
-                    const dataContainer = document.getElementById('data');
+                    // const dataContainer = document.getElementById('data');
 
                     // Clear the existing content in the data container
                     dataContainer.innerHTML = '';
@@ -1976,11 +1988,14 @@
 
                 }
                 else {
+                    console.log("No document found:", result);
                     alert("No questions and answers found for selected tasks");
                 }
 
             } catch (error) {
-                console.error("Error fetching data:", error);
+                dataContainer.removeChild(loadingDiv);
+                console.error('Error fetching textbook solution:', error);
+                alert("Failed to fetch data. Please try again.");
             }
         }
 
@@ -1994,10 +2009,19 @@
             const subject = document.getElementById('subject').value;
 
             // Define a function to handle the fetching and displaying of questions and answers
+            let missingFields = [];
 
-            // Validate required fields
-            if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select') {
-                console.error('Please select all required fields');
+            // Check each field and add the field name to the missingFields array if not selected
+            if (board === 'select') missingFields.push("Board");
+            if (medium === 'select') missingFields.push("Medium");
+            if (grade === 'select') missingFields.push("Class");
+            if (subject === 'select') missingFields.push("Subject");
+            //if (lesson === 'select') missingFields.push("Chapter/Topic");
+
+            // Show alert if any field is missing
+            if (missingFields.length > 0) {
+                alert("Please select the following fields: " + missingFields.join(", "));
+                console.error('Missing fields:', missingFields);
                 return;
             }
 
@@ -2015,6 +2039,10 @@
             });
             console.log("This is query:", queryParams.toString());
 
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading');
+            dataContainer.appendChild(loadingDiv);
+
             try {
                 const response = await fetch(`/get_SamplePaper-solution?${queryParams.toString()}`);
                 // console.log("Response:", response);
@@ -2022,6 +2050,7 @@
                 console.log("Results: ", result);
 
                 if (response.ok) {
+                    dataContainer.removeChild(loadingDiv);
                     const documentsArray = result.document;
 
                     if (!heading) {
@@ -2064,6 +2093,7 @@
                 }
 
             } catch (error) {
+                dataContainer.removeChild(loadingDiv);
                 console.error("Error fetching data:", error);
             }
         }
@@ -2389,7 +2419,7 @@
 
             // Ensure there are selected tasks
             if (selectedTasks.length === 0) {
-                dataContainer.innerHTML = '<p>Fetched Questions And Answers will appear here .....</p>';
+                dataContainer.innerHTML = '<p style="color: #28a745; font-size: 18px; font-weight: bold;">Fetched Questions And Answers will appear here .....</p>';
                 return;
             }
 
@@ -2436,6 +2466,22 @@
                 //     alert('Please select a valid lesson');
                 // }
 
+                let missingFields = [];
+
+                // Check each field and add the field name to the missingFields array if not selected
+                if (board === 'select') missingFields.push("Board");
+                if (medium === 'select') missingFields.push("Medium");
+                if (grade === 'select') missingFields.push("Class");
+                if (subject === 'select') missingFields.push("Subject");
+                if (lesson === 'select') missingFields.push("Chapter/Topic");
+
+                // Show alert if any field is missing
+                if (missingFields.length > 0) {
+                    alert("Please select the following fields: " + missingFields.join(", "));
+                    console.error('Missing fields:', missingFields);
+                    return;
+                }
+
                 // Construct the query string
                 const queryParams = new URLSearchParams({
                     board: board,
@@ -2448,11 +2494,16 @@
                 });
                 console.log("This is query:", queryParams.toString());
 
+                const loadingDiv = document.createElement('div');
+                loadingDiv.classList.add('loading');
+                dataContainer.appendChild(loadingDiv);
+
                 try {
                     const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
                     const result = await response.json();
 
                     if (response.ok && result.questions_and_answers) {
+                        dataContainer.removeChild(loadingDiv);
                         const questionsAndAnswers = result.questions_and_answers;
 
                         // Calculate how many results we can still take before reaching 25
@@ -2567,6 +2618,7 @@
                     }
 
                 } catch (error) {
+                    dataContainer.removeChild(loadingDiv);
                     console.error("Error fetching data:", error);
                 }
             };

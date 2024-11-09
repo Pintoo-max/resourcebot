@@ -41,6 +41,7 @@ institute_collection = db['institute']
 class_collection = db['class']
 subject_collection = db['subject']
 topic_collection = db['topic']
+# user_collection = db['user_counter']
 
 # Secret key for signing sessions
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
@@ -921,23 +922,30 @@ def process_section(task_type, lines):
         #     processed_data.append(current_question)
 
         for line in lines:
-            if re.match(r'^[A-Za-z].*[\?\:]$', line):  # Question Line (Detects a line ending with a question mark)
+            if re.match(r'^[A-Za-zअ-ह"].*[\?\:]$', line) and not line.startswith("Answer:") and not line.startswith("Explanation:"): # Question Line (Detects a line ending with a question mark)
                 if current_question:
                     processed_data.append(current_question)
                 question_text = line.strip()  # Question text without the number
                 current_question = {"question": question_text, "options": [], "answer": "", "explanation": ""}
             
             elif re.match(r'^[A-Da-d]\)\s*(.*)$', line):  # Option Line
-                option_match = re.match(r'^[A-Da-d]\)\s*(.*)$', line)
-                current_question["options"].append(option_match.group(0).strip())
+                if current_question:
+                    option_match = re.match(r'^[A-Da-d]\)\s*(.*)$', line)
+                    current_question["options"].append(option_match.group(0).strip())
             
             elif re.match(r'^Answer:\s*(.*)$', line):  # Answer Line
-                answer_match = re.match(r'^Answer:\s*(.*)$', line)
-                current_question["answer"] = answer_match.group(0).strip()
+                if current_question:
+                    answer_match = re.match(r'^Answer:\s*(.*)$', line)
+                    current_question["answer"] = answer_match.group(0).strip()
             
             elif re.match(r'^Explanation:\s*(.*)$', line):  # Explanation Line
-                explanation_match = re.match(r'^Explanation:\s*(.*)$', line)
-                current_question["explanation"] = explanation_match.group(0).strip()
+                if current_question:
+                    explanation_match = re.match(r'^Explanation:\s*(.*)$', line)
+                    current_question["explanation"] = explanation_match.group(0).strip()
+            
+            # elif re.match(r'^["]', line):  # Line starts with a quotation mark
+            #     if current_question:  # Ensure there's an active question
+            #         current_question["question"] += " " + line.strip()  
 
         # Append the last question
         if current_question:
@@ -955,7 +963,7 @@ def process_section(task_type, lines):
             print(f"Processing line: {line}")  # Debug: Print the current line being processed
             
             # Match the statement (line starting with a character and ending with ".", "?" or ":")
-            if re.match(r'^[A-Za-z].*[\.\?:]$', line) and not line.startswith("Answer:") and not line.startswith("Explanation:"):
+            if re.match(r'^[A-Za-zअ-ह"].*[\.\?:]$', line) and not line.startswith("Answer:") and not line.startswith("Explanation:"):
                 # If there is a previous statement with all necessary data, save it
                 if current_statement and current_options and current_answer and current_explanation:
                     processed_data.append({
@@ -1628,6 +1636,14 @@ class User(BaseModel):
 class Board(BaseModel):
     boardName: str
    
+# async def get_next_user_id():
+#     counter = await db.user_counter.find_one_and_update(
+#         {"_id": "user_id"},
+#         {"$inc": {"seq": 1}},
+#         upsert=True,
+#         return_document=True
+#     )
+#     return counter['seq']
 
 def get_role_id(role: str):
     """Assign role_id based on the user's role."""
@@ -1646,6 +1662,7 @@ def get_role_id(role: str):
 #         content = f.read()s
 #         return content.decode('utf-8')
 
+
 @app.post("/register")
 async def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
@@ -1654,8 +1671,11 @@ async def register_user(user: User):
     role_id = get_role_id(user.role)
     print(role_id)
     
+    # user_id = await get_next_user_id()
+    
     # Create user profile data
     user_profile = {
+        # "user_id": user_id,
         "role": user.role,
         "name": user.name,
         "teachertype": user.teachertype,
@@ -1669,6 +1689,7 @@ async def register_user(user: User):
 
     # Create auth data
     auth_data = {
+        # "user_id": user_id,
         "role": user.role,
         "email": user.email,
         "password": hashed_password,
@@ -1676,7 +1697,9 @@ async def register_user(user: User):
         "unique_institute_id": user.unique_institute_id
     }
 
-    existing_user = await profiles_collection.find_one({"role": user.role,
+    existing_user = await profiles_collection.find_one({
+        # "user_id": user_id,
+                                                        "role": user.role,
                                                         "email": user.email,
                                                         "class_name":user.class_name,
                                                         "unique_institute_id": user.unique_institute_id,
