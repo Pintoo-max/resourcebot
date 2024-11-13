@@ -442,7 +442,7 @@ body {
     padding-bottom: 8px;
 }
 
-.board-list table,
+/* .board-list table,
 .medium-list table,
 .institute-list table,
 .class-list table,
@@ -497,6 +497,152 @@ body {
 .topic-list table tbody tr:hover {
     background-color: #f1f1f1;
     cursor: pointer;
+}
+
+.subject-list-container table.dataTable thead th{
+    background-color: #007bff;
+} */
+
+/* Container styling for responsive behavior */
+.table-responsive {
+    overflow-x: auto;
+    margin: 0;
+    padding: 10px;
+}
+
+/* Basic table styling */
+#subject-datatable,
+#board-datatable ,
+#medium-datatable,
+#class-datatable,
+#institute-datatable,
+#topic-datatable {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Header styling */
+#subject-datatable thead th,
+#board-datatable thead th,
+#medium-datatable thead th,
+#class-datatable thead th,
+#institute-datatable thead th,
+#topic-datatable thead th {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+}
+
+/* Table rows styling */
+#subject-datatable tbody tr,
+#board-datatable tbody tr,
+#medium-datatable tbody tr,
+#class-datatable tbody tr,
+#institute-datatable tbody tr,
+#topic-datatable tbody tr{
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s ease;
+}
+
+#subject-datatable tbody tr:hover,
+#board-datatable tbody tr:hover,
+#medium-datatable tbody tr:hover,
+#class-datatable tbody tr:hover,
+#institute-datatable tbody tr:hover,
+#topic-datatable tbody tr:hover{
+    background-color: #f1f1f1;
+}
+
+/* Table cell styling */
+#subject-datatable tbody td,
+#board-datatable tbody td,
+#medium-datatable tbody td,
+#class-datatable tbody td,
+#institute-datatable tbody td,
+#topic-datatable tbody td {
+    padding: 8px;
+    white-space: nowrap;
+    text-align: left;
+}
+
+/* Actions column styling */
+#subject-datatable tbody td:last-child,
+#board-datatable tbody td:last-child,
+#medium-datatable tbody td:last-child,
+#class-datatable tbody td:last-child,
+#institute-datatable tbody td:last-child,
+#topic-datatable tbody td:last-child{
+    text-align: center;
+}
+
+/* Alternate row colors for readability */
+#subject-datatable tbody tr:nth-child(even),
+#board-datatable tbody tr:nth-child(even),
+#medium-datatable tbody tr:nth-child(even),
+#class-datatable tbody tr:nth-child(even),
+#institute-datatable tbody tr:nth-child(even),
+#topic-datatable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Pagination control styling */
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 0;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    margin: 0 2px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #0056b3;
+}
+
+/* Active pagination button */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #0056b3;
+    font-weight: bold;
+}
+
+/* Search box styling */
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    padding: 10px 0;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+/* Table info styling */
+.dataTables_wrapper .dataTables_info {
+    padding: 10px 0;
+    font-size: 17px;
+}
+
+/* Dropdown for entries styling */
+.dataTables_wrapper .dataTables_length select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 14px;
 }
 
 

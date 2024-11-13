@@ -116,12 +116,23 @@
 <body>
     <div class="container">
         <h2><i class="fas fa-user-plus"></i> Register</h2>
-       <form id="registrationForm" onsubmit="return handleRegistration(event)">
+        <form id="registrationForm" onsubmit="return handleRegistration(event)">
             <div class="form-group">
                 <label for="role"><b><i class="fas fa-user-tag"></i> Select Role</b></label>
                 <select name="role" id="role" required onchange="updateForm()">
+                    <option value="">Select Role</option>
                     <option value="student">Student</option>
                     <option value="teacher">Teacher</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="registrationtypeGroup">
+                <label for="registrationtype"><b><i class="fas fa-school"></i> Type</b></label>
+                <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
+                <select id="registrationtype" name="registrationtype" onchange="updatenewForm()">
+                    <option value="select">Select type</option>
+                    <option value="registered">Registered</option>
+                    <option value="open">Open</option>
                 </select>
             </div>
 
@@ -131,16 +142,17 @@
                 <select id="class" name="class">
                     <option value="select">Select Class</option>
                 </select>
-            </div> 
-            
-            <div class="form-group hidden" id="teachertypeGroup">
-                <label for="teachertype"><b><i class="fas fa-school"></i> Type</b></label>
-                <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
-                <select id="teachertype" name="teachertype" onchange="updateteacherForm()">
-                    <option value="select">Select type</option>
-                    <option value="registered">Registered</option>
-                    <option value="open">open</option>
-                </select>
+            </div>
+
+            <div class="form-group hidden" id="student_id">
+                <label for="student-id"><b><i class="fas fa-id-badge"></i>Student ID</b></label>
+                <input type="text" placeholder="Enter Student ID" name="student-id" id="student-id">
+            </div>
+
+            <div class="form-group" id="open_institute_name">
+                <label for="open-institute-name"><b><i class="fas fa-university"></i> Institute/Class Name</b></label>
+                <input type="text" placeholder="Enter Institute Name" name="open-institute-name"
+                    id="open-institute-name">
             </div>
 
 
@@ -166,6 +178,7 @@
                 <label for="institute-id"><b><i class="fas fa-id-badge"></i> Institute ID</b></label>
                 <input type="text" placeholder="Enter Institute ID" name="institute-id" id="institute-id" readonly>
             </div>
+
 
             <div class="form-group">
                 <label for="email"><b><i class="fas fa-envelope"></i> Email</b></label>
@@ -216,47 +229,99 @@
         });
 
 
-        
-        function updateForm() {
-                const role = document.getElementById('role').value;
-                const classGroup = document.getElementById('classGroup');
-                const teachertypeGroup = document.getElementById('teachertypeGroup');
-                const dobGroup = document.getElementById('dobGroup');
-                const instituteName = document.getElementById('institute_name');
-                const instituteId = document.getElementById('institute_id');
-                
-                // Show or hide fields based on role
-                if (role === 'student') {
-                    classGroup.classList.remove('hidden');
-                    dobGroup.classList.remove('hidden');
-                    instituteName.classList.remove('hidden');
-                    instituteId.classList.remove('hidden');
-                    teachertypeGroup.classList.add('hidden');
-                } else {
-                    classGroup.classList.add('hidden');
-                    teachertypeGroup.classList.remove('hidden');
-                    instituteName.classList.add('hidden');
-                    instituteId.classList.add('hidden');
-                    dobGroup.classList.add('hidden');
-                }
-        }
 
-        function updateteacherForm() {
-            const teachertype = document.getElementById('teachertype').value;
+        function updateForm() {
+            const role = document.getElementById('role').value;
+            const classGroup = document.getElementById('classGroup');
+            const registrationtypeGroup = document.getElementById('registrationtypeGroup');
+            const dobGroup = document.getElementById('dobGroup');
             const instituteName = document.getElementById('institute_name');
             const instituteId = document.getElementById('institute_id');
+            const openInstituteName = document.getElementById('open_institute_name');
+            const studentID = document.getElementById('student_id');
 
-            if (teachertype === 'registered') {
-                instituteName.classList.remove('hidden');
-                instituteId.classList.remove('hidden');
-            } else {
+            // Show or hide fields based on role
+            if (role === 'student') {
+                classGroup.classList.remove('hidden');
+                dobGroup.classList.add('hidden');
+                registrationtypeGroup.classList.remove('hidden');
                 instituteName.classList.add('hidden');
                 instituteId.classList.add('hidden');
+                openInstituteName.classList.add('hidden');
+                studentID.classList.add('hidden');
+            } else if (role === 'teacher') {
+                classGroup.classList.add('hidden');
+                dobGroup.classList.add('hidden');
+                registrationtypeGroup.classList.remove('hidden');
+                instituteName.classList.add('hidden');
+                instituteId.classList.add('hidden');
+                openInstituteName.classList.add('hidden');
+                studentID.classList.add('hidden');
+            } else {
+                classGroup.classList.add('hidden');
+                dobGroup.classList.add('hidden');
+                registrationtypeGroup.classList.add('hidden');
+                instituteName.classList.add('hidden');
+                instituteId.classList.add('hidden');
+                openInstituteName.classList.add('hidden');
+                studentID.classList.add('hidden');
+            }
+        }
+
+        function updatenewForm() {
+            const registrationtype = document.getElementById('registrationtype').value;
+            const instituteName = document.getElementById('institute_name');
+            const instituteId = document.getElementById('institute_id');
+            const openInstituteName = document.getElementById('open_institute_name');
+            const studentID = document.getElementById('student_id');
+            const dobGroup = document.getElementById('dobGroup');
+            const role = document.getElementById('role').value;
+
+            // Adjust fields based on registration type and role
+            if (registrationtype === 'registered' && role === 'student') {
+                instituteName.classList.remove('hidden');
+                instituteId.classList.remove('hidden');
+                openInstituteName.classList.add('hidden');
+                studentID.classList.remove('hidden');
+                dobGroup.classList.remove('hidden');
+            } else if (registrationtype === 'open' && role === 'student') {
+                openInstituteName.classList.remove('hidden');
+                instituteName.classList.add('hidden');
+                instituteId.classList.add('hidden');
+                studentID.classList.add('hidden');
+                dobGroup.classList.remove('hidden');
+            } else if (registrationtype === 'registered' && role === 'teacher') {
+                instituteName.classList.remove('hidden');
+                instituteId.classList.remove('hidden');
+                openInstituteName.classList.add('hidden');
+                studentID.classList.add('hidden');
+                dobGroup.classList.remove('hidden');
+            } else if (registrationtype === 'open' && role === 'teacher') {
+                openInstituteName.classList.remove('hidden');
+                instituteName.classList.add('hidden');
+                instituteId.classList.add('hidden');
+                studentID.classList.add('hidden');
+                dobGroup.classList.add('hidden');
+            } else {
+                // If no registration type is selected or if "select" is chosen, hide fields based on role
+                if (role === 'student') {
+                    instituteName.classList.add('hidden');
+                    instituteId.classList.add('hidden');
+                    openInstituteName.classList.add('hidden');
+                    studentID.classList.remove('hidden');
+                    dobGroup.classList.remove('hidden');
+                } else if (role === 'teacher') {
+                    instituteName.classList.add('hidden');
+                    instituteId.classList.add('hidden');
+                    openInstituteName.classList.add('hidden');
+                    studentID.classList.add('hidden');
+                    dobGroup.classList.add('hidden');
+                }
             }
         }
 
         function handleRegistration(event) {
-            //alert("This is the registration page");
+            alert("This is the registration page");
             event.preventDefault();
 
             const password = document.getElementById('psw').value;
@@ -270,9 +335,11 @@
             const formData = {
                 role: document.getElementById('role').value,
                 name: document.getElementById('name').value,
-                teachertype: document.getElementById('teachertype').value,
+                registrationtype: document.getElementById('registrationtype').value,
                 surname: document.getElementById('surname').value,
                 institute_name: document.getElementById('institute-name') ? document.getElementById('institute-name').value : null,
+                open_institute: document.getElementById('open-institute-name') ? document.getElementById('open-institute-name').value : null,
+                student_id: document.getElementById('student-id')? document.getElementById('student-id').value : null,
                 class_name: document.getElementById('class').value,
                 unique_institute_id: document.getElementById('institute-id') ? document.getElementById('institute-id').value : null,
                 date_of_birth: document.getElementById('date_of_birth').value,
@@ -294,15 +361,14 @@
                 .then(data => {
                     console.log("Response Data:", data); // Log response data
 
-                    if (data.message === "Registration successful") 
-                    {
-                        if (formData.role === 'student'){
+                    if (data.message === "Registration successful") {
+                        if (formData.role === 'student') {
                             alert("Student registration successfully")
                         }
-                        else if(formData.role === 'teacher'){
+                        else if (formData.role === 'teacher') {
                             alert("Teacher registration successfully")
                         }
-                        else{
+                        else {
                             alert("User Registration successfully");
                         }
 

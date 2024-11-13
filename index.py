@@ -922,26 +922,26 @@ def process_section(task_type, lines):
         #     processed_data.append(current_question)
 
         for line in lines:
-            if re.match(r'^[A-Za-zअ-ह"].*[\?\:]$', line) and not line.startswith("Answer:") and not line.startswith("Explanation:"): # Question Line (Detects a line ending with a question mark)
+            if re.match(r'^(?:\d+[.:]\s*)?([A-Za-zअ-ह"].*[\?\:])$', line.strip()) and not line.startswith("Answer:") and not line.startswith("Explanation:"):  # Question Line
                 if current_question:
                     processed_data.append(current_question)
-                question_text = line.strip()  # Question text without the number
+                question_text = re.sub(r'^(?:\d+[.:]\s*)?', '', line).strip() # Question text without the number
                 current_question = {"question": question_text, "options": [], "answer": "", "explanation": ""}
             
-            elif re.match(r'^[A-Da-d]\)\s*(.*)$', line):  # Option Line
+            elif re.match(r'^\s*[A-Da-d]\)\s*(.*)$', line):  # Option Line
                 if current_question:
-                    option_match = re.match(r'^[A-Da-d]\)\s*(.*)$', line)
-                    current_question["options"].append(option_match.group(0).strip())
+                    option_match = re.match(r'^\s*[A-Da-d]\)\s*(.*)$', line)
+                    current_question["options"].append(option_match.group(1).strip())
             
             elif re.match(r'^Answer:\s*(.*)$', line):  # Answer Line
                 if current_question:
                     answer_match = re.match(r'^Answer:\s*(.*)$', line)
-                    current_question["answer"] = answer_match.group(0).strip()
+                    current_question["answer"] = answer_match.group(1).strip()
             
             elif re.match(r'^Explanation:\s*(.*)$', line):  # Explanation Line
                 if current_question:
                     explanation_match = re.match(r'^Explanation:\s*(.*)$', line)
-                    current_question["explanation"] = explanation_match.group(0).strip()
+                    current_question["explanation"] = explanation_match.group(1).strip()
             
             # elif re.match(r'^["]', line):  # Line starts with a quotation mark
             #     if current_question:  # Ensure there's an active question
@@ -959,11 +959,12 @@ def process_section(task_type, lines):
         current_explanation = ""
 
         for i, line in enumerate(lines):
-            line = line.strip()  # Clean up whitespace from the line
-            print(f"Processing line: {line}")  # Debug: Print the current line being processed
-            
+            print(f"Processing line {i}: {line.strip()}")  # Debugging line being processed
+
             # Match the statement (line starting with a character and ending with ".", "?" or ":")
-            if re.match(r'^[A-Za-zअ-ह"].*[\.\?:]$', line) and not line.startswith("Answer:") and not line.startswith("Explanation:"):
+            if re.match(r'^\d*[.:]?\s*[A-Za-zअ-ह"].*[\.\?:।]$', line.strip()) and not line.startswith("Answer:") and not line.startswith("Explanation:"):
+                current_statement = re.sub(r'^\d*[.:]?\s*', '', line.strip())
+
                 # If there is a previous statement with all necessary data, save it
                 if current_statement and current_options and current_answer and current_explanation:
                     processed_data.append({
@@ -972,24 +973,29 @@ def process_section(task_type, lines):
                         "answer": current_answer.strip(),
                         "explanation": current_explanation.strip()
                     })
-                    print("Appended a statement to processed_data")  # Debug: Confirm data appending
+                    print("Appended to processed_data")  # Debugging append to processed_data
                 
                 # Start a new statement
-                current_statement = line
+                current_statement = line.strip()
                 current_options = []
                 current_answer = ""
                 current_explanation = ""
+                # print(f"Started new statement: {current_statement}")  # Debugging new statement initialization
 
             # Option lines, such as "A) True" or "B) False"
-            elif re.match(r'^[A-Ba-b]\)\s*(.*)$', line):
+            elif re.match(r'^\s*[A-Ba-b]\)\s*(.*)$', line):
+                # # print(f"Matched Option Line: {line.strip()}")  # Debugging matched option line
+                # option_match = re.match(r'^\s*[A-Ba-b]\)\s*(.*)$', line)
                 current_options.append(line.strip())
 
             # Extract the answer line
             elif line.startswith("Answer:"):
+                # print(f"Matched Answer Line: {line.strip()}")  # Debugging matched answer line
                 current_answer = line[len("Answer:"):].strip()
 
             # Extract the explanation line
             elif line.startswith("Explanation:"):
+                # print(f"Matched Explanation Line: {line.strip()}")  # Debugging matched explanation line
                 current_explanation = line[len("Explanation:"):].strip()
 
         # Append the final set if complete
@@ -1000,6 +1006,9 @@ def process_section(task_type, lines):
                 "answer": current_answer.strip(),
                 "explanation": current_explanation.strip()
             })
+            # print("Appended final statement to processed_data")  # Debugging final append
+
+        print("the processed_data",processed_data)
 
     
     elif task_type == 'long-answers' or task_type == 'short-answers':
@@ -1007,7 +1016,7 @@ def process_section(task_type, lines):
         current_answer = ""  # Track the current answer
         for line in lines:
         # Match a question line
-            question_match = re.match(r'^(?!Answer:)(.*)', line.strip())
+            question_match = re.match(r'^(?!Answer:)(?:\d+[.:]\s*)?(.*)', line.strip())
             
             if question_match:
                 # If there was a previous question-answer, save it
@@ -1018,7 +1027,7 @@ def process_section(task_type, lines):
                     })
                 
                 # Start a new question
-                current_question = question_match.group(0).strip()
+                current_question = question_match.group(1).strip()
                 current_answer = ""  # Reset the answer for the new question
 
             # Match the answer line
@@ -1631,7 +1640,9 @@ class User(BaseModel):
     date_of_birth: str
     email: str
     password: str
-    teachertype: str
+    registrationtype: str
+    open_institute: str
+    student_id : str 
 
 class Board(BaseModel):
     boardName: str
@@ -1678,13 +1689,15 @@ async def register_user(user: User):
         # "user_id": user_id,
         "role": user.role,
         "name": user.name,
-        "teachertype": user.teachertype,
+        "registrationtype": user.registrationtype,
         "surname": user.surname,
         "institute_name": user.institute_name,
         "class_name": user.class_name,
         "unique_institute_id": user.unique_institute_id,
         "date_of_birth": user.date_of_birth,
-        "email": user.email
+        "email": user.email,
+        "open_institute": user.open_institute,
+        "student_id": user.student_id
     }
 
     # Create auth data
@@ -1694,7 +1707,8 @@ async def register_user(user: User):
         "email": user.email,
         "password": hashed_password,
         "role_id": role_id,  # Store the role_id
-        "unique_institute_id": user.unique_institute_id
+        "unique_institute_id": user.unique_institute_id,
+        "registrationtype" : user.registrationtype
     }
 
     existing_user = await profiles_collection.find_one({
@@ -1727,24 +1741,39 @@ class StudentTeacherLoginData(BaseModel):
     email: str
     role_id: int
     password: str
-    unique_institute_id: str
+    unique_institute_id: Optional[str] = None 
+    registrationtype: str
 
 @app.post("/student-teacher-login")
 async def student_teacher_login(data: StudentTeacherLoginData):
-    user_auth = await auth_collection.find_one({
-        "email": data.email,
-        "role_id": data.role_id,
-        "unique_institute_id": data.unique_institute_id
-    })
+    # Check if the registration type is 'registered'
+    if data.registrationtype == "registered":
+        user_auth = await auth_collection.find_one({
+            "email": data.email,
+            "role_id": data.role_id,
+            "unique_institute_id": data.unique_institute_id,  # For registered users, this should be checked
+            "registrationtype": data.registrationtype
+        })
+    elif data.registrationtype == "open":
+        user_auth = await auth_collection.find_one({
+            "email": data.email,
+            "role_id": data.role_id,
+            # "open_institute": True,  # Check the open_institute flag for open users
+            "registrationtype": data.registrationtype
+        })
+    else:
+        raise HTTPException(status_code=422, detail="Invalid registration type")
 
     # Check if user exists
     if not user_auth:
         raise HTTPException(status_code=404, detail="User not found. Please check your email, institute ID, or role.")
 
+    # Check password
     if not pwd_context.verify(data.password, user_auth['password']):
         raise HTTPException(status_code=401, detail="Incorrect password")
 
     return {"message": "Login successful"}
+
     
 @app.post("/admin-login")
 async def admin_login(data: LoginData):
@@ -1922,6 +1951,7 @@ async def update_medium(medium: Update_Medium):
         return {"message": "Medium updated successfully"}
     else:
         raise HTTPException(status_code=500, detail="Failed to update medium")
+
 
 @app.delete("/delete_medium/{medium_id}")
 async def delete_medium(medium_id: int):
@@ -2393,10 +2423,6 @@ async def get_topic_details(request: Request):
                 print(f"Invalid ID format for subject {topic['_id']}")
                 class_id, medium_id, board_id, subject_id = None, None, None, None
 
-            # print(f"Subject ID: {subject['_id']}")
-            # print(f"Class ID: {class_id} (Type: {type(class_id)})")
-            # print(f"Medium ID: {medium_id} (Type: {type(medium_id)})")
-            # print(f"Board ID: {board_id} (Type: {type(board_id)})")
 
             # Fetch class name based on class_id
             class_data = await class_collection.find_one({"classs_id": class_id})

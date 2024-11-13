@@ -181,17 +181,18 @@
                 <option value="2">Teacher</option>
             </select>
 
-            
+
             <div id="studentTeacherFields">
-                <div class="form-group hidden" id="teachertypeGroup">
-                    <label for="teachertype"><b><i class="fas fa-school"></i> Type</b></label>
+                <div class="form-group hidden" id="registrationtypeGroup">
+                    <label for="registrationtype"><b><i class="fas fa-school"></i> Type</b></label>
                     <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
-                    <select id="teachertype" name="teachertype" onchange="updateteacherForm()">
+                    <select id="registrationtype" name="registrationtype" onchange="updatenewForm()">
                         <option value="select">Select type</option>
                         <option value="registered">Registered</option>
-                        <option value="open">open</option>
+                        <option value="open">Open</option>
                     </select>
                 </div>
+
                 <div id="instField" class="hidden input-icon">
                     <i class="fas fa-id-badge"></i>
                     <label for="institute-id"><b>Institute ID</b></label>
@@ -257,43 +258,45 @@
             const passwordField = document.getElementById('passwordField');
             const registrationLink = document.getElementById('registrationLink');
             const emailField = document.getElementById('email');
-            const teachertypeGroup = document.getElementById('teachertypeGroup');
+            const registrationtypeGroup = document.getElementById('registrationtypeGroup');
 
             // Check the role and update the form accordingly
             if (role === '1') {
                 document.getElementById('instField').style.display = 'none';
                 registrationLink.classList.add('hidden'); // Hide registration link for Admins
-                teachertypeGroup.classList.add('hidden');
-            } else if(role === '2'){
+                registrationtypeGroup.classList.add('hidden');
+            } else if (role === '2') {
                 document.getElementById('instField').style.display = 'none';
-                teachertypeGroup.classList.remove('hidden');
+                registrationtypeGroup.classList.remove('hidden');
                 registrationLink.classList.remove('hidden'); // Show registration link for Teachers and Students
-            }else {
-                document.getElementById('instField').style.display = 'block';
-                teachertypeGroup.classList.add('hidden');
+            } else {
+                document.getElementById('instField').style.display = 'none';
+                registrationtypeGroup.classList.remove('hidden');
                 registrationLink.classList.remove('hidden'); // Show registration link for Teachers and Students
             }
         }
 
-        function updateteacherForm() {
-            const teachertype = document.getElementById('teachertype').value;
-           // const instituteName = document.getElementById('institute_name');
+        function updatenewForm() {
+            const registrationtype = document.getElementById('registrationtype').value;
+            // const instituteName = document.getElementById('institute_name');
             const instituteId = document.getElementById('instField');
 
-            if (teachertype == 'registered') {
-               
+            if (registrationtype == 'registered') {
+
                 document.getElementById('instField').style.display = 'block';
             } else {
-               
+
                 document.getElementById('instField').style.display = 'none';
             }
         }
+
         async function handleLogin(event) {
             event.preventDefault();
             const role_id = document.getElementById('role').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('psw').value;
             const instituteId = document.getElementById('institute-id').value;
+            const registrationtypeGroup = document.getElementById('registrationtype').value
 
             //alert("this is email",email);
 
@@ -343,10 +346,12 @@
             }
 
             // Validate institute ID only if the role is not Admin
-            if (role_id == '3' && (!instituteId || instituteId.trim() === '')) {
+            if (role_id == '3' && registrationtypeGroup === 'registered' && (!instituteId || instituteId.trim() === '')) {
                 alert("Institute ID is required for Teachers and Students.");
                 return false;
             }
+
+            let loginSuccess = false;
 
             if (role_id === '1') {
                 // Admin login
@@ -359,33 +364,53 @@
                     alert("Invalid credentials. Please try again.");
                 }
             } else {
-                // Student/Teacher login
-                const loginSuccess = await performLogin(email, password, instituteId, role_id);
-                if (loginSuccess) {
-                    alert("User Login Successfully");
-                    window.location.href = "/static/example_screen.html";
+                if (registrationtypeGroup === "registered") {
+                    // For "registered" users, include instituteId
+                    loginSuccess = await performLogin(email, password, instituteId, role_id, registrationtypeGroup);
+                } else if (registrationtypeGroup === "open") {
+                    // For "open" users, pass null or omit instituteId
+                    loginSuccess = await performLogin(email, password, null, role_id, registrationtypeGroup);
                 }
-                else {
+
+                if (loginSuccess) {
+                    if (role_id === '2') { // Assuming '2' is the role ID for teachers
+                        alert("Teacher Login Successfully");
+                        window.location.href = "/static/example_screen.html";
+                    } else if (role_id === '3') { // Assuming '2' is the role ID for teachers
+                        alert("Student Login Successfully");
+                        window.location.href = "/static/example_screen.html";
+                    } else{
+                        alert("User Login Successfully");
+                        window.location.href = "/static/example_screen.html";
+                    }
+                    
+                } else {
                     // This handles incorrect credentials or unregistered users
-                    alert("User details are incorrect. Please try again or else registration as new user")
+                    alert("User details are incorrect. Please try again or register as a new user");
                     redirectToRegistration();
                 }
             }
         }
 
-        // }
-
-        async function checkUser(email) {
+        async function checkUser(email, registrationtypeGroup) {
             try {
+
+                const requestBody = {
+                    email: email,
+                    registrationtype: registrationtypeGroup,
+                };
+
+                // Add unique_institute_id only if registrationtypeGroup is "registered"
+                if (registrationtypeGroup === 'registered') {
+                    requestBody.unique_institute_id = document.getElementById('institute-id').value;  // Only add for registered users
+                }
+
                 const response = await fetch('/student-teacher-login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        email: email,
-                        unique_institute_id: document.getElementById('institute-id').value,  // Fixed typo here
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -398,37 +423,47 @@
             }
         }
 
-        async function performLogin(email, password, instituteId, role_id) {
+        async function performLogin(email, password, instituteId, role_id, registrationtypeGroup) {
             try {
+                // Define the request body conditionally
+                const requestBody = {
+                    email: email,
+                    role_id: role_id,
+                    password: password,
+                    registrationtype: registrationtypeGroup
+                };
+
+                // Add unique_institute_id only if registrationtypeGroup is "registered"
+                if (registrationtypeGroup === 'registered') {
+                    requestBody.unique_institute_id = instituteId;  // Only add for registered users
+                }
+
+                console.log("Request Body:", JSON.stringify(requestBody)); // Log the request body
+
                 const response = await fetch('/student-teacher-login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        email: email,
-                        unique_institute_id: instituteId,  // Ensure this matches the server expectation
-                        role_id: role_id,
-                        password: password
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
-                // Log the response status for debugging
                 console.log('Response Status:', response.status);
 
                 if (!response.ok) {
-                    const errorData = await response.json();  // Get error details
-                    throw new Error(errorData.detail || 'Network response was not ok');  // Use the error detail message
+                    const errorData = await response.json();  // Get detailed error message
+                    console.error('Error Detail:', errorData);  // Log backend error detail
+                    throw new Error(errorData.detail || 'Network response was not ok');
                 }
 
                 const data = await response.json();
                 return data.message === "Login successful";
             } catch (error) {
                 console.error('Error performing login:', error);
-                // alert(error.message);  // Show error message in an alert
                 return false;
             }
         }
+
 
 
         async function performAdminLogin(email, password, role_id) {
