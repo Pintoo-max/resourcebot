@@ -66,7 +66,7 @@
             margin: 6px 0;
             border: 1px solid #ccc;
             box-sizing: border-box;
-            border-radius: 5px;
+            border-radius: 10px;
             font-size: 18px;
         }
 
@@ -120,19 +120,9 @@
             <div class="form-group">
                 <label for="role"><b><i class="fas fa-user-tag"></i> Select Role</b></label>
                 <select name="role" id="role" required onchange="updateForm()">
-                    <option value="">Select Role</option>
+                    <option value="student">Select Role</option>
                     <option value="student">Student</option>
                     <option value="teacher">Teacher</option>
-                </select>
-            </div>
-
-            <div class="form-group" id="registrationtypeGroup">
-                <label for="registrationtype"><b><i class="fas fa-school"></i> Type</b></label>
-                <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
-                <select id="registrationtype" name="registrationtype" onchange="updatenewForm()">
-                    <option value="select">Select type</option>
-                    <option value="registered">Registered</option>
-                    <option value="open">Open</option>
                 </select>
             </div>
 
@@ -144,15 +134,14 @@
                 </select>
             </div>
 
-            <div class="form-group hidden" id="student_id">
-                <label for="student-id"><b><i class="fas fa-id-badge"></i>Student ID</b></label>
-                <input type="text" placeholder="Enter Student ID" name="student-id" id="student-id">
-            </div>
-
-            <div class="form-group" id="open_institute_name">
-                <label for="open-institute-name"><b><i class="fas fa-university"></i> Institute/Class Name</b></label>
-                <input type="text" placeholder="Enter Institute Name" name="open-institute-name"
-                    id="open-institute-name">
+            <div class="form-group hidden" id="teachertypeGroup">
+                <label for="teachertype"><b><i class="fas fa-school"></i> Type</b></label>
+                <!-- <input type="text" placeholder="Enter Class" name="class" id="class"> -->
+                <select id="teachertype" name="teachertype" onchange="updateteacherForm()">
+                    <option value="select">Select type</option>
+                    <option value="registered">Registered</option>
+                    <option value="open">open</option>
+                </select>
             </div>
 
 
@@ -179,7 +168,6 @@
                 <input type="text" placeholder="Enter Institute ID" name="institute-id" id="institute-id" readonly>
             </div>
 
-
             <div class="form-group">
                 <label for="email"><b><i class="fas fa-envelope"></i> Email</b></label>
                 <input type="email" placeholder="Enter Email" name="email" id="email" required>
@@ -190,23 +178,35 @@
                 <input type="date" placeholder="Enter DOB" name="date_of_birth" id="date_of_birth">
             </div>
 
+
             <div class="form-group">
                 <label for="psw"><b><i class="fas fa-lock"></i> Password</b></label>
                 <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+                <span onclick="togglePassword()" style="cursor: pointer; margin-left: -45px; letter-spacing: normal;">
+                    <i class="fas fa-eye" id="toggleIcon"></i>
+                </span>
             </div>
 
             <div class="form-group">
                 <label for="psw-confirm"><b><i class="fas fa-lock"></i> Confirm Password</b></label>
                 <input type="password" placeholder="Confirm Password" name="psw-confirm" id="psw-confirm" required>
+                <span onclick="ConfirmtogglePassword()"
+                    style="cursor: pointer; margin-left: -45px; letter-spacing: normal;">
+                    <i class="fas fa-eye" id="confirmtoggleIcon"></i>
+                </span>
             </div>
 
+            <div id="password-error" style="color: red; font-size: 14px; display: none;">Passwords do not match. Please
+                try again.</div>
+
+
             <!-- Checkbox to show/hide password -->
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="showPassword">
                     <input type="checkbox" id="showPassword" style="margin-right: 8px;">
                     Show Password
                 </label>
-            </div>
+            </div> -->
 
             <button type="submit"><i class="fas fa-user-check"></i> Register</button>
         </form>
@@ -218,110 +218,61 @@
 
     <script>
 
-        const showPasswordCheckbox = document.querySelector('#showPassword');
-        const passwordInput = document.getElementById('psw');
-        const confirmPasswordInput = document.getElementById('psw-confirm');
+        // const showPasswordCheckbox = document.querySelector('#showPassword');
+        // const passwordInput = document.getElementById('psw');
+        // const confirmPasswordInput = document.getElementById('psw-confirm');
 
-        showPasswordCheckbox.addEventListener('change', function () {
-            const type = this.checked ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            confirmPasswordInput.setAttribute('type', type);
-        });
+        // showPasswordCheckbox.addEventListener('change', function () {
+        //     const type = this.checked ? 'text' : 'password';
+        //     passwordInput.setAttribute('type', type);
+        //     confirmPasswordInput.setAttribute('type', type);
+        // });
 
 
 
         function updateForm() {
             const role = document.getElementById('role').value;
             const classGroup = document.getElementById('classGroup');
-            const registrationtypeGroup = document.getElementById('registrationtypeGroup');
+            const teachertypeGroup = document.getElementById('teachertypeGroup');
             const dobGroup = document.getElementById('dobGroup');
             const instituteName = document.getElementById('institute_name');
             const instituteId = document.getElementById('institute_id');
-            const openInstituteName = document.getElementById('open_institute_name');
-            const studentID = document.getElementById('student_id');
 
             // Show or hide fields based on role
             if (role === 'student') {
                 classGroup.classList.remove('hidden');
-                dobGroup.classList.add('hidden');
-                registrationtypeGroup.classList.remove('hidden');
-                instituteName.classList.add('hidden');
-                instituteId.classList.add('hidden');
-                openInstituteName.classList.add('hidden');
-                studentID.classList.add('hidden');
-            } else if (role === 'teacher') {
-                classGroup.classList.add('hidden');
-                dobGroup.classList.add('hidden');
-                registrationtypeGroup.classList.remove('hidden');
-                instituteName.classList.add('hidden');
-                instituteId.classList.add('hidden');
-                openInstituteName.classList.add('hidden');
-                studentID.classList.add('hidden');
+                dobGroup.classList.remove('hidden');
+                instituteName.classList.remove('hidden');
+                instituteId.classList.remove('hidden');
+                teachertypeGroup.classList.add('hidden');
             } else {
                 classGroup.classList.add('hidden');
-                dobGroup.classList.add('hidden');
-                registrationtypeGroup.classList.add('hidden');
+                teachertypeGroup.classList.remove('hidden');
                 instituteName.classList.add('hidden');
                 instituteId.classList.add('hidden');
-                openInstituteName.classList.add('hidden');
-                studentID.classList.add('hidden');
+                dobGroup.classList.remove('hidden');
             }
         }
 
-        function updatenewForm() {
-            const registrationtype = document.getElementById('registrationtype').value;
+        function updateteacherForm() {
+            const teachertype = document.getElementById('teachertype').value;
             const instituteName = document.getElementById('institute_name');
             const instituteId = document.getElementById('institute_id');
-            const openInstituteName = document.getElementById('open_institute_name');
-            const studentID = document.getElementById('student_id');
             const dobGroup = document.getElementById('dobGroup');
-            const role = document.getElementById('role').value;
 
-            // Adjust fields based on registration type and role
-            if (registrationtype === 'registered' && role === 'student') {
+            if (teachertype === 'registered') {
                 instituteName.classList.remove('hidden');
                 instituteId.classList.remove('hidden');
-                openInstituteName.classList.add('hidden');
-                studentID.classList.remove('hidden');
                 dobGroup.classList.remove('hidden');
-            } else if (registrationtype === 'open' && role === 'student') {
-                openInstituteName.classList.remove('hidden');
-                instituteName.classList.add('hidden');
-                instituteId.classList.add('hidden');
-                studentID.classList.add('hidden');
-                dobGroup.classList.remove('hidden');
-            } else if (registrationtype === 'registered' && role === 'teacher') {
-                instituteName.classList.remove('hidden');
-                instituteId.classList.remove('hidden');
-                openInstituteName.classList.add('hidden');
-                studentID.classList.add('hidden');
-                dobGroup.classList.remove('hidden');
-            } else if (registrationtype === 'open' && role === 'teacher') {
-                openInstituteName.classList.remove('hidden');
-                instituteName.classList.add('hidden');
-                instituteId.classList.add('hidden');
-                studentID.classList.add('hidden');
-                dobGroup.classList.add('hidden');
+
             } else {
-                // If no registration type is selected or if "select" is chosen, hide fields based on role
-                if (role === 'student') {
-                    instituteName.classList.add('hidden');
-                    instituteId.classList.add('hidden');
-                    openInstituteName.classList.add('hidden');
-                    studentID.classList.remove('hidden');
-                    dobGroup.classList.remove('hidden');
-                } else if (role === 'teacher') {
-                    instituteName.classList.add('hidden');
-                    instituteId.classList.add('hidden');
-                    openInstituteName.classList.add('hidden');
-                    studentID.classList.add('hidden');
-                    dobGroup.classList.add('hidden');
-                }
+                instituteName.classList.add('hidden');
+                instituteId.classList.add('hidden');
+                dobGroup.classList.remove('hidden');
             }
         }
 
         function handleRegistration(event) {
-            alert("This is the registration page");
             event.preventDefault();
 
             const password = document.getElementById('psw').value;
@@ -335,16 +286,15 @@
             const formData = {
                 role: document.getElementById('role').value,
                 name: document.getElementById('name').value,
-                registrationtype: document.getElementById('registrationtype').value,
+                teachertype: document.getElementById('teachertype')?.value || null,
                 surname: document.getElementById('surname').value,
-                institute_name: document.getElementById('institute-name') ? document.getElementById('institute-name').value : null,
-                open_institute: document.getElementById('open-institute-name') ? document.getElementById('open-institute-name').value : null,
-                student_id: document.getElementById('student-id')? document.getElementById('student-id').value : null,
+                institute_name: document.getElementById('institute-name')?.value || null,
                 class_name: document.getElementById('class').value,
-                unique_institute_id: document.getElementById('institute-id') ? document.getElementById('institute-id').value : null,
+                unique_institute_id: document.getElementById('institute-id')?.value || null,
                 date_of_birth: document.getElementById('date_of_birth').value,
                 email: document.getElementById('email').value,
                 password: password,
+                confirm_password: confirmPassword,
             };
 
             fetch('/register', {
@@ -355,24 +305,24 @@
                 body: JSON.stringify(formData),
             })
                 .then(response => {
-                    console.log("Response Status:", response.status); // Log status
+                    console.log("Response Status:", response.status);
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Response Data:", data); // Log response data
+                    console.log("Response Data:", data);
 
                     if (data.message === "Registration successful") {
                         if (formData.role === 'student') {
-                            alert("Student registration successfully")
-                        }
-                        else if (formData.role === 'teacher') {
-                            alert("Teacher registration successfully")
-                        }
-                        else {
-                            alert("User Registration successfully");
+                            alert("Student registration successful");
+                        } else if (formData.role === 'teacher') {
+                            alert("Teacher registration successful");
+                        } else {
+                            alert("User registration successful");
                         }
 
-                        document.getElementById('registrationForm').reset();  // This line clears the form
+                        // Clear the form after successful registration
+                        document.getElementById('registrationForm').reset();
+
                         // Redirect to login page
                         window.location.href = "/static/login.html";
                     } else {
@@ -384,6 +334,7 @@
                     alert("An error occurred. Please try again.");
                 });
         }
+
 
         // Initialize the form based on the default role selection
         window.onload = updateForm;
@@ -427,25 +378,39 @@
         // }
 
         function fetchInstitutes() {
-            fetch('/get_SchoolInstitute')
+            fetch('/get_SchoolInstitute') // Adjust the endpoint as per your backend API
                 .then(response => response.json())
                 .then(institutes => {
                     const instituteInput = document.getElementById('institute-name');
+                    const instituteIdInput = document.getElementById('institute-id');
+
+                    // Clear the dropdown and add a default option
                     instituteInput.innerHTML = '<option value="">Select Institute</option>';
 
                     // Populate the institute dropdown
                     institutes.forEach(instituteItem => {
                         const option = document.createElement('option');
-                        option.value = instituteItem.unique_institute_id; // Set institute_id as value
-                        option.textContent = instituteItem.institute_name;
+                        option.value = instituteItem.unique_institute_id; // Set unique_institute_id as value
+                        option.textContent = instituteItem.institute_name; // Set institute_name as the text
+
                         instituteInput.appendChild(option);
                     });
 
-                    // Event listener to update the Institute ID when an institute is selected
+                    // Event listener to update Institute ID and name fields when an institute is selected
                     instituteInput.addEventListener('change', function () {
-                        const selectedInstituteId = instituteInput.value; // Get selected value (institute_id)
-                        const instituteIdInput = document.getElementById('institute-id');
-                        instituteIdInput.value = selectedInstituteId ? selectedInstituteId : ''; // Set the ID or clear it
+                        const selectedInstituteId = instituteInput.value; // Get selected unique_institute_id
+
+                        if (selectedInstituteId) {
+                            const selectedInstituteName = instituteInput.options[instituteInput.selectedIndex].text;
+
+                            // Update the hidden inputs
+                            instituteIdInput.value = selectedInstituteId; // Set the ID
+                            instituteInput.setAttribute("data-selected-name", selectedInstituteName); // Store the name
+                        } else {
+                            // Clear fields if no institute is selected
+                            instituteIdInput.value = '';
+                            instituteInput.removeAttribute("data-selected-name");
+                        }
                     });
                 })
                 .catch(error => console.error('Error fetching institutes:', error));
@@ -455,6 +420,38 @@
             fetchClasses();
             fetchInstitutes();
         });
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('psw');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            // Check current type and toggle between 'password' and 'text'
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash'); // Change to 'eye-slash' icon for hiding
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye'); // Change back to 'eye' icon for showing
+            }
+        }
+
+        function ConfirmtogglePassword() {
+            const PasswordInput = document.getElementById('psw-confirm');
+            const confirmtoggleIcon = document.getElementById('confirmtoggleIcon');
+
+            // Check current type and toggle between 'password' and 'text'
+            if (PasswordInput.type === 'password') {
+                PasswordInput.type = 'text';
+                confirmtoggleIcon.classList.remove('fa-eye');
+                confirmtoggleIcon.classList.add('fa-eye-slash'); // Change to 'eye-slash' icon for hiding
+            } else {
+                PasswordInput.type = 'password';
+                confirmtoggleIcon.classList.remove('fa-eye-slash');
+                confirmtoggleIcon.classList.add('fa-eye'); // Change back to 'eye' icon for showing
+            }
+        }
     </script>
 
 </body>

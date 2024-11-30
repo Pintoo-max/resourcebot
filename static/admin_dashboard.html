@@ -202,7 +202,7 @@
             <!-- Board List Section -->
             <div class="board-list-container">
                 <h3>Existing Boards</h3>
-                
+
                 <div class="table-responsive">
                     <table id="board-datatable" class="board-list display nowrap" style="width:100%">
                         <thead>
@@ -366,7 +366,7 @@
             <!-- Class List Section -->
             <div class="subject-list-container">
                 <h3>Existing Subjects</h3>
-        
+
                 <!-- Responsive Table -->
                 <div class="table-responsive">
                     <table id="subject-datatable" class="subject-list display nowrap" style="width:100%">
@@ -427,6 +427,15 @@
                     <input type="text" id="new-topic-input" placeholder="Add topic name">
                 </div>
                 <button id="add-topic-btn" class="form-button">Add Topic</button>
+            </div>
+
+            <!-- CSV Upload Section -->
+            <div class="csv-upload">
+                <label for="csv-upload-input" class="form-item">
+                    <i class="fa fa-upload" aria-hidden="true"></i>
+                </label>
+                <input type="file" id="csv-upload-input" accept=".csv" style="display:none;">
+                <button id="upload-csv-btn" class="form-button">Upload</button>
             </div>
 
             <!-- Topic List Section -->
@@ -649,7 +658,7 @@
                 let subjects = JSON.parse(localStorage.getItem('subjects')) || [];
                 let topics = JSON.parse(localStorage.getItem('topics')) || [];
 
-            
+
                 // Render Roles
                 function renderRoles() {
                     roleList.innerHTML = '';
@@ -1501,22 +1510,66 @@
 
 
 
-                // Function to handle adding subject
+                // // Function to handle adding subject
+                // function addSubject(event) {
+                //     event.preventDefault();
+
+                //     const subjectName = newSubjectInput.value.trim();
+                //     const className = document.getElementById('cls-input').value;
+                //     const mediumName = document.getElementById('mid-input').value;
+                //     const boardName = document.getElementById('brd-input').value;
+
+                //     // Validation: ensure all fields are filled
+                //     if (!subjectName || !className || !mediumName || !boardName) {
+                //         alert('Please fill in all fields');
+                //         return;
+                //     }
+
+                //     // Make a POST request to add subject
+                //     fetch('/add_subject', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //         },
+                //         body: JSON.stringify({
+                //             subjectName,
+                //             className,
+                //             mediumName,
+                //             boardName
+                //         }),
+                //     })
+                //         .then(response => {
+                //             return response.json();
+                //         })
+                //         .then(data => {
+                //             if (data.message === "Subject added successful") {
+                //                 alert("Subject added successfully");
+                //                 fetchAndRenderSubjects(); // Refresh the subject list
+                //             } else {
+                //                 alert(data.message || "An error occurred");
+                //             }
+                //         })
+                //         .catch(error => {
+                //             console.error('Error:', error);
+                //             alert("An error occurred. Please try again.");
+                //         });
+                // }
+
                 function addSubject(event) {
                     event.preventDefault();
 
-                    const subjectName = newSubjectInput.value.trim();
-                    const className = document.getElementById('cls-input').value;
-                    const mediumName = document.getElementById('mid-input').value;
-                    const boardName = document.getElementById('brd-input').value;
+                    const subjectName = document.getElementById('new-subject-input').value.trim();
+                    const className = document.getElementById('cls-input').value.trim();
+                    const mediumName = document.getElementById('mid-input').value.trim();
+                    const boardName = document.getElementById('brd-input').value.trim();
 
-                    // Validation: ensure all fields are filled
+                    // Validate inputs
                     if (!subjectName || !className || !mediumName || !boardName) {
                         alert('Please fill in all fields');
                         return;
                     }
 
-                    // Make a POST request to add subject
+                    // Make a POST request to add the subject
                     fetch('/add_subject', {
                         method: 'POST',
                         headers: {
@@ -1529,15 +1582,21 @@
                             boardName
                         }),
                     })
-                        .then(response => {
-                            return response.json();
-                        })
+                        .then(response => response.json())
                         .then(data => {
                             if (data.message === "Subject added successful") {
                                 alert("Subject added successfully");
-                                fetchAndRenderSubjects(); // Refresh the subject list
+
+                                // Clear the input fields
+                                document.getElementById('new-subject-input').value = '';
+                                document.getElementById('cls-input').value = '';
+                                document.getElementById('mid-input').value = '';
+                                document.getElementById('brd-input').value = '';
+
+                                // Refresh the subject list
+                                fetchAndRenderSubjects();
                             } else {
-                                alert(data.message || "An error occurred");
+                                alert(data.message || "An error occurred while adding the subject");
                             }
                         })
                         .catch(error => {
@@ -2118,15 +2177,15 @@
                             addDeleteEventListeners_topic();
                         }
                         if ($.fn.DataTable.isDataTable('#topic-datatable')) {
-                                $('#topic-datatable').DataTable().destroy(); // Destroy previous instance if exists
-                            }
+                            $('#topic-datatable').DataTable().destroy(); // Destroy previous instance if exists
+                        }
 
-                            $('#topic-datatable').DataTable({
-                                "paging": true,   // Enable pagination
-                                "searching": true, // Enable search
-                                "ordering": true,  // Enable column sorting
-                                "info": true,      // Show info about the table
-                            });
+                        $('#topic-datatable').DataTable({
+                            "paging": true,   // Enable pagination
+                            "searching": true, // Enable search
+                            "ordering": true,  // Enable column sorting
+                            "info": true,      // Show info about the table
+                        });
                     })
                     .catch(error => {
                         console.error('Error fetching topics:', error);

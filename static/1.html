@@ -229,6 +229,25 @@
             </div>
         </div>
 
+        <div class="task">
+            <input type="checkbox" id="text-book" name="tasks" value="text-book" 
+            onchange="toggleTextBook(this)">
+            <label for="text-book">Text book</label>
+        </div>
+
+        <div class="task">
+            <input type="checkbox" id="syllabus" name="tasks" value="syllabus"
+             onchange="toggleSyllabus(this)">
+            <label for="syllabus">Syllabus</label>
+        </div>
+
+        <div class="task">
+            <input type="checkbox" id="question-bank" name="tasks" value="question-bank"
+                onchange="toggleQuestionBank(this)">
+            <label for="question-bank">Question Bank</label>
+        </div>
+
+
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="file" accept=".doc,.pdf" required>
 
@@ -298,6 +317,44 @@
             inputContainer.style.display = 'none';
         }
 
+    }
+
+    function toggleTextBook(mainCheckbox) {
+        const otherCheckboxes2 = document.querySelectorAll('input[type="checkbox"]:not(#text-book)');
+        if (mainCheckbox.checked) {
+            otherCheckboxes2.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            });
+        } else {
+            otherCheckboxes2.forEach(checkbox => checkbox.disabled = false);
+        }
+    }
+
+    // Function to toggle checkboxes for textbook
+    function toggleSyllabus(mainCheckbox) {
+        const otherCheckboxes3 = document.querySelectorAll('input[type="checkbox"]:not(#syllabus)');
+        if (mainCheckbox.checked) {
+            otherCheckboxes3.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true; // Disable the other checkboxes
+            });
+        } else {
+            otherCheckboxes3.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+        }
+    }
+
+    // function to toggle checkboxes for Question Bank
+    function toggleQuestionBank(mainCheckbox) {
+        const otherCheckboxes4 = document.querySelectorAll('input[type="checkbox"]:not(#question-bank)');
+        if (mainCheckbox.checked) {
+            otherCheckboxes4.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true; // Disable the other checkboxes
+            });
+        } else {
+            otherCheckboxes4.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+        }
     }
 
     // Function to fetch and populate boards
@@ -479,57 +536,163 @@
         document.getElementById('subject').addEventListener('change', fetchTopics);
     });
 
-    async function submitForm(event) {
-        event.preventDefault(); // Prevent the form from submitting the traditional way
+    // async function submitForm(event) {
+    //     event.preventDefault(); // Prevent the form from submitting the traditional way
 
-        let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'UploadForm'
+    //     let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'UploadForm'
+    //     alert("Document is getting uploaded.....");
+    //     try {
+    //         const response = await fetch('/submit', {
+    //             method: 'POST',
+    //             body: formData
+    //         });
+    //         console.log("The response:",response);
+
+    //         const result = await response.json(); // Parse the JSON response
+    //         console.log("The result",result);
+
+    //         // Ensure the response is OK (status code 200-299)
+    //         if (result && typeof result.status !== 'undefined') {
+    //             if (result.status == '1') {  // Check if the status is 1 (indicating success)
+
+    //                 // Check if filename is a string or an array, and handle accordingly
+    //                 let filenames;
+    //                 if (Array.isArray(result.filename)) {
+    //                     filenames = result.filename; // Use directly if it's already an array
+    //                 } else if (typeof result.filename === 'string') {
+    //                     filenames = result.filename.split(','); // Split if it's a comma-separated string
+    //                 } else {
+    //                     console.error("Unexpected data type for result.filename:", typeof result.filename);
+    //                     filenames = []; // Default to an empty array if data type is unexpected
+    //                 }
+
+    //                 // Join filenames with a newline for display in the alert
+    //                 const filenamesMessage = filenames.map(filename => filename.trim()).join('\n');
+
+    //                 // Check if the file was newly created or appended
+    //                 if (result.message.includes('appended')) {
+    //                     // File content was appended (updated)
+    //                     alert('File content appended successfully:\n' + filenamesMessage);
+    //                 } else if (result.message.includes('created')) {
+    //                     // New file was created and uploaded
+    //                     alert('All Selected:\n' + filenamesMessage);
+    //                 } else {
+    //                     // Catch-all success message if neither 'appended' nor 'created' are found
+    //                     alert('File processed successfully:\n' + filenamesMessage);
+    //                 }
+
+    //                 // Reload the page after displaying the success message
+    //                 window.location.reload();
+    //             } else {
+    //                 // If result.status is not 1 (indicating an error)
+    //                 alert('Error: ' + result.message);
+    //                 console.error('Error response from server:', result);
+    //             }
+    //         }
+
+    //     } 
+
+    //     catch (error) {
+    //     // Catch any network or processing errors
+    //     alert('An error occurred while submitting the form.');
+    //     console.error('Error:', error);
+    // }
+    // }
+
+    async function submitForm(event) {
+        event.preventDefault();  // Prevent the form from submitting the traditional way
+
+        let formData = new FormData(document.getElementById('UploadForm'));  // Get form data
+        console.log("Form data:", formData);  // Check form data
+
         alert("Document is getting uploaded.....");
+
         try {
             const response = await fetch('/submit', {
                 method: 'POST',
                 body: formData
             });
 
-            const result = await response.json(); // Parse the JSON response
+            const responseText = await response.text();  // Get raw response text
+            console.log("Raw response text:", responseText);
 
-            // Clear any previous alert or message display
-            if (document.getElementById("message")) {
-                document.getElementById("message").textContent = ''; // Clear previous message content if using an HTML element
+            let result;
+            try {
+                result = JSON.parse(responseText);  // Manually parse the response text
+                console.log("Parsed result:", result);
+            } catch (err) {
+                console.error("Error parsing JSON:", err);
+                return;
             }
-            
-            // Ensure the response is OK (status code 200-299)
-            if (result && typeof result.status !== 'undefined') {
-                if (result.status == '1') {  // Check if the status is 1 (indicating success)
-                    // Check if the file was newly created or appended
-                    if (result.message.includes('appended')) {
-                        // File content was appended (updated)
-                        alert('File content appended successfully: ' + result.filename);
-                    } else if (result.message.includes('created')) {
-                        // New file was created and uploaded
-                        alert('All Selected: ' + result.filename);
-                    } else {
-                        // Catch-all success message if neither 'appended' nor 'created' are found
-                        alert('File processed successfully: ' + result.filename);
-                    }
-                    // Reload the page after displaying the success message
-                    window.location.reload();
-                } else {
-                    // If result.status is not 1 (indicating an error)
-                    alert('Error: ' + result.message);
-                    console.error('Error response from server:', result);
-                }
+
+            if (result && result.status === "1") {
+                let filenames = Array.isArray(result.filename) ? result.filename : result.filename.split(',');
+
+                const filenamesMessage = filenames.join('\n');
+                alert('File uploaded successfully:\n' + filenamesMessage);
+                window.location.reload();
             } else {
-                alert('Error: Something went wrong with the server response.');
-                console.error('Invalid server response:', result);
+                alert('Error: ' + (result.message || 'Unknown error'));
             }
-
-        }
-        catch (error) {
-            // Catch any network or processing errors
-            alert('An error occurred while submitting the form.');
-            console.error('Error:', error);
+        } catch (error) {
+            console.error("Error during fetch:", error);
+            alert('Error: ' + error.message);
         }
     }
+
+    // async function submitForm(event) {
+    //     event.preventDefault();  // Prevent the form from submitting traditionally
+
+    //     let formData = new FormData(document.getElementById('UploadForm'));  // Get form data
+    //     console.log("Form data:", formData);  // Debugging form data
+
+    //     alert("Document is getting uploaded.....");
+
+    //     try {
+    //         const response = await fetch('/submit', {
+    //             method: 'POST',
+    //             body: formData
+    //         });
+
+    //         const responseText = await response.text();  // Get raw response text
+    //         console.log("Raw response text:", responseText);
+
+    //         let result;
+    //         try {
+    //             result = JSON.parse(responseText);  // Parse the response JSON
+    //             console.log("Parsed result:", result);
+    //         } catch (err) {
+    //             console.error("Error parsing JSON:", err);
+    //             return;
+    //         }
+
+    //         if (result && result.status === "1") {
+    //             // Extract `filename` and `inserted_filenames`
+    //             const uploadedFilename = result.filename;  // Single uploaded file
+    //             const batchFilenames = result.inserted_filenames || [];  // Batch of filenames
+
+    //             // Construct message
+    //             let filenamesMessage = `Uploaded Filename: ${uploadedFilename}\n\n`;
+
+    //             // Check if batch filenames exist
+    //             if (batchFilenames.length > 0) {
+    //                 filenamesMessage += `Batch Filenames:\n${batchFilenames.join('\n')}`;
+    //             } else {
+    //                 filenamesMessage += `Batch Filenames: None provided`;
+    //             }
+
+    //             alert(filenamesMessage);  // Show the alert
+    //             window.location.reload();  // Reload the page
+    //         } else {
+    //             alert('Error: ' + (result.message || 'Unknown error'));  // Handle error message
+    //         }
+    //     } catch (error) {
+    //         console.error("Error during fetch:", error);
+    //         alert('Error: ' + error.message);
+    //     }
+    // }
+
+
 
     function askForSetNumber() {
         // Get the checkbox for sample-paper-solution

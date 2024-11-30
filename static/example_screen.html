@@ -25,7 +25,7 @@
 
         .container {
             display: flex;
-            width: 85%;
+            width: 100%;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -33,7 +33,7 @@
         }
 
         .form-section {
-            width: 45%;
+            width: 40%;
             padding: 20px;
             background-color: #f7f9fa;
             border-left: 1px solid #e0e4e8;
@@ -438,7 +438,7 @@
             border: none;
             color: white;
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 12px;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             border-radius: 5px;
@@ -662,18 +662,18 @@
                 display: flex;
                 flex-direction: column;
                 /* Stack buttons vertically */
-                width: 100%;
+                width: 50%;
                 margin-top: 10px;
             }
 
             .button-options .option-button {
-                width: 100%;
+                width: 50%;
                 /* Make buttons take full width */
                 padding: 12px;
                 /* Adjust padding for touch targets */
                 margin-bottom: 10px;
                 /* Add space between buttons */
-                font-size: 14px;
+                font-size: 12px;
                 /* Adjust font size */
             }
 
@@ -760,12 +760,17 @@
             <div class="button-options">
                 <button id="worksheetButton" class="option-button selected"
                     onclick="selectScreenType('worksheet')">Worksheet</button>
-                <button id="questionBankButton" class="option-button"
-                    onclick="selectScreenType('sample-paper')">Question Paper</button>
                 <button id="textbookSolutionsButton" class="option-button"
                     onclick="selectScreenType('textbook-solutions')">Textbook Solutions</button>
+                <button id="textbookButton" class="option-button"
+                    onclick="selectScreenType('textbook')">Textbook</button>
+                <button id="questionPaperButton" class="option-button"
+                    onclick="selectScreenType('sample-paper')">Question Paper</button>
+                <button id="questionBankButton" class="option-button"
+                    onclick="selectScreenType('question-bank')">Question Bank</button>
+                <button id="syllabusButton" class="option-button"
+                    onclick="selectScreenType('syllabus')">Syallabus</button>
             </div>
-
 
             <form onsubmit="fetchQuestionsAndAnswers(); return false;">
                 <div class="form-row">
@@ -895,12 +900,30 @@
                 </div>
 
                 <div class="task">
+                    <input type="checkbox" id="text-book" name="tasks" value="text-book"
+                        onchange="toggleTextBook(this)">
+                    <label for="text-book">Text book</label>
+                </div>
+
+                <div class="task">
                     <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
                         onchange="toggleSamplePaper(this)">
                     <label for="sample-paper-solution">Sample Paper</label>
                 </div>
 
+                <div class="task">
+                    <input type="checkbox" id="question-bank" name="tasks" value="question-bank"
+                        onchange="toggleQuestionBank(this)">
+                    <label for="question-bank">Question Bank</label>
+                </div>
+
+                <div class="task">
+                    <input type="checkbox" id="syllabus" name="tasks" value="syllabus" onchange="toggleSyllabus(this)">
+                    <label for="syllabus">Syllabus</label>
+                </div>
+
                 <br>
+
 
                 <!-- Logout icon container -->
                 <!-- <div class="form-row">
@@ -967,7 +990,9 @@
                     <button id="addAnswerBtn" disabled>Answers</button>
                     <button id="textbookSolutionBtn" style="display: none;">Click To Fetch TextBook Solution</button>
                     <button id="samplePaperBtn" style="display: none;">Click To Fetch Question Bank</button>
-
+                    <button id="textbookBtn" style="display: none;">Click To Fetch Textbook </button>
+                    <button id="syllabusBtn" style="display: none;">Click To Fetch Syllabus </button>
+                    <button id="questionBankBtn" style="display: none;">Click To Fetch Question Bank</button>
                 </div>
 
                 <!-- Right side buttons: "Print" and "Download" -->
@@ -1053,6 +1078,45 @@
             }
         }
 
+        // Function to toggle checkboxes for textbook
+        function toggleTextBook(mainCheckbox) {
+            const otherCheckboxes2 = document.querySelectorAll('input[type="checkbox"]:not(#text-book)');
+            if (mainCheckbox.checked) {
+                otherCheckboxes2.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.disabled = false; // Disable the other checkboxes
+                });
+            } else {
+                otherCheckboxes2.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+            }
+        }
+
+
+        // Function to toggle checkboxes for textbook
+        function toggleSyllabus(mainCheckbox) {
+            const otherCheckboxes3 = document.querySelectorAll('input[type="checkbox"]:not(#syllabus)');
+            if (mainCheckbox.checked) {
+                otherCheckboxes3.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.disabled = false; // Disable the other checkboxes
+                });
+            } else {
+                otherCheckboxes3.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+            }
+        }
+
+        // function to toggle checkboxes for Question Bank
+        function toggleQuestionBank(mainCheckbox) {
+            const otherCheckboxes4 = document.querySelectorAll('input[type="checkbox"]:not(#question-bank)');
+            if (mainCheckbox.checked) {
+                otherCheckboxes4.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.disabled = false; // Disable the other checkboxes
+                });
+            } else {
+                otherCheckboxes4.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+            }
+        }
 
         // Initialize global mapping objects
         const mappings = {
@@ -1391,6 +1455,62 @@
             }
         });
 
+
+
+        // Fetch for textbook part
+        document.getElementById('textbookBtn').addEventListener('click', async () => {
+            const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+            // Extract and store the IDs of checked checkboxes
+            const checkedIds = [];
+            checkboxes.forEach((checkbox) => {
+                checkedIds.push(checkbox.id);
+            });
+
+            // Check if the selected checkbox is only for the sample paper solution
+            if (checkedIds.length === 1 && checkedIds[0] === 'text-book') {
+                await fetchTextBook();
+            } else {
+                await fetchQuestionsAndAnswers();
+            }
+        });
+
+        // Fetch for syllabus part
+        document.getElementById('syllabusBtn').addEventListener('click', async () => {
+            const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+            // Extract and store the IDs of checked checkboxes
+            const checkedIds = [];
+            checkboxes.forEach((checkbox) => {
+                checkedIds.push(checkbox.id);
+            });
+
+            // Check if the selected checkbox is only for the sample paper solution
+            if (checkedIds.length === 1 && checkedIds[0] === 'syllabus') {
+                await fetchSyllabus();
+            } else {
+                await fetchQuestionsAndAnswers();
+            }
+        });
+
+
+        // Fetch for questionBank part
+        document.getElementById('questionBankBtn').addEventListener('click', async () => {
+            const checkboxes = document.querySelectorAll('input[name="tasks"]:checked');
+
+            // Extract and store the IDs of checked checkboxes
+            const checkedIds = [];
+            checkboxes.forEach((checkbox) => {
+                checkedIds.push(checkbox.id);
+            });
+
+            // Check if the selected checkbox is only for the sample paper solution
+            if (checkedIds.length === 1 && checkedIds[0] === 'question-bank') {
+                await fetchQuestionBank();
+            } else {
+                await fetchQuestionsAndAnswers();
+            }
+        });
 
         //  Fetch wala part hai quetsiona and answers
 
@@ -1948,7 +2068,7 @@
                 const response = await fetch(`/get_textbook-solution?${queryParams.toString()}`);
                 // console.log("Response:", response);
                 const result = await response.json();
-                // console.log("Results: ", result);
+                console.log("Results: ", result);
 
 
                 if (response.ok) {
@@ -2097,6 +2217,320 @@
                 console.error("Error fetching data:", error);
             }
         }
+
+        //  the TextBook 
+        async function fetchTextBook() {
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+            const board = document.getElementById('board').value;
+            const medium = document.getElementById('medium').value;
+            const grade = document.getElementById('grade').value;
+            console.log("This is grade", grade);
+            const subject = document.getElementById('subject').value;
+            // const lesson = document.getElementById('lesson').value;
+
+            let missingFields = [];
+
+            // Check each field and add the field name to the missingFields array if not selected
+            if (board === 'select') missingFields.push("Board");
+            if (medium === 'select') missingFields.push("Medium");
+            if (grade === 'select') missingFields.push("Class");
+            if (subject === 'select') missingFields.push("Subject");
+            // if (lesson === 'select') missingFields.push("Chapter/Topic");
+
+            // Show alert if any field is missing
+            if (missingFields.length > 0) {
+                alert("Please select the following fields: " + missingFields.join(", "));
+                console.error('Missing fields:', missingFields);
+                return;
+            }
+
+            let heading = false;
+
+            // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+            // Construct the query string
+            const queryParams = new URLSearchParams({
+                board: board,
+                medium: medium,
+                grade: grade,
+                subject: subject,
+                // lesson: lesson,
+                tasks: 'text-book',
+
+            });
+            console.log("This is query:", queryParams.toString());
+
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading');
+            dataContainer.appendChild(loadingDiv);
+
+            try {
+                const response = await fetch(`/get_textBook?${queryParams.toString()}`);
+                // console.log("Response:", response);
+                const result = await response.json();
+                console.log("Results: ", result);
+
+
+                if (response.ok) {
+                    dataContainer.removeChild(loadingDiv);
+
+                    const documentData = result.document;
+                    console.log("The filename", documentData.filename);
+                    const baseUrl = window.location.origin + "/";
+                    console.log('path', "upload/textBook" + documentData.filename);
+                    var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
+
+                    console.log("upload path", pathname);
+                    // Get the element with the id "data"
+                    // const dataContainer = document.getElementById('data');
+
+                    // Clear the existing content in the data container
+                    dataContainer.innerHTML = '';
+
+                    if (!heading) {
+                        dataContainer.innerHTML +=
+                            ` <h3>Board: ${mappings.boards[board]} 
+                Medium: ${mappings.mediums[medium]} 
+                Class: ${mappings.grades[grade]} 
+                Subject: ${mappings.subjects[subject]}<h3>`;
+                        heading = true;
+                    }
+
+
+                    // Create an iframe to embed the PDF
+                    const pdfIframe = document.createElement('iframe');
+                    pdfIframe.src = documentData.file_path.replace(/\\/g, '/');
+                    //pdfIframe.src = baseUrl +"upload/textbook_pdf/"+documentData.filename+".pdf";
+                    pdfIframe.width = '100%';
+                    pdfIframe.height = '100%'; // You can adjust this height as per your design
+
+                    // Append the iframe to the data container directly
+                    dataContainer.appendChild(pdfIframe);
+
+                }
+                else {
+                    console.log("No document found:", result);
+                    alert("No questions and answers found for selected tasks");
+                }
+
+            } catch (error) {
+                dataContainer.removeChild(loadingDiv);
+                console.error('Error fetching textbook:', error);
+                alert("Failed to fetch data. Please try again.");
+            }
+        }
+
+        //  the Syllabus 
+        async function fetchSyllabus() {
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+            const board = document.getElementById('board').value;
+            const medium = document.getElementById('medium').value;
+            const grade = document.getElementById('grade').value;
+            console.log("This is grade", grade);
+            const subject = document.getElementById('subject').value;
+            // const lesson = document.getElementById('lesson').value;
+
+            let missingFields = [];
+
+            // Check each field and add the field name to the missingFields array if not selected
+            if (board === 'select') missingFields.push("Board");
+            if (medium === 'select') missingFields.push("Medium");
+            if (grade === 'select') missingFields.push("Class");
+            if (subject === 'select') missingFields.push("Subject");
+            // if (lesson === 'select') missingFields.push("Chapter/Topic");
+
+            // Show alert if any field is missing
+            if (missingFields.length > 0) {
+                alert("Please select the following fields: " + missingFields.join(", "));
+                console.error('Missing fields:', missingFields);
+                return;
+            }
+
+            let heading = false;
+
+            // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+            // Construct the query string
+            const queryParams = new URLSearchParams({
+                board: board,
+                medium: medium,
+                grade: grade,
+                subject: subject,
+                // lesson: lesson,
+                tasks: 'syllabus',
+
+            });
+            console.log("This is query:", queryParams.toString());
+
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading');
+            dataContainer.appendChild(loadingDiv);
+
+            try {
+                const response = await fetch(`/get_Syllabus?${queryParams.toString()}`);
+                // console.log("Response:", response);
+                const result = await response.json();
+                console.log("Results: ", result);
+
+
+                if (response.ok) {
+                    dataContainer.removeChild(loadingDiv);
+
+                    const documentData = result.document;
+                    console.log("The filename", documentData.filename);
+                    const baseUrl = window.location.origin + "/";
+                    console.log('path', "upload/syllabus" + documentData.filename);
+                    var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
+
+                    console.log("upload path", pathname);
+                    // Get the element with the id "data"
+                    // const dataContainer = document.getElementById('data');
+
+                    // Clear the existing content in the data container
+                    dataContainer.innerHTML = '';
+
+                    if (!heading) {
+                        dataContainer.innerHTML +=
+                            ` <h3>Board: ${mappings.boards[board]} 
+    Medium: ${mappings.mediums[medium]} 
+    Class: ${mappings.grades[grade]} 
+    Subject: ${mappings.subjects[subject]}<h3>`;
+                        heading = true;
+                    }
+
+
+                    // Create an iframe to embed the PDF
+                    const pdfIframe = document.createElement('iframe');
+                    pdfIframe.src = documentData.file_path.replace(/\\/g, '/');
+                    //pdfIframe.src = baseUrl +"upload/textbook_pdf/"+documentData.filename+".pdf";
+                    pdfIframe.width = '100%';
+                    pdfIframe.height = '100%'; // You can adjust this height as per your design
+
+                    // Append the iframe to the data container directly
+                    dataContainer.appendChild(pdfIframe);
+
+                }
+                else {
+                    console.log("No document found:", result);
+                    alert("No questions and answers found for selected tasks");
+                }
+
+            } catch (error) {
+                dataContainer.removeChild(loadingDiv);
+                console.error('Error fetching textbook:', error);
+                alert("Failed to fetch data. Please try again.");
+            }
+        }
+
+        //  the Syllabus 
+        async function fetchQuestionBank() {
+
+            // Clear previous data before starting to append new results
+            const dataContainer = document.getElementById('data');
+            dataContainer.innerHTML = '';
+            const board = document.getElementById('board').value;
+            const medium = document.getElementById('medium').value;
+            const grade = document.getElementById('grade').value;
+            console.log("This is grade", grade);
+            const subject = document.getElementById('subject').value;
+            // const lesson = document.getElementById('lesson').value;
+
+            let missingFields = [];
+
+            // Check each field and add the field name to the missingFields array if not selected
+            if (board === 'select') missingFields.push("Board");
+            if (medium === 'select') missingFields.push("Medium");
+            if (grade === 'select') missingFields.push("Class");
+            if (subject === 'select') missingFields.push("Subject");
+            // if (lesson === 'select') missingFields.push("Chapter/Topic");
+
+            // Show alert if any field is missing
+            if (missingFields.length > 0) {
+                alert("Please select the following fields: " + missingFields.join(", "));
+                console.error('Missing fields:', missingFields);
+                return;
+            }
+
+            let heading = false;
+
+            // retrieve_filename = {board_medium_grade_subject_lesson_{'.'.join(tasks_list)}
+            // Construct the query string
+            const queryParams = new URLSearchParams({
+                board: board,
+                medium: medium,
+                grade: grade,
+                subject: subject,
+                // lesson: lesson,
+                tasks: 'question-bank',
+
+            });
+            console.log("This is query:", queryParams.toString());
+
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading');
+            dataContainer.appendChild(loadingDiv);
+
+            try {
+                const response = await fetch(`/get_QuestionBank?${queryParams.toString()}`);
+                // console.log("Response:", response);
+                const result = await response.json();
+                console.log("Results: ", result);
+
+
+                if (response.ok) {
+                    dataContainer.removeChild(loadingDiv);
+
+                    const documentData = result.document;
+                    console.log("The filename", documentData.filename);
+                    const baseUrl = window.location.origin + "/";
+                    console.log('path', "upload/questionBank" + documentData.filename);
+                    var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
+
+                    console.log("upload path", pathname);
+                    // Get the element with the id "data"
+                    // const dataContainer = document.getElementById('data');
+
+                    // Clear the existing content in the data container
+                    dataContainer.innerHTML = '';
+
+                    if (!heading) {
+                        dataContainer.innerHTML +=
+                            ` <h3>Board: ${mappings.boards[board]} 
+                                Medium: ${mappings.mediums[medium]} 
+                                Class: ${mappings.grades[grade]} 
+                                Subject: ${mappings.subjects[subject]}<h3>`;
+                        heading = true;
+                    }
+
+
+                    // Create an iframe to embed the PDF
+                    const pdfIframe = document.createElement('iframe');
+                    pdfIframe.src = documentData.file_path.replace(/\\/g, '/');
+                    //pdfIframe.src = baseUrl +"upload/textbook_pdf/"+documentData.filename+".pdf";
+                    pdfIframe.width = '100%';
+                    pdfIframe.height = '100%'; // You can adjust this height as per your design
+
+                    // Append the iframe to the data container directly
+                    dataContainer.appendChild(pdfIframe);
+
+                }
+                else {
+                    console.log("No document found:", result);
+                    alert("No questions and answers found for selected tasks");
+                }
+
+            } catch (error) {
+                dataContainer.removeChild(loadingDiv);
+                console.error('Error fetching textbook:', error);
+                alert("Failed to fetch data. Please try again.");
+            }
+        }
+
+
 
         // Previous code fro worksheet, sample-paper and textbook solutions
         // // Get the screen type from the URL query parameters
@@ -2280,9 +2714,15 @@
         ];
         const textbookSolutionsCheckbox = document.getElementById('text-book-solution');
         const samplePaperCheckbox = document.getElementById('sample-paper-solution');
+        const textbookCheckbox = document.getElementById('text-book');
+        const syllabusCheckbox = document.getElementById('syllabus');
+        const questionBankCheckbox = document.getElementById('question-bank');
 
         // Define buttons here to make them accessible in the toggle function
         const textbookSolutionBtn = document.getElementById('textbookSolutionBtn');
+        const textbookBtn = document.getElementById('textbookBtn');
+        const syllabusBtn = document.getElementById('syllabusBtn');
+        const questionBankBtn = document.getElementById('questionBankBtn');
         const samplePaperBtn = document.getElementById('samplePaperBtn');
         const addQuestionBtn = document.getElementById('addQuestionBtn');
         const addAnswerBtn = document.getElementById('addAnswerBtn');
@@ -2318,8 +2758,11 @@
 
             // Remove "selected" class from all buttons
             document.getElementById("worksheetButton").classList.remove("selected");
-            document.getElementById("questionBankButton").classList.remove("selected");
+            document.getElementById("questionPaperButton").classList.remove("selected");
             document.getElementById("textbookSolutionsButton").classList.remove("selected");
+            document.getElementById("textbookButton").classList.remove("selected");
+            document.getElementById("syllabusButton").classList.remove("selected");
+            document.getElementById("questionBankButton").classList.remove("selected");
 
             // Add "selected" class to the active button
             if (screenType === "worksheet") {
@@ -2335,9 +2778,15 @@
                 });
                 textbookSolutionsCheckbox.parentElement.style.display = 'none';
                 samplePaperCheckbox.parentElement.style.display = 'none';
+                textbookCheckbox.parentElement.style.display = 'none';
+                syllabusCheckbox.parentElement.style.display = 'none';
+                questionBankCheckbox.parentElement.style.display = 'none';
 
                 textbookSolutionBtn.style.display = 'none';
+                textbookBtn.style.display = 'none';
+                syllabusBtn.style.display = 'none';
                 samplePaperBtn.style.display = 'none';
+                questionBankBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'inline-block';
                 addAnswerBtn.style.display = 'inline-block';
 
@@ -2358,8 +2807,15 @@
                 });
                 textbookSolutionsCheckbox.parentElement.style.display = 'flex';
                 samplePaperCheckbox.parentElement.style.display = 'none';
+                textbookCheckbox.parentElement.style.display = 'none';
                 textbookSolutionBtn.style.display = 'inline-block';
+                syllabusCheckbox.parentElement.style.display = 'none';
+                questionBankCheckbox.parentElement.style.display = 'none';
+
+                textbookBtn.style.display = 'none';
+                syllabusBtn.style.display = 'none';
                 samplePaperBtn.style.display = 'none';
+                questionBankBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
 
@@ -2369,7 +2825,94 @@
                 }
 
             }
+
             else if (screenType === "sample-paper") {
+                document.getElementById("questionPaperButton").classList.add("selected");
+                worksheetCheckboxes.forEach(checkbox => {
+                    checkbox.parentElement.style.display = 'none';
+                    checkbox.disabled = false;
+                    const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+                    if (limitField) {
+                        limitField.disabled = true;
+                    }
+                });
+                textbookSolutionsCheckbox.parentElement.style.display = 'none';
+                textbookCheckbox.parentElement.style.display = 'none';
+                samplePaperCheckbox.parentElement.style.display = 'flex';
+                syllabusCheckbox.parentElement.style.display = 'none';
+                questionBankCheckbox.parentElement.style.display = 'none';
+
+                const lessonField = document.getElementById('lesson');
+                if (lessonField) {
+                    lessonField.disabled = true;
+                }
+                textbookSolutionBtn.style.display = 'none';
+                textbookBtn.style.display = 'none';
+                syllabusBtn.style.display = 'none';
+                questionBankBtn.style.display = 'none';
+                addQuestionBtn.style.display = 'none';
+                addAnswerBtn.style.display = 'none';
+                samplePaperBtn.style.display = 'inline-block';
+            }
+
+            else if (screenType === "textbook") {
+                document.getElementById("textbookButton").classList.add("selected");
+                worksheetCheckboxes.forEach(checkbox => {
+                    checkbox.parentElement.style.display = 'none';
+                    checkbox.disabled = false;
+                    const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+                    if (limitField) {
+                        limitField.disabled = true;
+                    }
+                });
+                textbookSolutionsCheckbox.parentElement.style.display = 'none';
+                samplePaperCheckbox.parentElement.style.display = 'none';
+                textbookCheckbox.parentElement.style.display = 'flex';
+                syllabusCheckbox.parentElement.style.display = 'none';
+                questionBankCheckbox.parentElement.style.display = 'none';
+
+                const lessonField = document.getElementById('lesson');
+                if (lessonField) {
+                    lessonField.disabled = true;
+                }
+                textbookSolutionBtn.style.display = 'none';
+                addQuestionBtn.style.display = 'none';
+                addAnswerBtn.style.display = 'none';
+                textbookBtn.style.display = 'inline-block';
+                samplePaperBtn.style.display = 'none';
+                syllabusBtn.style.display = 'none';
+                questionBankBtn.style.display = 'none';
+            }
+            else if (screenType === "syllabus") {
+                document.getElementById("syllabusButton").classList.add("selected");
+                worksheetCheckboxes.forEach(checkbox => {
+                    checkbox.parentElement.style.display = 'none';
+                    checkbox.disabled = false;
+                    const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
+                    if (limitField) {
+                        limitField.disabled = true;
+                    }
+                });
+                textbookSolutionsCheckbox.parentElement.style.display = 'none';
+                samplePaperCheckbox.parentElement.style.display = 'none';
+                textbookCheckbox.parentElement.style.display = 'none';
+                syllabusCheckbox.parentElement.style.display = 'flex';
+                questionBankCheckbox.parentElement.style.display = 'none';
+
+                const lessonField = document.getElementById('lesson');
+                if (lessonField) {
+                    lessonField.disabled = true;
+                }
+                textbookSolutionBtn.style.display = 'none';
+                addQuestionBtn.style.display = 'none';
+                addAnswerBtn.style.display = 'none';
+                textbookBtn.style.display = 'none';
+                syllabusBtn.style.display = 'inline-block';
+                samplePaperBtn.style.display = 'none';
+                questionBankBtn.style.display = 'none';
+            }
+
+            else if (screenType === "question-bank") {
                 document.getElementById("questionBankButton").classList.add("selected");
                 worksheetCheckboxes.forEach(checkbox => {
                     checkbox.parentElement.style.display = 'none';
@@ -2380,7 +2923,11 @@
                     }
                 });
                 textbookSolutionsCheckbox.parentElement.style.display = 'none';
-                samplePaperCheckbox.parentElement.style.display = 'flex';
+                samplePaperCheckbox.parentElement.style.display = 'none';
+                textbookCheckbox.parentElement.style.display = 'none';
+                syllabusCheckbox.parentElement.style.display = 'none';
+                questionBankCheckbox.parentElement.style.display = 'flex';
+
                 const lessonField = document.getElementById('lesson');
                 if (lessonField) {
                     lessonField.disabled = true;
@@ -2388,9 +2935,14 @@
                 textbookSolutionBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
-                samplePaperBtn.style.display = 'inline-block';
+                textbookBtn.style.display = 'none';
+                syllabusBtn.style.display = 'none';
+                samplePaperBtn.style.display = 'none';
+                questionBankBtn.style.display = 'inline-block';
             }
+
         }
+
 
         // Call the function on page load to set the default selected button
         window.onload = toggleCheckboxVisibility;
@@ -2403,7 +2955,7 @@
 
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
                 const taskId = checkbox.id; // Get the ID of the selected checkbox
-                const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
+                const limitInput = document.querySelector(`#${taskId} _limit`); // Get the corresponding number input
 
                 if (limitInput) { // Check if the number input exists
                     const limitValue = limitInput.value; // Get the value of the number input
@@ -2499,7 +3051,7 @@
                 dataContainer.appendChild(loadingDiv);
 
                 try {
-                    const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
+                    const response = await fetch(`/ get_questions_and_answers ? ${queryParams.toString()} `);
                     const result = await response.json();
 
                     if (response.ok && result.questions_and_answers) {
@@ -2521,11 +3073,11 @@
                         allQuestionsAndAnswers.push(...limitedQuestionsAndAnswers);
 
                         if (!heading) {
-                            dataContainer.innerHTML += `<h3>Board: ${mappings.boards[board]} 
-                            Medium: ${mappings.mediums[medium]} 
-                            Class: ${mappings.grades[grade]} 
-                            Subject: ${mappings.subjects[subject]} 
-                            Lesson: ${mappings.lessons[lesson]}<h3>`;
+                            dataContainer.innerHTML += `< h3 > Board: ${mappings.boards[board]}
+                        Medium: ${mappings.mediums[medium]}
+                        Class: ${mappings.grades[grade]}
+                        Subject: ${mappings.subjects[subject]}
+                        Lesson: ${mappings.lessons[lesson]} <h3>`;
                             heading = true;
                         }
 
@@ -2558,14 +3110,14 @@
                             if (qa.column_a && qa.column_a.length > 0) {
                                 columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
                                 qa.column_a.forEach((a) => {
-                                    columnsWrapper += `<li>${a}</li>`;
+                                    columnsWrapper += `< li > ${a}</li > `;
                                 });
                                 columnsWrapper += '</ul></div>';
                             }
                             if (qa.column_b && qa.column_b.length > 0) {
                                 columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
                                 qa.column_b.forEach((b) => {
-                                    columnsWrapper += `<li>${b}</li>`;
+                                    columnsWrapper += `< li > ${b}</li > `;
                                 });
                                 columnsWrapper += '</ul></div>';
                             }
@@ -2574,7 +3126,7 @@
                         });
 
                         // Add a separator after the answers list
-                        questionsDiv.innerHTML += `<hr>`;
+                        questionsDiv.innerHTML += `< hr > `;
 
                         // Append questions to the container
                         dataContainer.appendChild(questionsDiv);
@@ -2582,7 +3134,7 @@
                         // Create a div for answers
                         const answersDiv = document.createElement('div');
                         answersDiv.classList.add('answersDiv');
-                        answersDiv.innerHTML = `<h3>${formattedTaskId} - Answer's</h3>`;
+                        answersDiv.innerHTML = `< h3 > ${formattedTaskId} - Answer's</h3>`;
 
                         // Loop through the answers array
                         limitedQuestionsAndAnswers.forEach((ans, index) => {
