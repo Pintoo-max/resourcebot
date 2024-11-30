@@ -43,8 +43,16 @@ subject_collection = db['subject']
 topic_collection = db['topic']
 # user_collection = db['user_counter']
 
-# Secret key for signing sessions
+# # Secret key for signing sessions
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
+
+# # Middleware for CORS
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],  # Replace with specific domains in production
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 # def get_collection(class_name: str) -> Collection:
 #     collection_name = f"class_{class_name}"
@@ -117,8 +125,8 @@ async def form_uplaod(
     print("This is subject")
     
   
-    if tasks=='text-book-solution':
-        print(tasks)
+    if 'text-book-solution' in tasks:
+        # print(tasks)
         form_data = await request.form()
         lesson = form_data.get('lesson')  # Fetch lesson from form data dynamically
         unique_code = str(uuid.uuid4())
@@ -215,7 +223,7 @@ async def form_uplaod(
         }
      
 
-    elif tasks=='sample-paper-solution':
+    elif 'sample-paper-solution' in tasks:
        # print(set_number)
         unique_code = str(uuid.uuid4())
         timestamp = datetime.utcnow().isoformat()
@@ -240,8 +248,8 @@ async def form_uplaod(
         print(existing_subject)
         subject_name = existing_subject["subject_name"]
 
-        new_filename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name[:3]}_{tasks}_{set_number}"
-        pdffilename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name[:3]}_{tasks}_{set_number}.pdf"
+        new_filename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}_{set_number}"
+        pdffilename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}_{set_number}.pdf"
         print(new_filename)
         print("Generated filename:", pdffilename)
 
@@ -305,6 +313,273 @@ async def form_uplaod(
                 "message": "File uploaded and saved successfully", 
                 "filename": new_filename
                 }
+        
+    elif 'text-book' in tasks:
+       
+        unique_code = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+        # new_filename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}"
+        # pdffilename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}.pdf"
+        # print(new_filename)
+
+        # print("Generated filename:", pdffilename)
+        existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+        print(existing_grade)
+        class_name = existing_grade["classs_name"]
+
+        existing_board = await board_collection.find_one({"board_id": int(board)})
+        print(existing_board)
+        board_name = existing_board["board_name"]
+        
+        existing_medium = await medium_collection.find_one({"medium_id": int(medium) })
+        print(existing_medium)
+        medium_name = existing_medium["medium_name"]
+
+        existing_subject = await subject_collection.find_one({"subject_id": int(subject) })
+        print(existing_subject)
+        subject_name = existing_subject["subject_name"]
+
+        new_filename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}"
+        pdffilename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}.pdf"
+        print(new_filename)
+        print("Generated filename:", pdffilename)
+
+        # collection = get_collection(class_name)
+        # print(collection)
+
+        db = await get_or_create_database(board_name)
+        print("This is db", db)
+
+        # Get the collection using both the board name and class name
+        collection = await get_collection(board_name, class_name)  # Pass both arguments
+        print("This is collection", collection)
+
+        # # Check for existing files with the same base filename
+        existing_file = await collection.find_one({"filename": new_filename})
+
+        if existing_file:
+            return {"status": "0", "message": "File already exsist"}
+           # return "alredy exsist"
+        else:
+            # Ensure the upload folder exists
+            upload_folder = 'static/upload/textBook'
+            upload_folder1='upload/textBook'
+            file_path = os.path.join(upload_folder, pdffilename)
+            file_path1 = os.path.join(upload_folder1, pdffilename)
+            # print("file path name", file_path)
+            # file.save(file_path)
+
+            # Save the file
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            print("File uploaded successfully:", pdffilename) 
+
+            document = {
+                        "board": board,
+                        "board_name": board_name,
+                        "medium": medium,
+                        "medium_name": medium_name,
+                        "grade": grade,
+                        "grade_name": class_name,
+                        "subject": subject,
+                        "subject_name": subject_name,
+                        "filename": new_filename,
+                        "tasks": tasks,
+                        "unique_code": unique_code,
+                        "timestamp": timestamp,
+                        "file_path": file_path1
+                }
+            
+            result = await collection.insert_one(document)
+            #print("Document to insert:", document)
+
+            print("This is detect format result collection")
+            print(result)
+            # return {"status": "1", "message": "File uploaded successfully"}
+            return {
+                "status" : "1",
+                "file_id": str(result.inserted_id), 
+                "message": "File uploaded and saved successfully", 
+                "filename": new_filename
+                }
+            
+    elif 'syllabus' in tasks:
+       
+        unique_code = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+        # new_filename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}"
+        # pdffilename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}.pdf"
+        # print(new_filename)
+
+        # print("Generated filename:", pdffilename)
+        existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+        print(existing_grade)
+        class_name = existing_grade["classs_name"]
+
+        existing_board = await board_collection.find_one({"board_id": int(board)})
+        print(existing_board)
+        board_name = existing_board["board_name"]
+        
+        existing_medium = await medium_collection.find_one({"medium_id": int(medium) })
+        print(existing_medium)
+        medium_name = existing_medium["medium_name"]
+
+        existing_subject = await subject_collection.find_one({"subject_id": int(subject) })
+        print(existing_subject)
+        subject_name = existing_subject["subject_name"]
+
+        new_filename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}"
+        pdffilename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}.pdf"
+        print(new_filename)
+        print("Generated filename:", pdffilename)
+
+        # collection = get_collection(class_name)
+        # print(collection)
+
+        db = await get_or_create_database(board_name)
+        print("This is db", db)
+
+        # Get the collection using both the board name and class name
+        collection = await get_collection(board_name, class_name)  # Pass both arguments
+        print("This is collection", collection)
+
+        # # Check for existing files with the same base filename
+        existing_file = await collection.find_one({"filename": new_filename})
+
+        if existing_file:
+            return {"status": "0", "message": "File already exsist"}
+           # return "alredy exsist"
+        else:
+            # Ensure the upload folder exists
+            upload_folder = 'static/upload/syllabus'
+            upload_folder1='upload/syllabus'
+            file_path = os.path.join(upload_folder, pdffilename)
+            file_path1 = os.path.join(upload_folder1, pdffilename)
+            # print("file path name", file_path)
+            # file.save(file_path)
+
+            # Save the file
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            print("File uploaded successfully:", pdffilename) 
+
+            document = {
+                        "board": board,
+                        "board_name": board_name,
+                        "medium": medium,
+                        "medium_name": medium_name,
+                        "grade": grade,
+                        "grade_name": class_name,
+                        "subject": subject,
+                        "subject_name": subject_name,
+                        "filename": new_filename,
+                        "tasks": tasks,
+                        "unique_code": unique_code,
+                        "timestamp": timestamp,
+                        "file_path": file_path1
+                }
+            
+            result = await collection.insert_one(document)
+            #print("Document to insert:", document)
+
+            print("This is detect format result collection")
+            print(result)
+            # return {"status": "1", "message": "File uploaded successfully"}
+            return {
+                "status" : "1",
+                "file_id": str(result.inserted_id), 
+                "message": "File uploaded and saved successfully", 
+                "filename": new_filename
+            }
+        
+    elif 'question-bank' in tasks:
+       
+        unique_code = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+        # new_filename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}"
+        # pdffilename = f"{board}_{medium}_{grade}_{subject}_{tasks}_{set_number}.pdf"
+        # print(new_filename)
+
+        # print("Generated filename:", pdffilename)
+        existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+        print(existing_grade)
+        class_name = existing_grade["classs_name"]
+
+        existing_board = await board_collection.find_one({"board_id": int(board)})
+        print(existing_board)
+        board_name = existing_board["board_name"]
+        
+        existing_medium = await medium_collection.find_one({"medium_id": int(medium) })
+        print(existing_medium)
+        medium_name = existing_medium["medium_name"]
+
+        existing_subject = await subject_collection.find_one({"subject_id": int(subject) })
+        print(existing_subject)
+        subject_name = existing_subject["subject_name"]
+
+        new_filename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}"
+        pdffilename = f"{board_name[:3]}_{medium_name[:3]}_{class_name}_{subject_name}_{tasks}.pdf"
+        print(new_filename)
+        print("Generated filename:", pdffilename)
+
+        # collection = get_collection(class_name)
+        # print(collection)
+
+        db = await get_or_create_database(board_name)
+        print("This is db", db)
+
+        # Get the collection using both the board name and class name
+        collection = await get_collection(board_name, class_name)  # Pass both arguments
+        print("This is collection", collection)
+
+        # # Check for existing files with the same base filename
+        existing_file = await collection.find_one({"filename": new_filename})
+
+        if existing_file: 
+            return {"status": "0", "message": "File already exsist"}
+        #    # return "alredy exsist"
+        # else:
+            # Ensure the upload folder exists
+        upload_folder = 'static/upload/questionbank'
+        upload_folder1='upload/questionbank'
+        file_path = os.path.join(upload_folder, pdffilename)
+        file_path1 = os.path.join(upload_folder1, pdffilename)
+        # print("file path name", file_path)
+        # file.save(file_path)
+
+        # Save the file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        print("File uploaded successfully:", pdffilename) 
+
+        document = {
+                    "board": board,
+                    "board_name": board_name,
+                    "medium": medium,
+                    "medium_name": medium_name,
+                    "grade": grade,
+                    "grade_name": class_name,
+                    "subject": subject,
+                    "subject_name": subject_name,
+                    "filename": new_filename,
+                    "tasks": tasks,
+                    "unique_code": unique_code,
+                    "timestamp": timestamp,
+                    "file_path": file_path1
+            }
+        
+        result = await collection.insert_one(document)
+        #print("Document to insert:", document)
+
+        print("This is detect format result collection")
+        print(result)
+        # return {"status": "1", "message": "File uploaded successfully"}
+        return {
+            "status" : "1",
+            "file_id": str(result.inserted_id), 
+            "message": "File uploaded and saved successfully", 
+            "filename": new_filename
+        }
 
     else:
         # with open(filename, 'r') as file:
@@ -396,10 +671,11 @@ async def form_uplaod(
 
             response = await store_task_data(task_type, processed_data,collection,new_filename,new_data)
             print("This the task_type",task_type)
+            
         if(response['status']=="1"):
             return {
                 "message": "File content uploaded successfully",
-                "filename": inserted_filenames,
+                "filename": inserted_filenames_batch,
                 "status": response['status']  # Send the hasError flag
             }
         else:
@@ -407,6 +683,33 @@ async def form_uplaod(
                 "message": "Error uploading the file. Please try again.",
                 "status": response.get('status')  # Include status in the response on error
             }
+
+            # response = await store_task_data(task_type, processed_data, collection, new_filename, new_data)
+            # print("Debug: This is the task_type:", task_type)
+            # print("Debug: new_filename before response =", new_filename)
+            # print("Debug: inserted_filenames_batch =", inserted_filenames_batch)
+
+            # if response['status'] == "1":
+            #     response_data = {
+            #         "message": "File content uploaded successfully",
+            #         "status": response['status'],  # Send the status
+            #     }
+
+            #     # Conditionally add 'filename' if available
+            #     if new_filename:
+            #         response_data["filename"] = new_filename
+
+            #     # Conditionally add 'inserted_filenames' if available
+            #     if inserted_filenames_batch:
+            #         response_data["inserted_filenames"] = inserted_filenames_batch
+
+            #     return response_data
+            # else:
+            #     return {
+            #         "message": "Error uploading the file. Please try again.",
+            #         "status": response.get('status')  # Include status in the response on error
+            #     }
+
     
 # async def store_task_data(task_type, questions_and_answers, collection, filename, new_data):
 #     # Create a formatted dictionary for questions and answers
@@ -495,17 +798,166 @@ async def form_uplaod(
 #             return {"status": "0", "message": f"Failed to insert '{filename}'."}
 
 # Create a dictionary to store filenames and their corresponding task types
+# inserted_files = {}
+# inserted_filenames = []  # List to store only the filenames
+# print("This is insert", inserted_files)
+
+# async def store_task_data(task_type, questions_and_answers, collection, filename, new_data):
+#     global inserted_files  # Use global to access the dictionary outside the function
+#     global inserted_filenames  # Use global to access the list of inserted filenames
+
+#     # Clear the existing filenames to start fresh for each upload
+#     inserted_files.clear()
+#     inserted_filenames.append(filename)
+
+#     # Create a formatted dictionary for questions and answers
+#     formatted_questions_and_answers = {}
+#     for idx, qa in enumerate(questions_and_answers, start=1):
+#         question_key = f"question{idx}"
+#         answer_key = f"answer{idx}"
+        
+#         # Handle formatting for different types
+#         if task_type == 'true-false':
+#             formatted_questions_and_answers[question_key] = qa['statement']
+#             if 'options' in qa:
+#                 options_key = f"options{idx}"
+#                 formatted_questions_and_answers[options_key] = qa['options']
+#             formatted_questions_and_answers[answer_key] = qa['answer']
+#             if 'explanation' in qa:
+#                 explanation_key = f"explanation{idx}"
+#                 formatted_questions_and_answers[explanation_key] = qa['explanation']
+        
+#         elif task_type == 'match-the-column':
+#             column_a_key = f"column_a{idx}"
+#             column_b_key = f"column_b{idx}"
+#             formatted_questions_and_answers[question_key] = "Match the following"
+#             formatted_questions_and_answers[column_a_key] = qa['column_a']
+#             formatted_questions_and_answers[column_b_key] = qa['column_b']
+#             formatted_questions_and_answers[answer_key] = qa['answers']
+        
+#         elif task_type == 'multiple-choice-questions':
+#             formatted_questions_and_answers[question_key] = qa['question']
+#             if 'options' in qa:
+#                 options_key = f"options{idx}"
+#                 formatted_questions_and_answers[options_key] = qa['options']
+#             formatted_questions_and_answers[answer_key] = qa['answer']
+#             if 'explanation' in qa:
+#                 explanation_key = f"explanation{idx}"
+#                 formatted_questions_and_answers[explanation_key] = qa['explanation']
+        
+#         else:  # For general questions and answers
+#             formatted_questions_and_answers[question_key] = qa['question']
+#             formatted_questions_and_answers[answer_key] = qa['answer']
+
+#     # Check for existing files with the same base filename
+#     existing_file = await collection.find_one({"filename": filename})
+#     if existing_file:
+#         # If file exists, update the existing document
+#         result = await collection.update_one(
+#             {"filename": filename},
+#             {
+#                 "$set": {"questions_and_answers": formatted_questions_and_answers},
+#                 "$addToSet": {"tasks": task_type}  # Add task_type to the array if it doesn't already exist
+#             }
+#         )
+#         if result.modified_count > 0:
+#             updated_file = await collection.find_one({"filename": filename})
+#             print(f"Updated existing file: {filename}")
+#             print("All task types:", updated_file["tasks"])
+#             inserted_files[filename] = updated_file["tasks"]  # Store the filename and task types
+
+#             # inserted_filenames.append(filename)  # Add to the list of inserted filenames
+#             print_all_inserted_filenames()  # Print after each update
+            
+#             return {
+#                 "status": "1",
+#                 "message": f"File '{filename}' updated successfully.",
+#                 "task_types": updated_file["tasks"]  # Return the list of task types
+#             }
+#         else:
+#             print(f"No changes made to the existing file: {filename}")
+#             return {
+#                 "status": "0",
+#                 "message": f"No changes were made to '{filename}'.",
+#                 "task_types": existing_file["tasks"]
+#             }
+
+#     else:
+#         # If file doesn't exist, create a new entry with the filename
+#         document = {
+#             "board": new_data["board"],
+#             "board_name": new_data["board_name"],
+#             "medium": new_data["medium"],
+#             "medium_name": new_data["medium_name"],
+#             "grade": new_data["grade"],
+#             "grade_name": new_data["class_name"],
+#             "subject": new_data["subject"],
+#             "subject_name": new_data["subject_name"],
+#             "lesson": new_data["lesson"],
+#             "lesson_name": new_data["topic_name"],
+#             "filename": filename,
+#             "tasks": [task_type],  # Start with the new task_type
+#             "unique_code": new_data["unique_code"],
+#             "timestamp": new_data["timestamp"],
+#             "questions_and_answers": formatted_questions_and_answers
+#         }
+        
+#         result = await collection.insert_one(document)
+#         if result.inserted_id:
+#             print(f"Inserted new file: {filename}")
+#             print("All task types:", document["tasks"])
+#             inserted_files[filename] = document["tasks"]  # Store the filename and task types
+
+#             # # Append the filename to the list of inserted filenames
+#             # inserted_filenames.append(filename)
+#             print_all_inserted_filenames()  # Print after each insertion
+            
+#             return {
+#                 "status": "1",
+#                 "message": f"File '{filename}' inserted successfully.",
+#                 "task_types": document["tasks"] # Return the list of task types
+#             }
+
+#         else:
+#             print(f"Failed to insert the new file: {filename}")
+#             return {
+#                 "status": "0",
+#                 "message": f"Failed to insert '{filename}'."
+#             }
+
+# # Function to print all inserted filenames as a single string
+# def print_all_inserted_filenames():
+#     print("\n--- List of Inserted Filenames ---")
+#     print(" ".join(inserted_filenames))  # Print all filenames as a space-separated string
+#     print("-----------------------------------")
+#     inserted_files.clear()
+
+# Global dictionary to store filenames and task types
 inserted_files = {}
-inserted_filenames = []  # List to store only the filenames
-print("This is insert", inserted_files)
+
+# Batch processing parameters
+MAX_FILES_PER_BATCH = 9  # Define your desired batch size
+inserted_filenames_batch = []  # List to store filenames for the current batch
+current_chapter = None  # Variable to track the current chapter
 
 async def store_task_data(task_type, questions_and_answers, collection, filename, new_data):
+    global inserted_filenames_batch  # Use global to access the list outside the function
     global inserted_files  # Use global to access the dictionary outside the function
-    global inserted_filenames  # Use global to access the list of inserted filenames
+    global current_chapter  # Track the chapter for batching
 
-    # Clear the existing filenames to start fresh for each upload
-    inserted_files.clear()
-    inserted_filenames.append(filename)
+    # Extract chapter information (using "lesson_name" or "topic_name" from new_data)
+    chapter = new_data.get("lesson_name") or new_data.get("topic_name")
+
+    # Check if the chapter has changed
+    if chapter != current_chapter:
+        # If the chapter has changed, print the current batch and reset for the new chapter
+        if inserted_filenames_batch:
+            print_all_inserted_filenames_batch()  # Print the batch of filenames
+            inserted_filenames_batch.clear()  # Clear the batch for the new chapter
+        current_chapter = chapter  # Update the current chapter
+
+    # Add the filename to the batch list
+    inserted_filenames_batch.append(filename)
 
     # Create a formatted dictionary for questions and answers
     formatted_questions_and_answers = {}
@@ -561,11 +1013,19 @@ async def store_task_data(task_type, questions_and_answers, collection, filename
             updated_file = await collection.find_one({"filename": filename})
             print(f"Updated existing file: {filename}")
             print("All task types:", updated_file["tasks"])
-            inserted_files[filename] = updated_file["tasks"]  # Store the filename and task types
-
-            # inserted_filenames.append(filename)  # Add to the list of inserted filenames
-            print_all_inserted_filenames()  # Print after each update
             
+            # Store the filename and task types in inserted_files
+            inserted_files[filename] = updated_file["tasks"]  
+
+             # Initialize batch_filenames_for_response (ensure it's always defined)
+            batch_filenames_for_response = " ".join(inserted_filenames_batch) if len(inserted_filenames_batch) > 0 else ""
+
+
+            # Print filenames for the batch after each update, check if batch size is reached
+            if len(inserted_filenames_batch) >= MAX_FILES_PER_BATCH:
+                print_all_inserted_filenames_batch()  # Print the batch of filenames
+                # inserted_filenames_batch.clear()  # Clear the batch after printing
+
             return {
                 "status": "1",
                 "message": f"File '{filename}' updated successfully.",
@@ -603,16 +1063,27 @@ async def store_task_data(task_type, questions_and_answers, collection, filename
         if result.inserted_id:
             print(f"Inserted new file: {filename}")
             print("All task types:", document["tasks"])
-            inserted_files[filename] = document["tasks"]  # Store the filename and task types
+            
+            # Store the filename and task types in inserted_files
+            inserted_files[filename] = document["tasks"]
 
-            # # Append the filename to the list of inserted filenames
-            # inserted_filenames.append(filename)
-            print_all_inserted_filenames()  # Print after each insertion
+            # Initialize batch_filenames_for_response (ensure it's always defined)
+            batch_filenames_for_response = " ".join(inserted_filenames_batch) if len(inserted_filenames_batch) > 0 else ""
+
+            # Print filenames for the batch after each insertion, check if batch size is reached
+            if len(inserted_filenames_batch) >= MAX_FILES_PER_BATCH:
+                print_all_inserted_filenames_batch()  # Print the batch of filenames
+                # inserted_filenames_batch.clear()  # Clear the batch after printing
+
+            if inserted_filenames_batch:
+                print_all_inserted_filenames_batch()
             
             return {
                 "status": "1",
                 "message": f"File '{filename}' inserted successfully.",
-                "task_types": document["tasks"] # Return the list of task types
+                "task_types": document["tasks"],  # Return the list of task types
+                "filenames_batch": batch_filenames_for_response  # Include batch filenames in the response
+
             }
 
         else:
@@ -622,12 +1093,18 @@ async def store_task_data(task_type, questions_and_answers, collection, filename
                 "message": f"Failed to insert '{filename}'."
             }
 
-# Function to print all inserted filenames as a single string
-def print_all_inserted_filenames():
-    print("\n--- List of Inserted Filenames ---")
-    print(" ".join(inserted_filenames))  # Print all filenames as a space-separated string
+# Function to print all inserted filenames in a batch as a single string
+# Function to print all inserted filenames in a batch, line by line
+def print_all_inserted_filenames_batch():
+    print("\n--- List of Inserted Filenames (Batch) ---")
+    for filename in inserted_filenames_batch:  # Iterate over each filename in the batch
+        print(filename)  # Print each filename on a new line
     print("-----------------------------------")
-    inserted_files.clear()
+    print("\n")
+
+    # Clear the batch list after printing
+    # inserted_filenames_batch.clear()
+
 
 # Function to preprocess the document by dividing into sections
 # def preprocess_document(file_content):
@@ -771,15 +1248,15 @@ def preprocess_document(file_content, selected_tasks):
     
     # Define a dictionary mapping headers to task types
     task_type_map = {
-        r'Fill in the blanks': 'fill-in-the-blanks',
+        r'Fill in the blanks|Fill Up': 'fill-in-the-blanks',
         r'Name the following': 'name-the-following',
         r'Answer in one Word': 'answer-in-one-word',
-        r'Match The Following': 'match-the-column',
-        r'Multiple Choice Question': 'multiple-choice-questions',
-        r'True or False': 'true-false',
-        r'Long Answers': 'long-answers',
-        r'Short Answers': 'short-answers',
-        r'Give Reasons': 'give-reasons'
+        r'Match The Following|Match the Column': 'match-the-column',
+        r'Multiple Choice Question|MCQ|MCQs': 'multiple-choice-questions',
+        r'True or False|True/False': 'true-false',
+        r'Long Answers|Long Answer': 'long-answers',
+        r'Short Answers|Short Answer': 'short-answers',
+        r'Give Reasons|Give Reason': 'give-reasons'
     }
 
     for line in file_content.splitlines():
@@ -1528,8 +2005,6 @@ async def get_questions_and_answers(
         "tasks": tasks
     }
 
-   
-
     print("Query:", query)
 
     existing_board = await board_collection.find_one({"board_id": int(board)})
@@ -1625,6 +2100,176 @@ async def get_questions_and_answers(
       
     return {"document": documents}
 
+@app.get("/get_textBook")
+async def get_questions_and_answers(
+    board: str = Query(...),
+    medium: str = Query(...),
+    grade: str = Query(...),
+    subject: str = Query(...),
+    tasks: str = Query(...),
+   
+):
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    print(existing_board)
+    board_name = existing_board["board_name"]
+
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    print(existing_grade)
+    class_name = existing_grade["classs_name"]
+
+    # collection = get_collection(class_name)
+   # print(collection)
+    # Get the collection based on grade
+
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    # Get the collection using both the board name and class name
+    collection = await get_collection(board_name, class_name)  # Pass both arguments
+    print("This is collection", collection)
+   
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+   # document = await collection.find(query)
+    # Find the document based on the query
+    document = await collection.find_one(query)
+    if not document:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        document['_id'] = str(document['_id'])
+       
+      
+    return {"document": document}
+
+
+@app.get("/get_Syllabus")
+async def get_questions_and_answers(
+    board: str = Query(...),
+    medium: str = Query(...),
+    grade: str = Query(...),
+    subject: str = Query(...),
+    tasks: str = Query(...),
+   
+):
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    print(existing_board)
+    board_name = existing_board["board_name"]
+
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    print(existing_grade)
+    class_name = existing_grade["classs_name"]
+
+    # collection = get_collection(class_name)
+   # print(collection)
+    # Get the collection based on grade
+
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    # Get the collection using both the board name and class name
+    collection = await get_collection(board_name, class_name)  # Pass both arguments
+    print("This is collection", collection)
+   
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+   # document = await collection.find(query)
+    # Find the document based on the query
+    document = await collection.find_one(query)
+    if not document:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        document['_id'] = str(document['_id'])
+       
+      
+    return {"document": document}
+
+@app.get("/get_QuestionBank")
+async def get_questions_and_answers(
+    board: str = Query(...),
+    medium: str = Query(...),
+    grade: str = Query(...),
+    subject: str = Query(...),
+    tasks: str = Query(...),
+   
+):
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    print(existing_board)
+    board_name = existing_board["board_name"]
+
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    print(existing_grade)
+    class_name = existing_grade["classs_name"]
+
+    # collection = get_collection(class_name)
+   # print(collection)
+    # Get the collection based on grade
+
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    # Get the collection using both the board name and class name
+    collection = await get_collection(board_name, class_name)  # Pass both arguments
+    print("This is collection", collection)
+   
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+   # document = await collection.find(query)
+    # Find the document based on the query
+    document = await collection.find_one(query)
+    if not document:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        document['_id'] = str(document['_id'])
+       
+      
+    return {"document": document}
+
+
 # Login part start here
 
 # Initialize CryptContext for password hashing
@@ -1636,101 +2281,160 @@ class User(BaseModel):
     surname: str
     institute_name: str
     class_name: str
-    unique_institute_id: str
+    unique_institute_id: str 
     date_of_birth: str
     email: str
     password: str
-    registrationtype: str
-    open_institute: str
-    student_id : str 
-
-class Board(BaseModel):
-    boardName: str
-   
-# async def get_next_user_id():
-#     counter = await db.user_counter.find_one_and_update(
-#         {"_id": "user_id"},
-#         {"$inc": {"seq": 1}},
-#         upsert=True,
-#         return_document=True
-#     )
-#     return counter['seq']
-
-def get_role_id(role: str):
-    """Assign role_id based on the user's role."""
-    if role == "admin":
-        return 1
-    elif role == "teacher":
-        return 2
-    elif role == "student":
-        return 3
-    else:
-        raise ValueError("Invalid role")
-
-# @app.get("static/register.html", response_class=HTMLResponse)
-# async def get_form():
-#     with open("static/register.html", 'rb') as f:
-#         content = f.read()s
-#         return content.decode('utf-8')
+    confirm_password: str
+    teachertype: str
+    
+def get_role_id(role: str) -> int:
+    role_mapping = {
+        "student": 3, 
+        "teacher": 2, 
+        "admin": 1}
+    return role_mapping.get(role, 0)
 
 
 @app.post("/register")
+# async def register_user(user: User):
+
+#     hashed_password = pwd_context.hash(user.password)
+
+#     print("this is new user",user)
+#     # Assign role_id based on the role
+#     role_id = get_role_id(user.role)
+#     print(role_id)
+    
+#     institute = await institute_collection.find_one({
+#         "unique_institute_id": user.unique_institute_id
+#         })
+
+    
+#     # Create user profile data
+#     user_profile = {
+#         # "user_id": user_id,
+#         "role": user.role,
+#         "name": user.name,
+#         "teachertype": user.teachertype,
+#         "surname": user.surname,
+#         "institute_name": institute['institute_name'],
+#         "class_name": user.class_name,
+#         "unique_institute_id": user.unique_institute_id,
+#         "date_of_birth": user.date_of_birth,
+#         "email": user.email,
+#     }
+
+#     # Create auth data
+#     auth_data = {
+#         # "user_id": user_id,
+#         "role": user.role,
+#         "email": user.email,
+#         "password": hashed_password,
+#         "role_id": role_id,  # Store the role_id
+#         "unique_institute_id": user.unique_institute_id,
+#     }
+
+#     existing_user = await profiles_collection.find_one({
+#         # "user_id": user_id,
+#                                                         "role": user.role,
+#                                                         "email": user.email,
+#                                                         "class_name":user.class_name,
+#                                                         "unique_institute_id": user.unique_institute_id,
+#                                                         "date_of_birth": user.date_of_birth
+#                                                         })
+#     print(existing_user)
+
+#     # Check if the email is already registered
+#     # if auth_collection.find_one({"email": user.email}):
+#     if existing_user:
+#         raise HTTPException(status_code=400, detail="User is already registered")
+    
+#     if user.password != user.confirm_password:
+#         raise HTTPException(status_code=400, detail="Passwords do not match")
+
+#     # Insert data into collections
+#     profiles_collection.insert_one(user_profile)
+#     auth_collection.insert_one(auth_data)
+
+#     return {"message": "Registration successful"}
+
 async def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
-    print("this is new user",user)
+
+    print("This is the new user:", user)
+    
     # Assign role_id based on the role
     role_id = get_role_id(user.role)
     print(role_id)
+
+    # Fetch institute data based on unique_institute_id
+    institute = await institute_collection.find_one({"unique_institute_id": user.unique_institute_id})
+    if not institute:
+        raise HTTPException(status_code=400, detail="Invalid institute ID.")
     
-    # user_id = await get_next_user_id()
-    
-    # Create user profile data
+    # classs = await class_collection.find_one({"classs_name": user.class_name})
+    # print(f"Class query result: {classs}")
+    # if not classs:
+    #     raise HTTPException(status_code=400, detail="Invalid Class Name.")
+
+    # Check if the user is already registered
+    existing_user = await profiles_collection.find_one({
+        "role": user.role,
+        "email": user.email,
+        "class_name": user.class_name,
+        "unique_institute_id": user.unique_institute_id,
+        "date_of_birth": user.date_of_birth
+    })
+
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User is already registered")
+
+    if user.password != user.confirm_password:
+        raise HTTPException(status_code=400, detail="Passwords do not match")
+
+    # Create role-specific user profile data
     user_profile = {
-        # "user_id": user_id,
         "role": user.role,
         "name": user.name,
-        "registrationtype": user.registrationtype,
         "surname": user.surname,
-        "institute_name": user.institute_name,
-        "class_name": user.class_name,
+        "institute_name": institute['institute_name'],
         "unique_institute_id": user.unique_institute_id,
         "date_of_birth": user.date_of_birth,
         "email": user.email,
-        "open_institute": user.open_institute,
-        "student_id": user.student_id
     }
+
+    if user.role == "student":
+        # Add student-specific fields
+        user_profile.update({
+            "class_name": user.class_name,
+            # "student_id": user.student_id,  # Optional field for student
+        })
+
+    elif user.role == "teacher":
+        # Add teacher-specific fields
+        user_profile.update({
+            "teachertype": user.teachertype,  # e.g., subject specialist or general
+            # "experience_years": user.experience_years,  # Optional field for teacher
+        })
+    else:
+        raise HTTPException(status_code=400, detail="Invalid role specified")
 
     # Create auth data
     auth_data = {
-        # "user_id": user_id,
         "role": user.role,
         "email": user.email,
         "password": hashed_password,
-        "role_id": role_id,  # Store the role_id
+        "role_id": role_id,
         "unique_institute_id": user.unique_institute_id,
-        "registrationtype" : user.registrationtype
     }
 
-    existing_user = await profiles_collection.find_one({
-        # "user_id": user_id,
-                                                        "role": user.role,
-                                                        "email": user.email,
-                                                        "class_name":user.class_name,
-                                                        "unique_institute_id": user.unique_institute_id,
-                                                        "date_of_birth": user.date_of_birth
-                                                        })
-    print(existing_user)
+    # Insert data into collections
+    await profiles_collection.insert_one(user_profile)
+    await auth_collection.insert_one(auth_data)
 
-    # Check if the email is already registered
-    # if auth_collection.find_one({"email": user.email}):
-    if existing_user:
-        raise HTTPException(status_code=400, detail="User is already registered")
-    else:
-        # Insert data into both collections
-        profiles_collection.insert_one(user_profile)
-        auth_collection.insert_one(auth_data)
+    return {"message":"Registration successful"}
 
-    return {"message": "Registration successful"}
 
 class LoginData(BaseModel):
     email: str
@@ -1742,38 +2446,54 @@ class StudentTeacherLoginData(BaseModel):
     role_id: int
     password: str
     unique_institute_id: Optional[str] = None 
-    registrationtype: str
+    # teachertype: str
+
+# @app.post("/student-teacher-login")
+# async def student_teacher_login(data: StudentTeacherLoginData):
+#     # Check if the registration type is 'registered'
+#     if data.registrationtype == "registered":
+#         user_auth = await auth_collection.find_one({
+#             "email": data.email,
+#             "role_id": data.role_id,
+#             "unique_institute_id": data.unique_institute_id,  # For registered users, this should be checked
+#             "teachertype": data.teachertype
+#         })
+#     elif data.teachertype == "open":
+#         user_auth = await auth_collection.find_one({
+#             "email": data.email,
+#             "role_id": data.role_id,
+#             # "open_institute": True,  # Check the open_institute flag for open users
+#             "teachertype": data.teachertype
+#         })
+#     else:
+#         raise HTTPException(status_code=422, detail="Invalid registration type")
+
+#     # Check if user exists
+#     if not user_auth:
+#         raise HTTPException(status_code=404, detail="User not found. Please check your email, institute ID, or role.")
+
+#     # Check password
+#     if not pwd_context.verify(data.password, user_auth['password']):
+#         raise HTTPException(status_code=401, detail="Incorrect password")
+
+#     return {"message": "Login successful"}
 
 @app.post("/student-teacher-login")
 async def student_teacher_login(data: StudentTeacherLoginData):
-    # Check if the registration type is 'registered'
-    if data.registrationtype == "registered":
-        user_auth = await auth_collection.find_one({
-            "email": data.email,
-            "role_id": data.role_id,
-            "unique_institute_id": data.unique_institute_id,  # For registered users, this should be checked
-            "registrationtype": data.registrationtype
-        })
-    elif data.registrationtype == "open":
-        user_auth = await auth_collection.find_one({
-            "email": data.email,
-            "role_id": data.role_id,
-            # "open_institute": True,  # Check the open_institute flag for open users
-            "registrationtype": data.registrationtype
-        })
-    else:
-        raise HTTPException(status_code=422, detail="Invalid registration type")
+    user_auth = await auth_collection.find_one({
+        "email": data.email,
+        "role_id": data.role_id,
+        "unique_institute_id": data.unique_institute_id
+    })
 
     # Check if user exists
     if not user_auth:
         raise HTTPException(status_code=404, detail="User not found. Please check your email, institute ID, or role.")
 
-    # Check password
     if not pwd_context.verify(data.password, user_auth['password']):
         raise HTTPException(status_code=401, detail="Incorrect password")
 
     return {"message": "Login successful"}
-
     
 @app.post("/admin-login")
 async def admin_login(data: LoginData):
@@ -1788,6 +2508,10 @@ async def admin_login(data: LoginData):
                 raise HTTPException(status_code=401, detail="Incorrect password")
     else:
             return {"message": "User not found. Please register first."}
+
+
+class Board(BaseModel):
+    boardName: str
     
 @app.post("/add_board")
 async def board_added(board: Board):
