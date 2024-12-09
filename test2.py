@@ -19,7 +19,7 @@ import shutil
 import re
 import uuid
 from datetime import datetime
-from starlette.middleware.sessions import SessionMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 
 
@@ -44,15 +44,15 @@ topic_collection = db['topic']
 # user_collection = db['user_counter']
 
 # # Secret key for signing sessions
-app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
+# app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
-# # Middleware for CORS
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # Replace with specific domains in production
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Set this to your frontend domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # def get_collection(class_name: str) -> Collection:
 #     collection_name = f"class_{class_name}"
