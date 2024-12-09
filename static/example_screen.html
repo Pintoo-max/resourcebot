@@ -560,7 +560,7 @@
                 justify-content: space-between;
                 /* Space out elements */
                 padding: 10px 10px;
-                width: 95%;
+                width: 90%;
                 /* Full width to avoid wrapping */
             }
 
@@ -704,7 +704,7 @@
 
             }
 
-            h3 {
+            .header h3 {
                 font-size: medium;
                 /* Slightly reduce font size for smaller screens */
                 flex-grow: 1;
@@ -1190,36 +1190,6 @@
                 .catch(error => console.error('Error fetching classes:', error));
         }
 
-        // async function fetchSubjects() {
-        //     const board = document.getElementById('board').value;
-        //     const medium = document.getElementById('medium').value;
-        //     const grade = document.getElementById('grade').value;
-
-        //     if (board === 'select' || medium === 'select' || grade === 'select') {
-        //         return;
-        //     }
-
-        //     try {
-        //         const response = await fetch(`/get_SubjectDetails?board=${board}&medium=${medium}&grade=${grade}`);
-        //         const result = await response.json();
-        //         const subjectSelect = document.getElementById('subject');
-
-        //         subjectSelect.innerHTML = '<option value="select">Select</option>';
-
-        //         if (response.ok) {
-        //             result.subjects.forEach(subject => {
-        //                 const option = document.createElement('option');
-        //                 option.value = subject;
-        //                 option.textContent = subject;
-        //                 subjectSelect.appendChild(option);
-        //             });
-        //         } else {
-        //             console.error('Error fetching subjects:', result.detail);
-        //         }
-        //     } catch (error) {
-        //         console.error('Error fetching subjects:', error);
-        //     }
-        // }
 
         // Function to fetch and populate subjects based on selected board, medium, and class
         function fetchSubjects() {
@@ -1269,45 +1239,6 @@
 
         }
 
-        // async function fetchChaptersAndTasks() {
-        //     const board = document.getElementById('board').value;
-        //     const medium = document.getElementById('medium').value;
-        //     const grade = document.getElementById('grade').value;
-        //     const subject = document.getElementById('subject').value;
-        //     const lessonDropdown = document.getElementById('lesson');
-
-        //     if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select') {
-        //         console.error('Please select all required fields');
-        //         return;
-        //     }
-
-        //     try {
-        //         const queryString = `board=${encodeURIComponent(board)}&medium=${encodeURIComponent(medium)}&grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(subject)}`;
-        //         const response = await fetch(`/getchaptersandtasks?${queryString}`);
-        //         const result = await response.json();
-
-        //         lessonDropdown.innerHTML = '';
-
-        //         if (response.ok) {
-        //             result.chapters.forEach(chapter => {
-        //                 const option = document.createElement('option');
-        //                 option.value = chapter;
-        //                 option.textContent = chapter;
-        //                 lessonDropdown.appendChild(option);
-        //             });
-
-        //             const taskCheckboxes = document.querySelectorAll('input[name="tasks"]');
-        //             taskCheckboxes.forEach(checkbox => {
-        //                 checkbox.checked = false;
-        //                 checkbox.disabled = !result.tasks.includes(checkbox.value);
-        //             });
-        //         } else {
-        //             console.error('Error fetching chapters and tasks:', result.detail);
-        //         }
-        //     } catch (error) {
-        //         console.error('Error fetching chapters and tasks:', error);
-        //     }
-        // }
 
         // Function to fetch and populate topics based on selected subject
         function fetchTopics() {
@@ -2113,7 +2044,7 @@
                 }
 
             } catch (error) {
-                dataContainer.removeChild(loadingDiv);
+                // dataContainer.removeChild(loadingDiv);
                 console.error('Error fetching textbook solution:', error);
                 alert("Failed to fetch data. Please try again.");
             }
@@ -2200,7 +2131,6 @@
     </a>
 </p>
 `;
-
                             questionsDiv.innerHTML += `<hr>`; // Add a separator between each document
                         });
                     }
@@ -2228,7 +2158,7 @@
             const medium = document.getElementById('medium').value;
             const grade = document.getElementById('grade').value;
             console.log("This is grade", grade);
-            const subject = document.getElementById('subject').value;
+            // const subject = document.getElementById('subject').value;
             // const lesson = document.getElementById('lesson').value;
 
             let missingFields = [];
@@ -2237,7 +2167,7 @@
             if (board === 'select') missingFields.push("Board");
             if (medium === 'select') missingFields.push("Medium");
             if (grade === 'select') missingFields.push("Class");
-            if (subject === 'select') missingFields.push("Subject");
+            // if (subject === 'select') missingFields.push("Subject");
             // if (lesson === 'select') missingFields.push("Chapter/Topic");
 
             // Show alert if any field is missing
@@ -2255,7 +2185,7 @@
                 board: board,
                 medium: medium,
                 grade: grade,
-                subject: subject,
+                // subject: subject,
                 // lesson: lesson,
                 tasks: 'text-book',
 
@@ -2275,39 +2205,64 @@
 
                 if (response.ok) {
                     dataContainer.removeChild(loadingDiv);
+                    const documentArray = result.document;
 
-                    const documentData = result.document;
-                    console.log("The filename", documentData.filename);
-                    const baseUrl = window.location.origin + "/";
-                    console.log('path', "upload/textBook" + documentData.filename);
-                    var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
+                    // console.log("The filename", documentData.filename);
+                    // const baseUrl = window.location.origin + "/";
+                    // console.log('path', "upload/textBook" + documentData.filename);
+                    // var pathname = baseUrl + documentData.file_path.replace(/\\/g, '/');
 
-                    console.log("upload path", pathname);
+                    // console.log("upload path", pathname);
                     // Get the element with the id "data"
                     // const dataContainer = document.getElementById('data');
 
                     // Clear the existing content in the data container
-                    dataContainer.innerHTML = '';
+                    // dataContainer.innerHTML = '';
 
                     if (!heading) {
                         dataContainer.innerHTML +=
                             ` <h3>Board: ${mappings.boards[board]} 
                 Medium: ${mappings.mediums[medium]} 
-                Class: ${mappings.grades[grade]} 
-                Subject: ${mappings.subjects[subject]}<h3>`;
+                Class: ${mappings.grades[grade]} <h3>`;
+                        // Subject: ${mappings.subjects[subject]}
                         heading = true;
                     }
 
+                    // Create a div for questions
+                    const questionsDiv = document.createElement('div');
+                    questionsDiv.classList.add('questionsDiv');
 
-                    // Create an iframe to embed the PDF
-                    const pdfIframe = document.createElement('iframe');
-                    pdfIframe.src = documentData.file_path.replace(/\\/g, '/');
-                    //pdfIframe.src = baseUrl +"upload/textbook_pdf/"+documentData.filename+".pdf";
-                    pdfIframe.width = '100%';
-                    pdfIframe.height = '100%'; // You can adjust this height as per your design
+                    // Add a title for the questions
+                    questionsDiv.innerHTML = `<h3>Question Bank</h3>`;
 
-                    // Append the iframe to the data container directly
-                    dataContainer.appendChild(pdfIframe);
+                    // Check if documentArray is an array and contains data
+                    if (Array.isArray(documentArray) && documentArray.length > 0) {
+                        // Loop through each document in the array
+                        documentArray.forEach((documentData, index) => {
+                            // Create a link for the sample paper
+                            questionsDiv.innerHTML += `
+<p>
+    <a href="${documentData.file_path}" target="_blank">
+        ${index + 1}: ${documentData.board_name} Text Book for class ${documentData.grade_name} ${documentData.subject_name}
+    </a>
+</p>
+`;
+                            questionsDiv.innerHTML += `<hr>`; // Add a separator between each document
+                        });
+                    }
+                    // Append the questions div to the container
+                    dataContainer.appendChild(questionsDiv);
+
+
+                    // // Create an iframe to embed the PDF
+                    // const pdfIframe = document.createElement('iframe');
+                    // pdfIframe.src = documentData.file_path.replace(/\\/g, '/');
+                    // //pdfIframe.src = baseUrl +"upload/textbook_pdf/"+documentData.filename+".pdf";
+                    // pdfIframe.width = '100%';
+                    // pdfIframe.height = '100%'; // You can adjust this height as per your design
+
+                    // // Append the iframe to the data container directly
+                    // dataContainer.appendChild(pdfIframe);
 
                 }
                 else {
@@ -2712,6 +2667,7 @@
             document.getElementById('multiple-choice-questions'),
             document.getElementById('true-false')
         ];
+
         const textbookSolutionsCheckbox = document.getElementById('text-book-solution');
         const samplePaperCheckbox = document.getElementById('sample-paper-solution');
         const textbookCheckbox = document.getElementById('text-book');
@@ -2755,6 +2711,7 @@
 
         function toggleCheckboxVisibility() {
             const screenType = getScreenType();
+            console.log(screenType);
 
             // Remove "selected" class from all buttons
             document.getElementById("worksheetButton").classList.remove("selected");
@@ -2770,12 +2727,14 @@
                 worksheetCheckboxes.forEach(checkbox => {
                     checkbox.parentElement.style.display = 'flex';
                     checkbox.disabled = false;
+
                     const limitField = checkbox.parentElement.querySelector('.limit-controls input[type="number"]');
                     if (limitField) {
                         limitField.style.width = '60px';
                         limitField.disabled = false;
                     }
                 });
+
                 textbookSolutionsCheckbox.parentElement.style.display = 'none';
                 samplePaperCheckbox.parentElement.style.display = 'none';
                 textbookCheckbox.parentElement.style.display = 'none';
@@ -2794,7 +2753,13 @@
                 if (lessonField) {
                     lessonField.disabled = false;
                 }
+
+                const subjectField = document.getElementById('subject');
+                if (subjectField) {
+                    subjectField.disabled = false;
+                }
             }
+
             else if (screenType === "textbook-solutions") {
                 document.getElementById("textbookSolutionsButton").classList.add("selected");
                 worksheetCheckboxes.forEach(checkbox => {
@@ -2805,6 +2770,7 @@
                         limitField.disabled = true;
                     }
                 });
+
                 textbookSolutionsCheckbox.parentElement.style.display = 'flex';
                 samplePaperCheckbox.parentElement.style.display = 'none';
                 textbookCheckbox.parentElement.style.display = 'none';
@@ -2824,6 +2790,11 @@
                     lessonField.disabled = false;
                 }
 
+                const subjectField = document.getElementById('subject');
+                if (subjectField) {
+                    subjectField.disabled = false;
+                }
+
             }
 
             else if (screenType === "sample-paper") {
@@ -2836,6 +2807,7 @@
                         limitField.disabled = true;
                     }
                 });
+
                 textbookSolutionsCheckbox.parentElement.style.display = 'none';
                 textbookCheckbox.parentElement.style.display = 'none';
                 samplePaperCheckbox.parentElement.style.display = 'flex';
@@ -2846,6 +2818,12 @@
                 if (lessonField) {
                     lessonField.disabled = true;
                 }
+
+                const subjectField = document.getElementById('subject');
+                if (subjectField) {
+                    subjectField.disabled = false;
+                }
+
                 textbookSolutionBtn.style.display = 'none';
                 textbookBtn.style.display = 'none';
                 syllabusBtn.style.display = 'none';
@@ -2865,6 +2843,7 @@
                         limitField.disabled = true;
                     }
                 });
+
                 textbookSolutionsCheckbox.parentElement.style.display = 'none';
                 samplePaperCheckbox.parentElement.style.display = 'none';
                 textbookCheckbox.parentElement.style.display = 'flex';
@@ -2875,6 +2854,12 @@
                 if (lessonField) {
                     lessonField.disabled = true;
                 }
+
+                const subjectField = document.getElementById('subject');
+                if (subjectField) {
+                    subjectField.disabled = true;
+                }
+
                 textbookSolutionBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
@@ -2883,6 +2868,7 @@
                 syllabusBtn.style.display = 'none';
                 questionBankBtn.style.display = 'none';
             }
+
             else if (screenType === "syllabus") {
                 document.getElementById("syllabusButton").classList.add("selected");
                 worksheetCheckboxes.forEach(checkbox => {
@@ -2903,6 +2889,12 @@
                 if (lessonField) {
                     lessonField.disabled = true;
                 }
+
+                const subjectField = document.getElementById('subject');
+                if (subjectField) {
+                    subjectField.disabled = false;
+                }
+
                 textbookSolutionBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
@@ -2922,6 +2914,7 @@
                         limitField.disabled = true;
                     }
                 });
+
                 textbookSolutionsCheckbox.parentElement.style.display = 'none';
                 samplePaperCheckbox.parentElement.style.display = 'none';
                 textbookCheckbox.parentElement.style.display = 'none';
@@ -2932,6 +2925,12 @@
                 if (lessonField) {
                     lessonField.disabled = true;
                 }
+
+                const subjectField = document.getElementById('subject');
+                if (subjectField) {
+                    subjectField.disabled = false;
+                }
+
                 textbookSolutionBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
@@ -2950,12 +2949,16 @@
 
     <script>
         async function fetchQuestionsAndAnswers() {
+            console.log('Fetching questions and answers...');
             let selectedTasks = [];
             let totalResults = 0; // Track total results
 
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
                 const taskId = checkbox.id; // Get the ID of the selected checkbox
-                const limitInput = document.querySelector(`#${taskId} _limit`); // Get the corresponding number input
+                // console.log(taskId);
+                const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
+
+                // console.log(limitInput);
 
                 if (limitInput) { // Check if the number input exists
                     const limitValue = limitInput.value; // Get the value of the number input
@@ -3051,7 +3054,7 @@
                 dataContainer.appendChild(loadingDiv);
 
                 try {
-                    const response = await fetch(`/ get_questions_and_answers ? ${queryParams.toString()} `);
+                    const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
                     const result = await response.json();
 
                     if (response.ok && result.questions_and_answers) {
@@ -3073,7 +3076,7 @@
                         allQuestionsAndAnswers.push(...limitedQuestionsAndAnswers);
 
                         if (!heading) {
-                            dataContainer.innerHTML += `< h3 > Board: ${mappings.boards[board]}
+                            dataContainer.innerHTML += `<h3> Board: ${mappings.boards[board]}
                         Medium: ${mappings.mediums[medium]}
                         Class: ${mappings.grades[grade]}
                         Subject: ${mappings.subjects[subject]}
@@ -3126,7 +3129,7 @@
                         });
 
                         // Add a separator after the answers list
-                        questionsDiv.innerHTML += `< hr > `;
+                        questionsDiv.innerHTML += `<hr>`;
 
                         // Append questions to the container
                         dataContainer.appendChild(questionsDiv);
@@ -3134,7 +3137,7 @@
                         // Create a div for answers
                         const answersDiv = document.createElement('div');
                         answersDiv.classList.add('answersDiv');
-                        answersDiv.innerHTML = `< h3 > ${formattedTaskId} - Answer's</h3>`;
+                        answersDiv.innerHTML = `<h3> ${formattedTaskId} - Answer's</h3>`;
 
                         // Loop through the answers array
                         limitedQuestionsAndAnswers.forEach((ans, index) => {

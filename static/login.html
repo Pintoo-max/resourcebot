@@ -125,6 +125,22 @@
             text-decoration: underline;
         }
 
+        .skiploginLink {
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .skiploginLink a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .skiploginLink a:hover {
+            text-decoration: underline;
+        }
+
         /* Responsive Design */
         @media screen and (max-width: 600px) {
             body {
@@ -170,6 +186,10 @@
             }
 
             .forgot-password a {
+                font-size: 12px;
+            }
+
+            .skiploginLink a {
                 font-size: 12px;
             }
         }
@@ -235,7 +255,12 @@
         <div class="forgot-password">
             <a href="/static/forgot-password.html" style="font-size: 18px;">Forgot Password?</a>
         </div>
+        <div id="skiploginLink">
+            <a href="/static/example_screen.html" style="font-size: 18px;">Skip login</a>
+            <!-- <button onclick="redirectToRegistration()">New User? Register Here</button> -->
+        </div>
     </div>
+
 
     <script>
 

@@ -1991,10 +1991,8 @@ async def get_questions_and_answers(
     grade: str = Query(...),
     subject: str = Query(...),
     lesson: str = Query(...),
-    tasks: str = Query(...),
+    tasks: str = Query(...),):
    
-):
-
     # Construct the query
     query = {
         "board": board,
@@ -2105,7 +2103,7 @@ async def get_questions_and_answers(
     board: str = Query(...),
     medium: str = Query(...),
     grade: str = Query(...),
-    subject: str = Query(...),
+    # subject: str = Query(...),
     tasks: str = Query(...),
    
 ):
@@ -2115,7 +2113,7 @@ async def get_questions_and_answers(
         "board": board,
         "medium": medium,
         "grade": grade,
-        "subject": subject,
+        # "subject": subject,
         "tasks": tasks
     }
 
@@ -2146,15 +2144,30 @@ async def get_questions_and_answers(
     # Find the document based on the query
    # document = await collection.find(query)
     # Find the document based on the query
-    document = await collection.find_one(query)
-    if not document:
+    # document = await collection.find_one(query)
+    # if not document:
+    #     print("No document found for query")
+    #     raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    # else:
+    #     document['_id'] = str(document['_id'])
+       
+      
+    # return {"document": document}
+
+    documents = await collection.find(query).to_list(length=None)  # Convert cursor to list
+    if not documents:
+    
         print("No document found for query")
         raise HTTPException(status_code=404, detail="No data found for the specified criteria")
     else:
-        document['_id'] = str(document['_id'])
+         # Convert ObjectId to string for JSON serialization
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])
+
+       # document['_id'] = str(document['_id'])
        
       
-    return {"document": document}
+    return {"document": documents}
 
 
 @app.get("/get_Syllabus")
