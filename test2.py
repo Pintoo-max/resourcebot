@@ -19,7 +19,8 @@ import shutil
 import re
 import uuid
 from datetime import datetime
-from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.session import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
 
 
@@ -46,12 +47,18 @@ topic_collection = db['topic']
 # # Secret key for signing sessions
 # app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
+# app.add_middleware(
+#     SessionMiddleware,
+#     allow_origins=["*"],  # Set this to your frontend domain
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+# Add the SessionMiddleware
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Set this to your frontend domain
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    SessionMiddleware,
+    secret_key="secret-key",  # Replace with a secure secret key
 )
 
 # def get_collection(class_name: str) -> Collection:
@@ -2512,6 +2519,7 @@ async def student_teacher_login(data: StudentTeacherLoginData):
 async def admin_login(data: LoginData):
     # Query to find user in auth collection by email and role_id
     user_auth = await auth_collection.find_one({"email": data.email, "role_id": data.role_id})
+    print("the user details",user_auth)
 
     if user_auth:
             # Verify the entered password against the stored hashed password
