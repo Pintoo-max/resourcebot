@@ -1,6 +1,6 @@
 import random
 import string
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from fastapi import FastAPI, HTTPException, Header, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -13,6 +13,7 @@ import logging
 from dotenv import load_dotenv
 import os
 
+from pymongo.collection import Collection
 # Load environment variables
 load_dotenv()
 
@@ -294,3 +295,247 @@ async def shutdown_db_client():
     client.close()
     logger.info("MongoDB client closed.")
     
+#worksheet data
+
+
+async def get_or_create_database(board_name: str):
+    # Get the list of existing databases
+    existing_databases = await client.list_database_names()
+    
+    # Check if the selected board's database already exists
+    if board_name in existing_databases:
+        db = client[board_name]
+        print(f"Using existing database: '{board_name}'")
+    else:
+        # Create the new database if it does not exist
+        db = client[board_name]
+        print(f"Created new database: '{board_name}'")
+    
+    return db
+
+async def get_collection(board_name: str, class_name: str) -> Collection:
+    collection_name = f"class_{class_name}"
+    print(f"Accessing collection: {collection_name} in database: {board_name}")
+
+    # Get or create the database
+    db = await get_or_create_database(board_name)
+
+    # Get the collection from the database
+    collection = db[collection_name]
+    
+    return collection
+
+# Define the request model
+class QuestionRequest(BaseModel):
+    board: int
+    medium: int
+    grade: int
+    subject: int
+    lesson: int
+    tasks: List[str]
+    limit: Optional[int] = None  # Limit is optional, default is None
+    
+
+@app.post("/get_questions_and_answers_api_one")
+async def get_questions_and_answers_api(request: QuestionRequest):
+    # Validate the limit
+    if request.limit is not None and request.limit < 1:
+        raise HTTPException(status_code=422, detail="Limit must be at least 1")
+
+    # Get the board and grade information
+    existing_board = await board_collection.find_one({"board_id": request.board})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    existing_grade = await class_collection.find_one({"classs_id": request.grade})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Construct the query to find the lesson and subject
+    query = {
+        "board": str(request.board),
+        "medium": str(request.medium),
+        "grade": str(request.grade),
+        "subject": str(request.subject),
+        "lesson": str(request.lesson),
+        "tasks": {"$in": request.tasks}  # Handle multiple tasks
+    }
+
+    # Get the database and collection
+    db = await get_or_create_database(board_name)
+    collection = await get_collection(board_name, class_name)
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Fetch the document
+    document = await collection.find_one(query)
+    if not document:
+        return {
+            "status": 404,
+            "message": "No data found for the specified criteria",
+            "data": {}
+        }
+
+    # Process the data
+    questions_and_answers = document.get("questions_and_answers", {})
+    result = []
+
+    # Loop over each task type in the request
+    for task in request.tasks:
+        # Process each question based on task
+        for i in range(1, 26):  # Assuming 25 questions max
+            question_key = f"question{i}"
+            answer_key = f"answer{i}"
+
+            # If the question and answer exist for this task, add them
+            if question_key in questions_and_answers and answer_key in questions_and_answers:
+                question_data = {
+                    "question": questions_and_answers.get(question_key, ""),
+                    "type": task,
+                    "correct_answer": questions_and_answers.get(answer_key, "")
+                }
+
+                # Add task-specific fields for different task types
+                if task == "multiple-choice-questions":
+                    question_data["options"] = questions_and_answers.get(f"options{i}", [])
+                elif task == "true-false":
+                    question_data["options"] = ["True", "False"]
+                elif task == "match-the-column":
+                    question_data["options"] = {
+                        "column_a": questions_and_answers.get(f"column_a{i}", []),
+                        "column_b": questions_and_answers.get(f"column_b{i}", [])
+                    }
+                elif task == "fill-in-the-blanks":
+                    # No options for fill-in-the-blanks, just the correct answer
+                    pass
+
+                result.append(question_data)
+
+    # Apply the limit if provided
+    if request.limit:
+        result = result[:request.limit]
+
+    # Return the response
+    return {
+        "status": 200,
+        "message": "Worksheet generated successfully",
+        "data": {
+            "questions": result
+        }
+    }
+    
+
+# Define the request model
+class TaskRequest(BaseModel):
+    type: str
+    limit: Optional[int] = 25  # Default limit is 25 if not provided
+
+class QuestionRequest(BaseModel):
+    board: int
+    medium: int
+    grade: int
+    subject: int
+    lesson: int
+    tasks: List[TaskRequest]  # Accept a list of TaskRequest objects
+    limit: Optional[int] = 10  # Global limit (optional)
+
+@app.post("/get_questions_and_answers_api")
+async def get_questions_and_answers_api(request: QuestionRequest):
+    # Validate the limit for each task
+    for task in request.tasks:
+        if task.limit is not None and task.limit < 1:
+            raise HTTPException(status_code=422, detail="Limit must be at least 1")
+
+    # Get the board and grade information
+    existing_board = await board_collection.find_one({"board_id": request.board})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    existing_grade = await class_collection.find_one({"classs_id": request.grade})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get the database and collection
+    db = await get_or_create_database(board_name)
+    collection = await get_collection(board_name, class_name)
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    final_result = []  # Store the questions for all tasks here
+
+    # Loop over each task type in the request
+    for task_info in request.tasks:
+        task = task_info.type  # The task type (e.g., "true-false")
+        task_limit = task_info.limit  # Task-specific limit
+
+        # Construct the query for the specific task
+        task_query = {
+            "board": str(request.board),
+            "medium": str(request.medium),
+            "grade": str(request.grade),
+            "subject": str(request.subject),
+            "lesson": str(request.lesson),
+            "tasks": task  # Filter by the specific task
+        }
+
+        # Fetch the document for this specific task
+        document = await collection.find_one(task_query)
+        if not document:
+            continue  # Skip if no data is found for this task
+
+        # Process the questions and answers for this task
+        questions_and_answers = document.get("questions_and_answers", {})
+        task_result = []  # Store the questions for this specific task
+
+        # Loop over each question for this task (assuming up to 25 questions)
+        for i in range(1, 26):
+            question_key = f"question{i}"
+            answer_key = f"answer{i}"
+
+            # If the question and answer exist for this task, add them
+            if question_key in questions_and_answers and answer_key in questions_and_answers:
+                question_data = {
+                    "question": questions_and_answers.get(question_key, ""),
+                    "type": task,
+                    "correct_answer": questions_and_answers.get(answer_key, "")
+                }
+
+                # Add task-specific fields for different task types
+                if task == "multiple-choice-questions":
+                    question_data["options"] = questions_and_answers.get(f"options{i}", [])
+                elif task == "true-false":
+                    question_data["options"] = ["True", "False"]
+                elif task == "match-the-column":
+                    question_data["options"] = {
+                        "column_a": questions_and_answers.get(f"column_a{i}", []),
+                        "column_b": questions_and_answers.get(f"column_b{i}", [])
+                    }
+                elif task == "fill-in-the-blanks":
+                    # No options for fill-in-the-blanks, just the correct answer
+                    pass
+
+                task_result.append(question_data)
+
+                # If we have reached the task-specific limit, stop adding questions for this task
+                if len(task_result) >= task_limit:
+                    break
+
+        # Add task-specific result to the final result
+        final_result.extend(task_result)
+
+        # If we have reached the global limit, stop processing further tasks
+        if len(final_result) >= request.limit:
+            break
+
+    # Return the response
+    return {
+        "status": 200,
+        "message": "Worksheet generated successfully",
+        "data": {
+            "questions": final_result
+        }
+    }
