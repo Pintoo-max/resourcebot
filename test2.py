@@ -2092,7 +2092,6 @@ async def get_questions_and_answers(
    # document = await collection.find(query)
     documents = await collection.find(query).to_list(length=None)  # Convert cursor to list
     if not documents:
-    
         print("No document found for query")
         raise HTTPException(status_code=404, detail="No data found for the specified criteria")
     else:
@@ -2101,7 +2100,6 @@ async def get_questions_and_answers(
             doc['_id'] = str(doc['_id'])
 
        # document['_id'] = str(document['_id'])
-       
       
     return {"document": documents}
 
@@ -2186,7 +2184,6 @@ async def get_questions_and_answers(
     tasks: str = Query(...),
    
 ):
-
     # Construct the query
     query = {
         "board": board,
@@ -2277,7 +2274,7 @@ async def get_questions_and_answers(
         raise HTTPException(status_code=404, detail="Collection not found")
 
     # Find the document based on the query
-   # document = await collection.find(query)
+    # document = await collection.find(query)
     # Find the document based on the query
     document = await collection.find_one(query)
     if not document:

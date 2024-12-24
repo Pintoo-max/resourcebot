@@ -1,7 +1,7 @@
 import random
 import string
 from typing import Dict, Optional, List
-from fastapi import FastAPI, HTTPException, Header, Depends
+from fastapi import FastAPI, HTTPException, Header, Depends, Body
 from fastapi.responses import HTMLResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
@@ -216,7 +216,7 @@ async def get_boards(user: dict = Depends(verify_access_token)):
         classes = await class_collection.find().to_list(length=100)  # Fetch all classes
         subjects = await subject_collection.find().to_list(length=100)  # Fetch all subjects
 
-        # Error handling if no subjects are found
+        # Error handling if no data is found
         if not boards or not mediums or not classes or not subjects:
             response1 = {
                 "status": 404,
@@ -229,7 +229,7 @@ async def get_boards(user: dict = Depends(verify_access_token)):
             logger.warning("No data found for boards, mediums, classes, or subjects")
             raise HTTPException(status_code=404, detail=response1)
 
-        # Convert ObjectId to string (if needed)
+        # Convert ObjectId to string
         boards = convert_objectid_to_str(boards)
         mediums = convert_objectid_to_str(mediums)
         classes = convert_objectid_to_str(classes)
@@ -242,20 +242,30 @@ async def get_boards(user: dict = Depends(verify_access_token)):
         for board in boards:
             board_name = board["board_name"]
             board_id = str(board["board_id"])
-            response_data[board_name] = {}
+            response_data[board_name] = {
+                "id": board_id,
+                "mediums": {}
+            }
 
             for medium in mediums:
                 medium_name = medium["medium_name"]
                 medium_id = str(medium["medium_id"])
-                response_data[board_name][medium_name] = {}
+                response_data[board_name]["mediums"][medium_name] = {
+                    "id": medium_id,
+                    "classes": {}
+                }
 
                 for cls in classes:
                     class_name = f"Class {cls['classs_name']}"
                     class_id = str(cls["classs_id"])
+                    response_data[board_name]["mediums"][medium_name]["classes"][class_name] = {
+                        "id": class_id,
+                        "subjects": []
+                    }
 
                     # Filter subjects for this specific board, medium, and class
                     filtered_subjects = [
-                        subject["subject_name"]
+                        {"id": str(subject["subject_id"]), "name": subject["subject_name"]}
                         for subject in subjects
                         if subject["board_id"] == board_id
                         and subject["medium_id"] == medium_id
@@ -264,7 +274,7 @@ async def get_boards(user: dict = Depends(verify_access_token)):
 
                     # Add subjects under the class if any exist
                     if filtered_subjects:
-                        response_data[board_name][medium_name][class_name] = filtered_subjects
+                        response_data[board_name]["mediums"][medium_name]["classes"][class_name]["subjects"] = filtered_subjects
 
         return {
             "status": 200,
@@ -283,7 +293,7 @@ async def get_boards(user: dict = Depends(verify_access_token)):
         }
         logger.error(f"An error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=response1)
-
+    
 @app.on_event("startup")
 async def startup_db_client():
     global client
@@ -539,3 +549,332 @@ async def get_questions_and_answers_api(request: QuestionRequest):
             "questions": final_result
         }
     }
+
+
+@app.post("/get_syllabus")
+async def get_syllabus(
+    payload: dict = Body(...)
+):
+    # Extract parameters from the JSON payload
+    board = payload.get("board")
+    medium = payload.get("medium")
+    grade = payload.get("grade")
+    subject = payload.get("subject")
+    tasks = payload.get("tasks")
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    # Retrieve board information
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    # Retrieve grade information
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get or create the database and collection
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    collection = await get_collection(board_name, class_name)
+    print("This is collection", collection)
+
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+    document = await collection.find_one(query)
+    if not document:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        document['_id'] = str(document['_id'])
+
+    # Update the file_path to include your domain
+    if "file_path" in document:
+        base_url = "https://learnaize.com/static/"
+        document["file_path"] = base_url + document["file_path"].replace("\\", "/")
+
+    return {
+        "status": 200,
+        "message": "Syllabus pdf extracted successfully",
+        "data": document
+        }
+
+
+@app.post("/get_textbook-solution")
+async def get_textbook_solution(
+    payload: dict = Body(...)
+):
+    # Extract parameters from the JSON payload
+    board = payload.get("board")
+    medium = payload.get("medium")
+    grade = payload.get("grade")
+    subject = payload.get("subject")
+    lesson = payload.get("lesson")
+    tasks = payload.get("tasks")
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        "lesson": lesson,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    # Retrieve board information
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    # Retrieve grade information
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get or create the database and collection
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    collection = await get_collection(board_name, class_name)
+    print("This is collection", collection)
+
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+    document = await collection.find_one(query)
+    if not document:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        document['_id'] = str(document['_id'])
+
+    # Update the file_path to include your domain
+    if "file_path" in document:
+        base_url = "https://learnaize.com/static/"
+        document["file_path"] = base_url + document["file_path"].replace("\\", "/")
+
+    return {
+        "status": 200,
+        "message": "Text-Book-Solution pdf extracted successfully",
+        "data": document
+        }
+
+
+@app.post("/get_SamplePaper-solution")
+async def get_SamplePaper_solution(
+    payload: dict = Body(...)
+):
+    # Extract parameters from the JSON payload
+    board = payload.get("board")
+    medium = payload.get("medium")
+    grade = payload.get("grade")
+    subject = payload.get("subject")
+    # lesson = payload.get("lesson")
+    tasks = payload.get("tasks")
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        # "lesson": lesson,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    # Retrieve board information
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    # Retrieve grade information
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get or create the database and collection
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    collection = await get_collection(board_name, class_name)
+    print("This is collection", collection)
+
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    documents = await collection.find(query).to_list(length=None)
+    if not documents:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        # Convert `_id` fields to strings
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])
+
+        # Update the file_path for each document
+        base_url = "https://learnaize.com/static/"
+        for doc in documents:
+            if "file_path" in doc:
+                doc["file_path"] = base_url + doc["file_path"].replace("\\", "/")
+
+    return {
+        "status": 200,
+        "message": "Sample Paper Solution pdf extracted successfully",
+        "data": documents
+    }
+
+
+@app.post("/get_textBook")
+async def get_textBook(
+    payload: dict = Body(...)
+):
+    # Extract parameters from the JSON payload
+    board = payload.get("board")
+    medium = payload.get("medium")
+    grade = payload.get("grade")
+    # subject = payload.get("subject")
+    # lesson = payload.get("lesson")
+    tasks = payload.get("tasks")
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        # "subject": subject,
+        # "lesson": lesson,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    # Retrieve board information
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    # Retrieve grade information
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get or create the database and collection
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    collection = await get_collection(board_name, class_name)
+    print("This is collection", collection)
+
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    documents = await collection.find(query).to_list(length=None)
+    if not documents:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        # Convert `_id` fields to strings
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])
+
+        # Update the file_path for each document
+        base_url = "https://learnaize.com/static/"
+        for doc in documents:
+            if "file_path" in doc:
+                doc["file_path"] = base_url + doc["file_path"].replace("\\", "/")
+
+    return {
+        "status": 200,
+        "message": "Text Book extracted successfully",
+        "data": documents
+    }
+
+@app.post("/get_questionBank")
+async def get_questionBank(
+    payload: dict = Body(...)
+):
+    # Extract parameters from the JSON payload
+    board = payload.get("board")
+    medium = payload.get("medium")
+    grade = payload.get("grade")
+    subject = payload.get("subject")
+    tasks = payload.get("tasks")
+
+    # Construct the query
+    query = {
+        "board": board,
+        "medium": medium,
+        "grade": grade,
+        "subject": subject,
+        "tasks": tasks
+    }
+
+    print("Query:", query)
+
+    # Retrieve board information
+    existing_board = await board_collection.find_one({"board_id": int(board)})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    # Retrieve grade information
+    existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get or create the database and collection
+    db = await get_or_create_database(board_name)
+    print("This is db", db)
+
+    collection = await get_collection(board_name, class_name)
+    print("This is collection", collection)
+
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    # Find the document based on the query
+    document = await collection.find_one(query)
+    if not document:
+        print("No document found for query")
+        raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+    else:
+        document['_id'] = str(document['_id'])
+
+    # Update the file_path to include your domain
+    if "file_path" in document:
+        base_url = "https://learnaize.com/static/"
+        document["file_path"] = base_url + document["file_path"].replace("\\", "/")
+
+    return {
+        "status": 200,
+        "message": "Syllabus pdf extracted successfully",
+        "data": document
+        }
