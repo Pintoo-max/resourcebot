@@ -20,11 +20,12 @@ import re
 import uuid
 from datetime import datetime
 # from fastapi.middleware.session import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
-from starlette.requests import Request
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.requests import Request
 from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 # templates = Jinja2Templates(directory="templates") 
@@ -51,7 +52,7 @@ topic_collection = db['topic']
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8000"],  # Set this to your frontend domain
+    allow_origins=["*"],  # Set this to your frontend domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,8 +61,7 @@ app.add_middleware(
 # Add the SessionMiddleware
 app.add_middleware(
     SessionMiddleware,
-    secret_key="secret-key"
-      # Replace with a secure secret key
+    secret_key="secret-key",  # Replace with a secure secret key
 )
 
 # def get_collection(class_name: str) -> Collection:
@@ -2095,6 +2095,7 @@ async def get_questions_and_answers(
    # document = await collection.find(query)
     documents = await collection.find(query).to_list(length=None)  # Convert cursor to list
     if not documents:
+    
         print("No document found for query")
         raise HTTPException(status_code=404, detail="No data found for the specified criteria")
     else:
@@ -2103,6 +2104,7 @@ async def get_questions_and_answers(
             doc['_id'] = str(doc['_id'])
 
        # document['_id'] = str(document['_id'])
+       
       
     return {"document": documents}
 
@@ -2187,6 +2189,7 @@ async def get_questions_and_answers(
     tasks: str = Query(...),
    
 ):
+
     # Construct the query
     query = {
         "board": board,
@@ -2277,7 +2280,7 @@ async def get_questions_and_answers(
         raise HTTPException(status_code=404, detail="Collection not found")
 
     # Find the document based on the query
-    # document = await collection.find(query)
+   # document = await collection.find(query)
     # Find the document based on the query
     document = await collection.find_one(query)
     if not document:
