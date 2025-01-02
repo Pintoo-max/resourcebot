@@ -30,6 +30,7 @@
             <li><a href="#" id="subjects-link"><i class="fas fa-book"></i> Subject</a></li>
             <li><a href="#" id="topics-link"><i class="fas fa-list-alt"></i> Topics</a></li>
             <li><a href="/static/ex.html" id="upload-link"><i class="fas fa-upload"></i> Upload</a></li>
+            <li><a href="#" id="reports-link"><i class="fas fa-chart-bar"></i> Reports</a></li>
             <!-- <li><a href="#"><i class="fas fa-user"></i> Users</a></li>
             <li><a href="#"><i class="fas fa-cogs"></i> Settings</a></li> -->
             <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -478,6 +479,59 @@
             </div>
         </div>
 
+        <div id="reports-section" class="content-section" style="display:none;">
+            <h2>Reports</h2>
+            <div class="search-fields">
+                <div class="form-item">
+                    <label for="report-board">Board</label>
+                    <select id="report-board">
+                        <option value="">Select Board</option>
+                        <!-- Populate options dynamically -->
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label for="report-medium">Medium</label>
+                    <select id="report-medium">
+                        <option value="">Select Medium</option>
+                        <!-- Populate options dynamically -->
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label for="report-class">Class</label>
+                    <select id="report-class">
+                        <option value="">Select Class</option>
+                        <!-- Populate options dynamically -->
+                    </select>
+                </div>
+                
+                <button id="fetch-reports-btn" class="form-button">Fetch Reports</button>
+            </div>
+
+            <div class="report-list-container">
+                <h3>Existing Topics</h3>
+
+                <div class="table-responsive">
+                    <table id="reports-datatable" class="report-list display nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Sr. No</th>
+                                <th>Board</th>
+                                <th>Medium</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Lesson</th>
+                                <th>Filename</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamically populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
@@ -613,6 +667,7 @@
                 const uploadLink = document.getElementById('upload-link');
                 const subjectsLink = document.getElementById('subjects-link');
                 const topicsLink = document.getElementById('topics-link');
+                const reportsLink = document.getElementById('reports-link');
 
                 const dashboardSection = document.getElementById('dashboard-section');
                 const rolesSection = document.getElementById('roles-section');
@@ -623,6 +678,7 @@
                 const uploadSection = document.getElementById("upload-section");
                 const subjectsSection = document.getElementById('subjects-section');
                 const topicsSection = document.getElementById('topics-section');
+                const reportsSection = document.getElementById('reports-section');
 
                 const addRoleBtn = document.getElementById('add-role-btn');
                 const addBoardBtn = document.getElementById('add-board-btn');
@@ -631,6 +687,7 @@
                 const addClassBtn = document.getElementById('add-class-btn');
                 const addSubjectBtn = document.getElementById('add-subject-btn');
                 const addTopicBtn = document.getElementById('add-topic-btn');
+                // const addReportBtn = document.getElementById('add-report-btn');
 
                 const newRoleInput = document.getElementById('new-role-input');
                 const newBoardInput = document.getElementById('new-board-input');
@@ -648,6 +705,7 @@
                 // const uploadList = document.querySelector(.upload-list);
                 const subjectList = document.querySelector('.subject-list');
                 const topicList = document.querySelector('.topic-list');
+                const reportList = document.querySelector('.report-list');
 
                 // Load roles and boards from local storage or initialize them
                 let roles = JSON.parse(localStorage.getItem('roles')) || [];
@@ -657,6 +715,7 @@
                 let classs = JSON.parse(localStorage.getItem('classs')) || [];
                 let subjects = JSON.parse(localStorage.getItem('subjects')) || [];
                 let topics = JSON.parse(localStorage.getItem('topics')) || [];
+                let reports = JSON.parse(localStorage.getItem('reports')) || [];
 
 
                 // Render Roles
@@ -944,7 +1003,6 @@
 
                             medium_name: mediumName,
                         };
-
 
                         fetch('/add_medium', {
                             method: 'POST',
@@ -1633,6 +1691,7 @@
                             return response.json();
                         })
                         .then(data => {
+                            console.log("the data:", data)
                             const selectElement = document.getElementById(selectElementId);
                             selectElement.innerHTML = `<option value="">Select</option>`;
 
@@ -1918,6 +1977,7 @@
                     uploadSection.style.display = 'none';
                     subjectsSection.style.display = 'none';
                     topicsSection.style.display = 'none';
+                    reportsSection.style.display = 'none';
 
                     // Show the selected section
                     sectionToShow.style.display = 'block';
@@ -1931,6 +1991,15 @@
                 // UploadForm Link Event Listener
                 uploadLink.addEventListener('click', function () {
                     showSection(uploadSection, uploadLink);
+                });
+
+                // UploadForm Link Event Listener
+                reportsLink.addEventListener('click', function () {
+                    showSection(reportsSection, reportsLink);
+                    fetchClassDtls_R();
+                    fetchMediumDtls_R();
+                    fetchBoardDtls_R();
+                    // fetchAndRenderReports();
                 });
 
                 // Roles Link Event Listener
@@ -2335,6 +2404,127 @@
                 }
             }
 
+            //  For Reports -------
+
+            // Function to fetch and populate board details
+            function fetchBoardDtls_R() {
+                fetchReportDetails('/get_SchoolBoard', 'report-board', 'board_id', 'board_name');
+            }
+
+            // Function to fetch and populate medium details
+            function fetchMediumDtls_R() {
+                fetchReportDetails('/get_SchoolMedium', 'report-medium', 'medium_id', 'medium_name');
+            }
+
+            // Function to fetch and populate class details
+            function fetchClassDtls_R() {
+                fetchReportDetails('/get_SchoolClass', 'report-class', 'classs_name', 'classs_name');
+            }
+
+            // Reusable function to fetch details and populate dropdowns
+            function fetchReportDetails(url, selectElementId, valueField, textField) {
+                fetch(url, { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(`Fetched data:`, data);
+                        const selectElement = document.getElementById(selectElementId);
+                        selectElement.innerHTML = `<option value="">Select</option>`;
+
+                        data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item[valueField];
+                            option.textContent = item[textField];
+                            selectElement.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error(`Error fetching data from ${url}:`, error);
+                        alert("An error occurred while fetching data.");
+                    });
+            }
+
+            document.getElementById('fetch-reports-btn').addEventListener('click', function () {
+                const boardId = document.getElementById('report-board').value;
+                const mediumId = document.getElementById('report-medium').value;
+                const classsName = document.getElementById('report-class').value;
+
+                if (!boardId || !mediumId || !classsName) {
+                    alert("Please select board, medium, and class!");
+                    return;
+                }
+
+                // Show loading message while fetching data
+                const tbody = document.querySelector('.report-list tbody');
+                tbody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
+
+                fetch('/fetch_reports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ board_id: boardId, medium_id: mediumId, classs_name: classsName }),
+                })
+                    .then(response => {
+                        console.log("Response from server:", response);
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`Error: ${response.status} - ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(reports => {
+                        console.log("Fetched Reports:", reports);
+                        tbody.innerHTML = ''; // Clear loading message
+
+                        if (reports.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="7">No reports found.</td></tr>';
+                        } else {
+                            // Append fetched reports to the table body
+                            reports.forEach((report, index) => {
+                                console.log("Adding report to table:", report);
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${report.board_name || 'Unknown Board'}</td>
+                        <td>${report.medium_name || 'Unknown Medium'}</td>
+                        <td>${report.classs_name || 'Unknown Class'}</td>
+                        <td>${report.subject_name || 'Unknown Subject'}</td>
+                        <td>${report.lesson_name || 'Unknown Lesson'}</td>
+                        <td>${report.filename || 'Unknown Filename'}</td>
+                        <td>${report.timestamp || 'Unknown Timestamp'}</td>`;
+                                tbody.appendChild(row);
+                            });
+
+                            // Reinitialize DataTable
+                            if ($.fn.DataTable.isDataTable('#reports-datatable')) {
+                                console.log("Destroying existing DataTable instance...");
+                                $('#reports-datatable').DataTable().destroy();
+                            }
+
+                            console.log("Initializing DataTable...");
+                            $('#reports-datatable').DataTable({
+                                paging: true,
+                                searching: true,
+                                ordering: true,
+                                info: true,
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching reports:', error);
+                        tbody.innerHTML = '<tr><td colspan="7">An error occurred while fetching reports.</td></tr>';
+                    });
+            });
+
+           
         </script>
 </body>
 

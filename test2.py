@@ -22,7 +22,9 @@ from datetime import datetime
 # from fastapi.middleware.session import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
-
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 # templates = Jinja2Templates(directory="templates") 
@@ -47,18 +49,19 @@ topic_collection = db['topic']
 # # Secret key for signing sessions
 # app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
-# app.add_middleware(
-#     SessionMiddleware,
-#     allow_origins=["*"],  # Set this to your frontend domain
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:8000"],  # Set this to your frontend domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Add the SessionMiddleware
 app.add_middleware(
     SessionMiddleware,
-    secret_key="secret-key",  # Replace with a secure secret key
+    secret_key="secret-key"
+      # Replace with a secure secret key
 )
 
 # def get_collection(class_name: str) -> Collection:
@@ -73,7 +76,7 @@ app.mount("/images", StaticFiles(directory="images"), name="images")
 @app.get("/", response_class=HTMLResponse)
 async def get_form():
     print("This is collection1")
-    with open("static/login.html") as f:
+    with open("static/welcome.html") as f:
         return f.read()
     
 @app.get("/output", response_class=HTMLResponse)
@@ -3662,3 +3665,103 @@ if __name__ == "__main__":
 #         else:
 #             print(f"Failed to insert the new file: {filename}")
 #             return {"status": "0", "message": f"Failed to insert '{filename}'."}
+
+
+GOOGLE_CLIENT_ID = "409005645941-t0srh7jvesh8cehoil6fpnnedqid2qd5.apps.googleusercontent.com"
+
+# Define the request schema
+class GoogleLoginRequest(BaseModel):
+    id_token: str
+    
+@app.post("/google-login")
+async def google_login(request: GoogleLoginRequest):
+    try:
+        # Verify the token
+        id_info = id_token.verify_oauth2_token(
+            request.id_token,
+            requests.Request(),
+            GOOGLE_CLIENT_ID
+        )
+
+        # Extract user info
+        user_info = {
+            "email": id_info.get("email"),
+            "name": id_info.get("name"),
+            "picture": id_info.get("picture"),
+        }
+
+        print("Hello User :",user_info)
+
+        if not id_info.get("email_verified"):
+            raise HTTPException(status_code=400, detail="Email not verified")
+
+        return {"success": True, "user": user_info}
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail="Invalid token: " + str(e))
+
+
+class ReportFilter(BaseModel):
+    board_id: str
+    medium_id: str
+    classs_name: str
+    
+
+@app.post("/fetch_reports")
+async def fetch_reports(request: Request):
+    try:
+        data = await request.json()
+        board_id = data.get("board_id")
+        medium_id = data.get("medium_id")
+        classs_name = data.get("classs_name")
+
+        if not board_id or not medium_id:
+            raise HTTPException(status_code=400, detail="Invalid input data")
+
+        # client = MongoClient("mongodb://your_mongo_connection_string")
+        db = client["State_Board"]
+        collection_name = f"class_{classs_name}"
+        collection = db[collection_name]
+
+        # Log query details
+        print(f"Querying collection: {collection_name}")
+        print(f"Query parameters: {{'board': {board_id}, 'medium': {medium_id}, 'classs': {classs_name}}}")
+
+        # Query the database
+        reports_cursor = collection.find({
+            "board": board_id,
+            "medium": medium_id,
+            "grade_name": classs_name
+        })
+
+        reports = await reports_cursor.to_list(length=None)
+
+        # Log fetched reports
+        # print(f"Reports fetched: {reports}")
+
+        if not reports:
+            print("No reports found in the collection.")
+            return {"detail": "No reports found."}
+
+        result = [
+            {
+                "sr_no": index + 1,  # Adding serial number (1-based index)
+                "board_name": report.get("board_name"),
+                "medium_name": report.get("medium_name"),
+                "classs_name": report.get("grade_name"),
+                "subject_name": report.get("subject_name"),
+                "lesson_name": report.get("lesson_name"),
+                "filename": report.get("filename"),
+                "timestamp": report.get("timestamp")
+            }
+            for index, report in enumerate(reports)
+        ]
+
+        print("the Result: ",result)
+
+        return result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

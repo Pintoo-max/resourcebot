@@ -219,7 +219,8 @@ body {
 .institute-management,
 .class-management,
 .subject-management, 
-.topic-management {
+.topic-management,
+.report-management {
     position: fixed;
     right: 20px;
     top: 100px;
@@ -235,7 +236,8 @@ body {
 .institute-management input,
 .class-management input,
 .subject-management input,
-.topic-management input {
+.topic-management input,
+.report-management input {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -249,7 +251,8 @@ body {
 .institute-management button,
 .class-management button,
 .subject-management button,
-.topic-management button {
+.topic-management button,
+.report-management button {
     background-color: #007bff;
     color: #fff;
     padding: 10px;
@@ -264,7 +267,8 @@ body {
 .institute-management button:hover,
 .class-management button:hover,
 .subject-management button:hover,
-.topic-management button:hover {
+.topic-management button:hover,
+.report-management button:hover {
     background-color: #0056b3;
 }
 
@@ -289,7 +293,8 @@ body {
 .institute-list div,
 .class-list div,
 .subject-list div,
-.topic-list div {
+.topic-list div,
+.report-list div {
     padding: 10px;
     border-bottom: 1px solid #ccc;
     margin-bottom: 10px;
@@ -304,7 +309,8 @@ body {
 .institute-list div span,
 .class-list div span,
 .subject-list div span,
-.topic-list div span {
+.topic-list div span,
+.report-list div span {
     flex-grow: 1;
 }
 
@@ -314,7 +320,8 @@ body {
 .institute-list div button,
 .class-list div button,
 .subject-list div button,
-.topic-list div button {
+.topic-list div button,
+.report-list div button {
     margin-left: 10px;
     background-color: #007bff;
     color: #fff;
@@ -360,7 +367,8 @@ body {
 .institute-form,
 .class-form,
 .subject-form,
-.topic-form {
+.topic-form,
+.search-fields{
     display: flex;
     align-items: center;
     gap: 10px;
@@ -374,7 +382,9 @@ body {
 .subject-form [type="text"],
 .subject-form select, 
 .topic-form [type="text"],
-.topic-form select {
+.topic-form select,
+.search-fields [type="text"],
+.search-fields select{
     padding: 10px;
     width: 280px;
     border: 1px solid #ccc;
@@ -389,7 +399,8 @@ body {
 .institute-form input:focus,
 .class-form input:focus,
 .subject-form input:focus,
-.topic-form input:focus {
+.topic-form input:focus,
+.search-fields input:focus {
     border-color: #007bff;
     outline: none;
 }
@@ -421,7 +432,8 @@ body {
 .institute-list-container,
 .class-list-container,
 .subject-list-container,
-.topic-list-container {
+.topic-list-container,
+.report-list-container {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
@@ -434,7 +446,9 @@ body {
 .institute-list-container h3,
 .class-list-container h3,
 .subject-list-container h3,
-.topic-list-container h3 {
+.topic-list-container h3,
+.report-list-container h3,
+.report-list-container h3 {
     margin-bottom: 20px;
     font-size: 22px;
     color: #333;
@@ -516,7 +530,8 @@ body {
 #medium-datatable,
 #class-datatable,
 #institute-datatable,
-#topic-datatable {
+#topic-datatable,
+#reports-datatable{
     width: 100%;
     border-collapse: collapse;
     font-family: Arial, sans-serif;
@@ -530,7 +545,8 @@ body {
 #medium-datatable thead th,
 #class-datatable thead th,
 #institute-datatable thead th,
-#topic-datatable thead th {
+#topic-datatable thead th,
+#reports-datatable thead th {
     background-color: #007bff;
     color: white;
     padding: 10px;
@@ -546,7 +562,8 @@ body {
 #medium-datatable tbody tr,
 #class-datatable tbody tr,
 #institute-datatable tbody tr,
-#topic-datatable tbody tr{
+#topic-datatable tbody tr,
+#reports-datatable tbody tr{
     border-bottom: 1px solid #ddd;
     transition: background-color 0.2s ease;
 }
@@ -556,7 +573,8 @@ body {
 #medium-datatable tbody tr:hover,
 #class-datatable tbody tr:hover,
 #institute-datatable tbody tr:hover,
-#topic-datatable tbody tr:hover{
+#topic-datatable tbody tr:hover,
+#reports-datatable tbody tr:hover{
     background-color: #f1f1f1;
 }
 
@@ -566,7 +584,8 @@ body {
 #medium-datatable tbody td,
 #class-datatable tbody td,
 #institute-datatable tbody td,
-#topic-datatable tbody td {
+#topic-datatable tbody td,
+#reports-datatable tbody td {
     padding: 8px;
     white-space: nowrap;
     text-align: left;
@@ -578,7 +597,8 @@ body {
 #medium-datatable tbody td:last-child,
 #class-datatable tbody td:last-child,
 #institute-datatable tbody td:last-child,
-#topic-datatable tbody td:last-child{
+#topic-datatable tbody td:last-child,
+#reports-datatable tbody td:last-child{
     text-align: center;
 }
 
@@ -588,7 +608,8 @@ body {
 #medium-datatable tbody tr:nth-child(even),
 #class-datatable tbody tr:nth-child(even),
 #institute-datatable tbody tr:nth-child(even),
-#topic-datatable tbody tr:nth-child(even) {
+#topic-datatable tbody tr:nth-child(even),
+#reports-datatable tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 

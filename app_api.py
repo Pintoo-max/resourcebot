@@ -14,6 +14,14 @@ from dotenv import load_dotenv
 import os
 
 from pymongo.collection import Collection
+#for pdf que ans
+import uuid
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.styles import getSampleStyleSheet
+from textwrap import wrap
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+
 # Load environment variables
 load_dotenv()
 
@@ -87,6 +95,20 @@ def convert_objectid_to_str(item):
         return [convert_objectid_to_str(element) for element in item]
     return item
 
+#for pdf que ans
+static_dir = "./static/apps/"
+if not os.path.exists(static_dir):
+    os.makedirs(static_dir)
+
+# Helper function to handle long text
+def draw_wrapped_text(canvas, text, x, y, max_width=500):
+    lines = wrap(text, width=max_width // 10)  # Wrap text at max_width
+    for line in lines:
+        canvas.drawString(x, y, line)
+        y -= 15  # Adjust line spacing
+    return y
+#end pdf que ans
+    
 # Pydantic models
 class LoginData(BaseModel):
     user_id: str
@@ -97,7 +119,7 @@ async def get_form():
     with open("static/login.html") as f:
         return f.read()
 
-@app.post("/all-login")
+@app.post("/all-login2")
 async def admin_login(data: LoginData):
     # Find the user by user_id in the 'user_auth' collection
     user_auth = await auth_collection.find_one({"email": data.user_id})  # Assuming user_id matches email field
@@ -128,6 +150,65 @@ async def admin_login(data: LoginData):
         }
         logger.warning(f"Login attempt failed for user_id: {data.user_id}")
         raise HTTPException(status_code=404, detail=response1)
+
+@app.post("/all-login")
+async def admin_login(data: LoginData):
+    # Check if user_id is blank
+    if not data.user_id or data.user_id.strip() == "":
+        # Generate a skip login access token
+        access_token = create_access_token({"sub": "skip_login"})
+        response = {
+            "status": 201,
+            "message": "Skip login access granted",
+            "data": {
+                "access_token": access_token,
+                "token_type": "bearer"
+            }
+        }
+        await save_token_to_db("skip_login@learnaize.com", access_token)
+        logger.info("Skip login access token generated")
+        return JSONResponse(content=response, status_code=200)
+
+    # Find the user by user_id in the 'user_auth' collection
+    user_auth = await auth_collection.find_one({"email": data.user_id})  # Assuming user_id matches email field
+
+    if user_auth:
+        # Generate an access token
+        access_token = create_access_token({"sub": user_auth["email"]})  # Use email for the token subject
+        response = {
+            "status": 200,
+            "message": "Request Successful",
+            "data": {
+                "access_token": access_token,
+                "token_type": "bearer"
+            }
+        }
+        await save_token_to_db(user_auth["email"], access_token)
+        logger.info(f"Login successful for user_id: {data.user_id}")
+        return JSONResponse(content=response, status_code=200)
+
+    else:
+        # If user does not exist, add to the database
+        new_user = {
+            "email": data.user_id,
+            "created_at": datetime.utcnow(),
+            # Add other fields as needed, e.g., default roles, status, etc.
+        }
+        await auth_collection.insert_one(new_user)
+        logger.info(f"New user added to database: {data.user_id}")
+
+        # Generate an access token for the new user
+        access_token = create_access_token({"sub": new_user["email"]})
+        response = {
+            "status": 201,
+            "message": "User added successfully",
+            "data": {
+                "access_token": access_token,
+                "token_type": "bearer"
+            }
+        }
+        await save_token_to_db(new_user["email"], access_token)
+        return JSONResponse(content=response, status_code=201)
 
 @app.get("/secure-data")
 async def secure_data(authorization: str = Header(None)):
@@ -449,7 +530,7 @@ class QuestionRequest(BaseModel):
     subject: int
     lesson: int
     tasks: List[TaskRequest]  # Accept a list of TaskRequest objects
-    limit: Optional[int] = 10  # Global limit (optional)
+    limit: Optional[int] = 30  # Global limit (optional)
 
 @app.post("/get_questions_and_answers_api")
 async def get_questions_and_answers_api(request: QuestionRequest):
@@ -550,6 +631,176 @@ async def get_questions_and_answers_api(request: QuestionRequest):
         }
     }
 
+
+@app.post("/get_questions_and_answers_api_pdf")
+async def get_questions_and_answers_api(request: QuestionRequest):
+    # Validate the limit for each task
+    for task in request.tasks:
+        if task.limit is not None and task.limit < 1:
+            raise HTTPException(status_code=422, detail="Limit must be at least 1")
+
+    # Get the board and grade information
+    existing_board = await board_collection.find_one({"board_id": request.board})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    existing_grade = await class_collection.find_one({"classs_id": request.grade})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get the database and collection
+    db = await get_or_create_database(board_name)
+    collection = await get_collection(board_name, class_name)
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    final_result = []  # Store the questions for all tasks here
+
+    # Loop over each task type in the request
+    for task_info in request.tasks:
+        task = task_info.type  # The task type (e.g., "true-false")
+        task_limit = task_info.limit  # Task-specific limit
+
+        # Construct the query for the specific task
+        task_query = {
+            "board": str(request.board),
+            "medium": str(request.medium),
+            "grade": str(request.grade),
+            "subject": str(request.subject),
+            "lesson": str(request.lesson),
+            "tasks": task  # Filter by the specific task
+        }
+
+        # Fetch the document for this specific task
+        document = await collection.find_one(task_query)
+        if not document:
+            continue  # Skip if no data is found for this task
+
+        # Process the questions and answers for this task
+        questions_and_answers = document.get("questions_and_answers", {})
+        task_result = []  # Store the questions for this specific task
+
+        # Loop over each question for this task (assuming up to 25 questions)
+        for i in range(1, 26):
+            question_key = f"question{i}"
+            answer_key = f"answer{i}"
+
+            # If the question and answer exist for this task, add them
+            if question_key in questions_and_answers and answer_key in questions_and_answers:
+                question_data = {
+                    "question": questions_and_answers.get(question_key, ""),
+                    "type": task,
+                    "correct_answer": questions_and_answers.get(answer_key, "")
+                }
+
+                # Add task-specific fields for different task types
+                if task == "multiple-choice-questions":
+                    question_data["options"] = questions_and_answers.get(f"options{i}", [])
+                elif task == "true-false":
+                    question_data["options"] = ["True", "False"]
+                elif task == "match-the-column":
+                    question_data["options"] = {
+                        "column_a": questions_and_answers.get(f"column_a{i}", []),
+                        "column_b": questions_and_answers.get(f"column_b{i}", [])
+                    }
+                elif task == "fill-in-the-blanks":
+                    # No options for fill-in-the-blanks, just the correct answer
+                    pass
+
+                task_result.append(question_data)
+
+                # If we have reached the task-specific limit, stop adding questions for this task
+                if len(task_result) >= task_limit:
+                    break
+
+        # Add task-specific result to the final result
+        final_result.extend(task_result)
+
+        # If we have reached the global limit, stop processing further tasks
+        if len(final_result) >= request.limit:
+            break
+
+             # Create a unique filename for the PDF
+    pdf_filename = f"{uuid.uuid4()}.pdf"
+    #pdf_filepath = f"/static/apps/{pdf_filename}"  # Change this path as per your setup
+    pdf_filepath = os.path.join(static_dir, f"{uuid.uuid4()}.pdf")
+
+    # Generate the PDF
+    c = canvas.Canvas(pdf_filepath, pagesize=letter)
+    c.setFont("Helvetica", 11)
+    y = 750  # Initial Y position on the first page
+
+    c.drawString(200, 800, "Worksheet")  # Title
+
+    for question in final_result:
+        if y < 50:  # Add a new page if space is running out
+            c.showPage()
+            c.setFont("Helvetica", 12)
+            y = 750
+
+        question_text = question["question"]
+        c.drawString(50, y, f"Q: {question_text}")
+        y -= 20
+
+        # Display options if available
+        options = question.get("options", [])
+        if question["type"] == "match-the-column" and isinstance(options, dict):
+            c.drawString(50, y, "Match the following:")
+            y -= 20
+            column_a = options.get("column_a", [])
+            column_b = options.get("column_b", [])
+            for col_a, col_b in zip(column_a, column_b):
+                c.drawString(100, y, f"{col_a} -> {col_b}")
+                y -= 20
+                if y < 50:  # Add a new page if space runs out mid-column
+                    c.showPage()
+                    c.setFont("Helvetica", 12)
+                    y = 750
+        elif isinstance(options, list):
+            for opt in options:
+                c.drawString(100, y, f"- {opt}")
+                y -= 20
+                if y < 50:  # Add a new page if space runs out mid-options
+                    c.showPage()
+                    c.setFont("Helvetica", 12)
+                    y = 750
+
+    # Display correct answer
+        correct_answer = question.get("correct_answer", "N/A")
+        if question["type"] == "match-the-column":
+            c.drawString(50, y, "Correct Answer:")
+            y -= 20
+            for match in correct_answer:
+                c.drawString(100, y, match)
+                y -= 20
+                if y < 50:  # Add a new page if space runs out mid-correct answer
+                    c.showPage()
+                    c.setFont("Helvetica", 12)
+                    y = 750
+        else:
+            c.drawString(50, y, f"Correct Answer: {correct_answer}")
+            y -= 30
+            if y < 50:  # Add a new page if space runs out mid-correct answer
+                c.showPage()
+                c.setFont("Helvetica", 12)
+                y = 750
+
+    c.save()
+
+    # Generate a downloadable link (adjust this path for your file server)
+    pdf_link = f"http://127.0.0.1:8000/static/apps/{pdf_filename}"  # Update to your server URL or path
+
+    # Return response with the PDF link
+    return JSONResponse(content={
+        "status": 200,
+        "message": "Worksheet generated successfully",
+        "data": {
+            "questions": final_result,
+            "pdf_link": pdf_link
+        }
+    })
 
 @app.post("/get_syllabus")
 async def get_syllabus(
@@ -875,6 +1126,176 @@ async def get_questionBank(
 
     return {
         "status": 200,
-        "message": "Syllabus pdf extracted successfully",
+        "message": "Question Bank extracted successfully",
         "data": document
         }
+    
+    
+@app.post("/get_questions_and_answers_api_pdf2")
+async def get_questions_and_answers_api(request: QuestionRequest):
+    # Validate the limit for each task
+    for task in request.tasks:
+        if task.limit is not None and task.limit < 1:
+            raise HTTPException(status_code=422, detail="Limit must be at least 1")
+
+    # Get the board and grade information
+    existing_board = await board_collection.find_one({"board_id": request.board})
+    if not existing_board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    board_name = existing_board["board_name"]
+
+    existing_grade = await class_collection.find_one({"classs_id": request.grade})
+    if not existing_grade:
+        raise HTTPException(status_code=404, detail="Grade not found")
+    class_name = existing_grade["classs_name"]
+
+    # Get the database and collection
+    db = await get_or_create_database(board_name)
+    collection = await get_collection(board_name, class_name)
+    if collection is None:
+        raise HTTPException(status_code=404, detail="Collection not found")
+
+    final_result = []  # Store the questions for all tasks here
+
+    # Loop over each task type in the request
+    for task_info in request.tasks:
+        task = task_info.type  # The task type (e.g., "true-false")
+        task_limit = task_info.limit  # Task-specific limit
+
+        # Construct the query for the specific task
+        task_query = {
+            "board": str(request.board),
+            "medium": str(request.medium),
+            "grade": str(request.grade),
+            "subject": str(request.subject),
+            "lesson": str(request.lesson),
+            "tasks": task  # Filter by the specific task
+        }
+
+        # Fetch the document for this specific task
+        document = await collection.find_one(task_query)
+        if not document:
+            continue  # Skip if no data is found for this task
+
+        # Process the questions and answers for this task
+        questions_and_answers = document.get("questions_and_answers", {})
+        task_result = []  # Store the questions for this specific task
+
+        # Loop over each question for this task (assuming up to 25 questions)
+        for i in range(1, 26):
+            question_key = f"question{i}"
+            answer_key = f"answer{i}"
+
+            # If the question and answer exist for this task, add them
+            if question_key in questions_and_answers and answer_key in questions_and_answers:
+                question_data = {
+                    "question": questions_and_answers.get(question_key, ""),
+                    "type": task,
+                    "correct_answer": questions_and_answers.get(answer_key, "")
+                }
+
+                # Add task-specific fields for different task types
+                if task == "multiple-choice-questions":
+                    question_data["options"] = questions_and_answers.get(f"options{i}", [])
+                elif task == "true-false":
+                    question_data["options"] = ["True", "False"]
+                elif task == "match-the-column":
+                    question_data["options"] = {
+                        "column_a": questions_and_answers.get(f"column_a{i}", []),
+                        "column_b": questions_and_answers.get(f"column_b{i}", [])
+                    }
+                elif task == "fill-in-the-blanks":
+                    # No options for fill-in-the-blanks, just the correct answer
+                    pass
+
+                task_result.append(question_data)
+
+                # If we have reached the task-specific limit, stop adding questions for this task
+                if len(task_result) >= task_limit:
+                    break
+
+        # Add task-specific result to the final result
+        final_result.extend(task_result)
+
+        # If we have reached the global limit, stop processing further tasks
+        if len(final_result) >= request.limit:
+            break
+
+    # Generate unique filenames for the PDFs
+    questions_pdf_filename = f"questions_{uuid.uuid4()}.pdf"
+    answers_pdf_filename = f"answers_{uuid.uuid4()}.pdf"
+
+    questions_pdf_filepath = os.path.join(static_dir, questions_pdf_filename)
+    answers_pdf_filepath = os.path.join(static_dir, answers_pdf_filename)
+
+    # Generate the Questions PDF
+    c = canvas.Canvas(questions_pdf_filepath, pagesize=letter)
+    c.setFont("Helvetica", 11)
+    y = 750
+    c.drawString(200, 800, "Questions Worksheet")
+    for question in final_result:
+        if y < 50:
+            c.showPage()
+            c.setFont("Helvetica", 12)
+            y = 750
+        question_text = question["question"]
+        c.drawString(50, y, f"Q: {question_text}")
+        y -= 20
+
+        # Display options if available
+        options = question.get("options", [])
+        if question["type"] == "match-the-column" and isinstance(options, dict):
+            c.drawString(50, y, "Match the following:")
+            y -= 20
+            column_a = options.get("column_a", [])
+            column_b = options.get("column_b", [])
+            for col_a, col_b in zip(column_a, column_b):
+                c.drawString(100, y, f"{col_a} -> {col_b}")
+                y -= 20
+        elif isinstance(options, list):
+            for opt in options:
+                c.drawString(100, y, f"- {opt}")
+                y -= 20
+    c.save()
+
+    # Generate the Answers PDF
+    c = canvas.Canvas(answers_pdf_filepath, pagesize=letter)
+    c.setFont("Helvetica", 11)
+    y = 750
+    c.drawString(200, 800, "Answers Worksheet")
+    for question in final_result:
+        if y < 50:
+            c.showPage()
+            c.setFont("Helvetica", 12)
+            y = 750
+        question_text = question["question"]
+        c.drawString(50, y, f"Q: {question_text}")
+        y -= 20
+
+        # Display correct answer
+        correct_answer = question.get("correct_answer", "N/A")
+        if question["type"] == "match-the-column":
+            c.drawString(50, y, "Correct Answer:")
+            y -= 20
+            for match in correct_answer:
+                c.drawString(100, y, match)
+                y -= 20
+        else:
+            c.drawString(50, y, f"Correct Answer: {correct_answer}")
+            y -= 30
+    c.save()
+
+    # Generate downloadable links
+    questions_pdf_link = f"http://127.0.0.1:8000/static/apps/{questions_pdf_filename}"
+    answers_pdf_link = f"http://127.0.0.1:8000/static/apps/{answers_pdf_filename}"
+
+    # Return response with both PDF links
+    return JSONResponse(content={
+        "status": 200,
+        "message": "Worksheets generated successfully",
+        "data": {
+            "questions": final_result,
+            "questions_pdf_link": questions_pdf_link,
+            "answers_pdf_link": answers_pdf_link
+        }
+    })

@@ -765,7 +765,7 @@
                 <button id="textbookButton" class="option-button"
                     onclick="selectScreenType('textbook')">Textbook</button>
                 <button id="questionPaperButton" class="option-button"
-                    onclick="selectScreenType('sample-paper')">Question Paper</button>
+                    onclick="selectScreenType('sample-paper')">Previous Paper</button>
                 <button id="questionBankButton" class="option-button"
                     onclick="selectScreenType('question-bank')">Question Bank</button>
                 <button id="syllabusButton" class="option-button"
@@ -892,11 +892,7 @@
                 <div class="task">
                     <input type="checkbox" id="text-book-solution" name="tasks" value="text-book-solution"
                         onchange="toggleCheckboxes(this)">
-                    <label for="text-book-solution">Test Book Solutions</label>
-                    <!-- <div class="limit-controls">
-                        <input type="number" id="text-book-solution_limit" name="limit_text-book-solution" min="0"
-                            value="">
-                    </div> -->
+                    <label for="text-book-solution">Text Book Solutions</label>
                 </div>
 
                 <div class="task">
@@ -2685,8 +2681,27 @@
 
         let selectedScreenType = 'worksheet'; // Default selection
 
+
         function selectScreenType(type) {
             selectedScreenType = type;
+
+            // Reset all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+
+            // Automatically select the checkbox based on the screen type
+            if (type === 'textbook-solutions') {
+                textbookSolutionsCheckbox.checked = true;
+            } else if (type === 'sample-paper') {
+                samplePaperCheckbox.checked = true;
+            } else if (type === 'textbook') {
+                textbookCheckbox.checked = true;
+            } else if (type === 'syllabus') {
+                syllabusCheckbox.checked = true;
+            } else if (type === 'question-bank') {
+                questionBankCheckbox.checked = true;
+            }
+
+
             toggleCheckboxVisibility();
             resetFormFields();  // Reset the form fields on screen type change
             clearOutput();      // Clear the output section
@@ -2694,7 +2709,7 @@
         }
 
         function resetFormFields() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+            // document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
             document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
             document.querySelectorAll('select').forEach(select => select.value = 'select');
         }
@@ -2762,6 +2777,7 @@
 
             else if (screenType === "textbook-solutions") {
                 document.getElementById("textbookSolutionsButton").classList.add("selected");
+
                 worksheetCheckboxes.forEach(checkbox => {
                     checkbox.parentElement.style.display = 'none';
                     checkbox.disabled = false;

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <!-- <link rel="stylesheet" href="style.css"> -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(120deg, #1c8efb, #6a11cb);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      
+    }
+
+    .google-container .nsm7Bb-HzV7m-LgbsSe{  
+      border-radius: 50px;
+      padding: 25px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    /* Styling for the buttons */
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      border: none;
+      width: 400px;
+      margin: 10px 0;
+    }
+
+    .google-container .nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      border: none;
+      width: 400px;
+      margin: 10px 0;
+    }
+
+    .button img {
+      width: 20px;
+      /* Adjust as necessary */
+      height: 25px;
+      /* Adjust as necessary */
+      margin-right: 10px;
+    }
+
+    .button.email {
+      background-color: #34b7f1;
+      color: white;
+    }
+/* 
+    .button.email:hover {
+      background-color: #1f9bb7;
+      transform: scale(1.05);
+    } */
+
+    .button.skip {
+      background-color: #ffcc00;
+      color: black;
+    }
+
+    /* .button.skip:hover {
+      background-color: #e6b800;
+      transform: scale(1.05);
+    } */
+
+    .footer p {
+      font-family: Arial, sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .container p {
+      font-family: Arial, sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .container h1 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-family: 18px;
+      font-style: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Sign Up</h1>
+    <p>Choose how you want to continue:</p>
+
+
+    <div id="g_id_onload" data-client_id="409005645941-t0srh7jvesh8cehoil6fpnnedqid2qd5.apps.googleusercontent.com"
+      data-context="signin" data-callback="handleCredentialResponse" data-auto_prompt="false">
+    </div>
+    <div class="google-container">
+      <div class="g_id_signin" data-type="standard" data-shape="rectangle" data-theme="filled_black"
+        data-text="continue_with" data-size="large">
+      </div>
+    </div>
+
+
+    <!-- Sign Up with Email Button -->
+    <button class="button email" onclick="signUpWithEmail()">
+      <img src="/images/email.png" alt="Email"> Sign Up with LearnAize
+    </button>
+
+    <!-- Skip Button -->
+    <button class="button skip" onclick="skipForNow()">
+      Skip for Now
+    </button>
+
+    <div class="footer">
+      <p>Already have an account? <a href="/static/login.html">Login Here</a></p>
+    </div>
+  </div>
+
+  <script>
+
+    function signUpWithEmail() {
+      // Redirect to Sign-Up page with email form
+      window.location.href = '/static/register.html';
+    }
+
+    function skipForNow() {
+      // Redirect to homepage or dashboard
+      window.location.href = '/static/example_screen.html';
+    }
+
+    function handleCredentialResponse(response) {
+      console.log("Encoded JWT ID token: " + response.credential);
+
+      // Send the token to your backend for validation
+      fetch('http://127.0.0.1:8000/google-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: response.credential })
+      })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Server responded with status ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data.success) {
+            console.log("Login successful:", data.user);
+            // Redirect to the desired page
+            window.location.href = '/static/example_screen.html';
+          } else {
+            console.error("Login failed:", data.error);
+            alert("Login failed: " + (data.error || "Unknown error"));
+          }
+        })
+        .catch(error => {
+          console.error("Error during login:", error.message);
+          alert("An error occurred: " + error.message);
+        });
+    }
+
+  </script>
+</body>
+
+</html>

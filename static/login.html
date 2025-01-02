@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: linear-gradient(to right, #007bff, #00c6ff);
+            background: linear-gradient(120deg, #1c8efb, #6a11cb);
             margin: 0;
             display: flex;
             justify-content: center;
@@ -109,7 +109,7 @@
             display: none;
         }
 
-        .forgot-password {
+        /* .forgot-password {
             text-align: center;
             margin-top: -10px;
             margin-bottom: 20px;
@@ -139,7 +139,45 @@
 
         .skiploginLink a:hover {
             text-decoration: underline;
+        } */
+
+        /* Style the parent container */
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            /* Stacks items vertically */
+            align-items: center;
+            /* Centers all items horizontally */
+            gap: 10px;
+            /* Adds spacing between links */
+            margin-top: 20px;
+            /* Adds spacing from elements above */
         }
+
+        /* Style individual links */
+        .links-container a {
+            font-size: 18px;
+            color: #007bff;
+            /* Blue color for links */
+            text-decoration: none;
+            /* Removes underline */
+            font-weight: bold;
+            transition: color 0.3s ease;
+            /* Adds smooth hover effect */
+        }
+
+        /* Hover effect for links */
+        .links-container a:hover {
+            color: #0056b3;
+            /* Darker blue on hover */
+        }
+
+        /* Styling for hidden registration link */
+        .container-footer.hidden {
+            display: none;
+            /* Keeps it hidden */
+        }
+
 
         /* Responsive Design */
         @media screen and (max-width: 600px) {
@@ -230,14 +268,17 @@
                 <div id="userFields">
                     <i class="fas fa-envelope"></i>
                     <label for="email"><b>Email/Username</b></label>
-                    <input type="text" placeholder="Enter Email or Username" name="email" id="email" required autocomplete="current-email">
+                    <input type="text" placeholder="Enter Email or Username" name="email" id="email" required
+                        autocomplete="current-email">
                 </div>
 
                 <div id="passwordField">
                     <i class="fas fa-lock"></i>
                     <label for="psw"><b>Password</b></label>
-                    <input type="password" placeholder="Enter Password" name="psw" id="psw" required autocomplete="current-password">
-                    <span onclick="togglePassword()" style="cursor: pointer; margin-left: -45px; letter-spacing: normal;">
+                    <input type="password" placeholder="Enter Password" name="psw" id="psw" required
+                        autocomplete="current-password">
+                    <span onclick="togglePassword()"
+                        style="cursor: pointer; margin-left: -45px; letter-spacing: normal;">
                         <i class="fas fa-eye" id="toggleIcon"></i>
                     </span>
                 </div>
@@ -246,20 +287,23 @@
             <button type="submit">Login</button>
         </form>
 
-        <div id="registrationLink" class="container-footer hidden">
-            <a href="/static/register.html" style="font-size: 18px;">New User? Register Here</a>
-            <!-- <button onclick="redirectToRegistration()">New User? Register Here</button> -->
-        </div>
-        </br>
+        <div class="links-container">
 
-        <div class="forgot-password">
-            <a href="/static/forgot-password.html" style="font-size: 18px;">Forgot Password?</a>
+            <!-- <div id="registrationLink" class="container-footer hidden">
+                <a href="/static/register.html">New User? Register Here</a>
+            <button onclick="redirectToRegistration()">New User? Register Here</button> 
+            </div> -->
+
+            <div class="forgot-password">
+                <a href="/static/forgot-password.html">Forgot Password?</a>
+            </div>
+
+            <div class="skiploginLink">
+                <a href="/static/example_screen.html">Skip login</a>
+            </div>
+
         </div>
 
-        <div class="skiploginLink">
-            <a href="/static/example_screen.html" style="font-size: 18px;">Skip login</a>
-            <!-- <button onclick="redirectToRegistration()">New User? Register Here</button> -->
-        </div>
     </div>
     <script>
 
@@ -299,11 +343,11 @@
                 document.getElementById('instField').style.display = 'none';
                 registrationLink.classList.add('hidden'); // Hide registration link for Admins
                 teachertypeGroup.classList.add('hidden');
-            } else if(role === '2'){
+            } else if (role === '2') {
                 document.getElementById('instField').style.display = 'none';
                 teachertypeGroup.classList.remove('hidden');
                 registrationLink.classList.remove('hidden'); // Show registration link for Teachers and Students
-            }else {
+            } else {
                 document.getElementById('instField').style.display = 'block';
                 teachertypeGroup.classList.add('hidden');
                 registrationLink.classList.remove('hidden'); // Show registration link for Teachers and Students
@@ -312,14 +356,14 @@
 
         function updateteacherForm() {
             const teachertype = document.getElementById('teachertype').value;
-           // const instituteName = document.getElementById('institute_name');
+            // const instituteName = document.getElementById('institute_name');
             const instituteId = document.getElementById('instField');
 
             if (teachertype == 'registered') {
-               
+
                 document.getElementById('instField').style.display = 'block';
             } else {
-               
+
                 document.getElementById('instField').style.display = 'none';
             }
         }
