@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <title>Form Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Vertically centers the form */
+            min-height: 100vh;
+            background: linear-gradient(120deg, #1c8efb, #6a11cb);
+            margin: 0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            /* Centers the form horizontally */
+        }
+
+        form label {
+            margin-left: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        form select,
+        form input[type="text"],
+        form input[type="file"],
+        form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        form input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .task {
+            margin-bottom: 8px;
+        }
+
+        .task label {
+            margin-left: 8px;
+            font-weight: normal;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 18px;
+        }
+
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            form {
+                padding: 15px;
+                max-width: 100%;
+                /* Full width on smaller screens */
+                box-shadow: none;
+            }
+
+            form input[type="submit"],
+            form input[type="text"],
+            form input[type="file"],
+            form select {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            form label {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            form {
+                padding: 10px;
+            }
+
+            form input[type="submit"],
+            form input[type="text"],
+            form input[type="file"],
+            form select {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            form label {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/submit" method="post" enctype="multipart/form-data" id="UploadForm">
+        <h2>CONTENTS</h2>
+        <label for="board" class="required">Board</label>
+        <select id="board" name="board" required>
+            <option value="">Select</option>
+        </select>
+
+        <label for="medium">Medium</label>
+        <select id="medium" name="medium">
+            <option value="select">Select</option>
+
+        </select>
+
+        <label for="grade" class="required">Class</label>
+        <select id="grade" name="grade" required>
+            <option value="select">Select</option>
+        </select>
+
+        <label for="subject" class="required">Subject</label>
+        <select id="subject" name="subject" required>
+            <option value="">Select</option>
+
+        </select>
+
+        <label for="lesson">Chapter/Topic</label>
+        <select id="lesson" name="lesson">
+            <option value="">Select</option>
+        </select>
+
+        <label for="task" class="required">Select the Question Type</label></br>
+        <!-- <div class="task">
+            <input type="checkbox" id="Fills_ups" name="tasks" value="fill-in-the-blanks">
+            <label for="Fills_ups">Fill in the Blanks</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="name-the-following" name="tasks" value="name-the-following">
+            <label for="name-the-following">Name the Following</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="match-the-column" name="tasks" value="match-the-column">
+            <label for="match-the-column">Match the Following</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="give-reasons" name="tasks" value="give-reasons">
+            <label for="give-reasons">Give Reasons</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="ans-one-word" name="tasks" value="answer-in-one-word">
+            <label for="ans-one-word">Answers in One Word</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="multiple-choice" name="tasks" value="multiple-choice-questions">
+            <label for="multiple-choice">Multiple Choice Questions</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="true-false" name="tasks" value="true-false">
+            <label for="true-false">True or False</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="short-answers" name="tasks" value="short-answers">
+            <label for="short-answers">Short Answers</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="long-answers" name="tasks" value="long-answers">
+            <label for="long-answers">Long Answers</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="text-book-solution" name="tasks" value="text-book-solution"
+                onclick="toggleCheckboxes(this)">
+            <label for="text-book-solution">Text Book Solution</label>
+        </div> -->
+
+        <!-- <div class="task">
+            <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
+                onclick="toggleSamplePaper(this)">
+            <label for="sample-paper-solution">Sample Paper</label> -->
+
+            <!-- <div id="input-container" style="margin-top: 10px; display: none; margin-left:20px;">
+                <select id="prev_years" name="prev_years"
+                    style="width:150px; height:30px; padding:0px; font-size:15px; margin-right: 10px;">
+                    <option value="">Select Year</option> -->
+                    <!-- Use JavaScript to populate the last 6 years -->
+                <!-- </select>
+
+                <input type="number" id="set_number" name="set_number" value=""
+                    style="width:130px; height:30px; display:inline-block;" placeholder="set number">
+            </div>
+        </div> -->
+
+        <!-- <div class="task">
+            <input type="checkbox" id="text-book" name="tasks" value="text-book" 
+            onchange="toggleTextBook(this)">
+            <label for="text-book">Text book</label>
+        </div> -->
+
+        <!-- <div class="task">
+            <input type="checkbox" id="syllabus" name="tasks" value="syllabus"
+             onchange="toggleSyllabus(this)">
+            <label for="syllabus">Syllabus</label>
+        </div> -->
+
+        <div class="task">
+            <input type="checkbox" id="question-bank" name="tasks" value="question-bank"
+                onchange="toggleQuestionBank(this)">
+            <label for="question-bank">Question Bank</label>
+        </div>
+
+
+        <label for="file">Upload File:</label>
+        <input type="file" id="file" name="file" accept=".doc,.pdf" required>
+
+        <input type="submit" id="submitButton" value="Submit">
+
+        <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
+
+    </form>
+</body>
+
+<script>
+
+    // // Get the current year
+    // const currentYear = new Date().getFullYear();
+    // const prev_years = document.getElementById('prev_years');
+
+    // // Populate the dropdown with the last 6 years
+    // for (let i = 0; i < 6; i++) {
+    //     const yearOption = document.createElement('option');
+    //     yearOption.value = currentYear - i;
+    //     yearOption.text = currentYear - i;
+    //     prev_years.add(yearOption);
+    // }
+
+    // Function to handle board selection change and manage medium disabling
+    function handleBoardChange() {
+        const boardSelect = document.getElementById('board');
+        const mediumSelect = document.getElementById('medium');
+        const gradeSelect = document.getElementById('grade');
+
+        // Disable medium select if IB or CB is selected
+        if (boardSelect.value === 'CBSE' || boardSelect.value === 'ICSE') {
+            mediumSelect.disabled = true;
+            mediumSelect.value = ''; // Reset medium select
+            gradeSelect.disabled = false; // Enable class selection if board is selected
+        } else {
+            mediumSelect.disabled = false;
+            gradeSelect.disabled = false; // Enable class selection once board is selected
+        }
+    }
+
+    // // Function to toggle checkboxes (if needed in the future)
+    // function toggleCheckboxes(mainCheckbox) {
+    //     const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#text-book-solution)');
+    //     if (mainCheckbox.checked) {
+    //         otherCheckboxes.forEach(checkbox => {
+    //             checkbox.checked = false;
+    //             checkbox.disabled = true;
+    //         });
+    //     } else {
+    //         otherCheckboxes.forEach(checkbox => checkbox.disabled = false);
+    //     }
+    // }
+
+    // // Function to toggle checkboxes (if needed in the future)
+    // function toggleSamplePaper(mainCheckbox) {
+    //     const otherCheckboxes1 = document.querySelectorAll('input[type="checkbox"]:not(#sample-paper-solution)');
+    //     const inputContainer = document.getElementById('input-container');
+    //     if (mainCheckbox.checked) {
+    //         otherCheckboxes1.forEach(checkbox => {
+    //             checkbox.checked = false;
+    //             checkbox.disabled = true;
+    //         });
+    //         inputContainer.style.display = 'block';
+    //     } else {
+    //         otherCheckboxes1.forEach(checkbox => checkbox.disabled = false);
+    //         inputContainer.style.display = 'none';
+    //     }
+
+    // }
+
+    // function toggleTextBook(mainCheckbox) {
+    //     const otherCheckboxes2 = document.querySelectorAll('input[type="checkbox"]:not(#text-book)');
+    //     if (mainCheckbox.checked) {
+    //         otherCheckboxes2.forEach(checkbox => {
+    //             checkbox.checked = false;
+    //             checkbox.disabled = true;
+    //         });
+    //     } else {
+    //         otherCheckboxes2.forEach(checkbox => checkbox.disabled = false);
+    //     }
+    // }
+
+    // // Function to toggle checkboxes for textbook
+    // function toggleSyllabus(mainCheckbox) {
+    //     const otherCheckboxes3 = document.querySelectorAll('input[type="checkbox"]:not(#syllabus)');
+    //     if (mainCheckbox.checked) {
+    //         otherCheckboxes3.forEach(checkbox => {
+    //             checkbox.checked = false;
+    //             checkbox.disabled = true; // Disable the other checkboxes
+    //         });
+    //     } else {
+    //         otherCheckboxes3.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+    //     }
+    // }
+
+    // function to toggle checkboxes for Question Bank
+    function toggleQuestionBank(mainCheckbox) {
+        const otherCheckboxes4 = document.querySelectorAll('input[type="checkbox"]:not(#question-bank)');
+        if (mainCheckbox.checked) {
+            otherCheckboxes4.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = true; // Disable the other checkboxes
+            });
+        } else {
+            otherCheckboxes4.forEach(checkbox => checkbox.disabled = false);  // Enable the other checkboxes
+        }
+    }
+
+    // Function to fetch and populate boards
+    function fetchBoards() {
+        fetch('/get_SchoolBoard')
+            .then(response => response.json())
+            .then(boards => {
+                const boardInput = document.getElementById('board');
+                boardInput.innerHTML = '<option value="">Select Board</option>';
+
+                // Populate the board dropdown
+                boards.forEach(boardItem => {
+                    const option = document.createElement('option');
+                    option.value = boardItem.board_id;
+                    option.textContent = boardItem.board_name;
+                    boardInput.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching boards:', error));
+    }
+
+    // Function to fetch and populate mediums
+    function fetchMediums() {
+        fetch('/get_SchoolMedium')
+            .then(response => response.json())
+            .then(mediums => {
+                const mediumInput = document.getElementById('medium');
+                mediumInput.innerHTML = '<option value="">Select Medium</option>';
+
+                // Populate the medium dropdown
+                mediums.forEach(mediumItem => {
+                    const option = document.createElement('option');
+                    option.value = mediumItem.medium_id;
+                    option.textContent = mediumItem.medium_name;
+                    mediumInput.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching mediums:', error));
+    }
+
+    // Function to fetch and populate classes
+    function fetchClasses() {
+        fetch('/get_SchoolClass')
+            .then(response => response.json())
+            .then(classes => {
+                const classInput = document.getElementById('grade');
+                classInput.innerHTML = '<option value="">Select Class</option>';
+
+                // Populate the class dropdown
+                classes.forEach(classItem => {
+                    const option = document.createElement('option');
+                    option.value = classItem.classs_id;
+                    option.textContent = classItem.classs_name;
+                    classInput.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching classes:', error));
+    }
+
+    // Function to fetch and populate subjects based on selected board, medium, and class
+    function fetchSubjects() {
+        const boardInput = document.getElementById('board');
+        const mediumInput = document.getElementById('medium');
+        const classInput = document.getElementById('grade');
+        //const subjectInput = document.getElementById('subject'); // Subject dropdown
+
+        // Get selected values
+        const selectedBoard = boardInput.value;
+        const selectedMedium = mediumInput.value;
+        const selectedClass = classInput.value;
+
+        fetch('/get_SubjectDetails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                mediumName: selectedMedium,
+                className: selectedClass,
+                boardName: selectedBoard
+            }),
+        })
+            .then(response => {
+                console.log("Response Status:", response.status);
+                return response.json();
+            })
+            .then(subject => {
+                const subjectInput = document.getElementById('subject');
+
+                // Clear previous options
+                subjectInput.innerHTML = '<option value="">Select Subject</option>';
+
+                // Iterate through the array and create option elements
+                subject.forEach(subItem => {
+
+                    const option = document.createElement('option');
+                    option.value = subItem.subject_id; // Adjust based on actual keys
+                    option.textContent = subItem.subject_name; // Adjust based on actual keys
+                    subjectInput.appendChild(option);
+                });
+
+            })
+
+    }
+
+
+    // Function to fetch and populate topics based on selected subject
+    function fetchTopics() {
+        const boardInput = document.getElementById('board');
+        const mediumInput = document.getElementById('medium');
+        const classInput = document.getElementById('grade');
+        const subjectInput = document.getElementById('subject');
+        //const topicInput = document.getElementById('topic');
+
+        const selectedBoard = boardInput.value;
+        const selectedMedium = mediumInput.value;
+        const selectedClass = classInput.value;
+        const selectedSubject = subjectInput.value;
+
+        // Ensure all values are selected before making the request
+        if (!selectedBoard || !selectedMedium || !selectedClass || !selectedSubject) {
+            return;
+        }
+
+        fetch('/get_TopicDetails', {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                mediumName: selectedMedium,
+                className: selectedClass,
+                boardName: selectedBoard,
+                subjectName: selectedSubject
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(topics => {
+                const topicInput = document.getElementById('lesson');
+
+                // Clear previous options
+                topicInput.innerHTML = '<option value="">Select Topic</option>';
+
+                // Iterate through the array and create option elements
+                topics.forEach(topicItem => {
+                    const option = document.createElement('option');
+                    option.value = topicItem.topic_id; // Adjust based on actual keys
+                    option.textContent = topicItem.topic_name; // Adjust based on actual keys
+                    topicInput.appendChild(option);
+                });
+
+            })
+            .catch(error => {
+                console.error('Error fetching topics:', error);
+                const topicInput = document.getElementById('topic');
+                topicInput.innerHTML = '<option value="">Error loading topics</option>';
+            });
+    }
+
+    // Load boards, mediums, and classes on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchBoards();
+        fetchMediums();
+        fetchClasses();
+
+        // // Add event listeners to update subjects based on selections
+        // document.getElementById('board').addEventListener('change', fetchSubjects);
+        // document.getElementById('medium').addEventListener('change', fetchSubjects);
+        // document.getElementById('grade').addEventListener('change', fetchSubjects);
+
+        document.getElementById('board').addEventListener('change', fetchSubjects);
+        document.getElementById('medium').addEventListener('change', fetchSubjects);
+        document.getElementById('grade').addEventListener('change', fetchSubjects);
+        // Add event listener for subject change
+        document.getElementById('subject').addEventListener('change', fetchTopics);
+    });
+
+    // async function submitForm(event) {
+    //     event.preventDefault(); // Prevent the form from submitting the traditional way
+
+    //     let formData = new FormData(document.getElementById('UploadForm')); // Assuming your form has the ID 'UploadForm'
+    //     alert("Document is getting uploaded.....");
+    //     try {
+    //         const response = await fetch('/submit', {
+    //             method: 'POST',
+    //             body: formData
+    //         });
+    //         console.log("The response:",response);
+
+    //         const result = await response.json(); // Parse the JSON response
+    //         console.log("The result",result);
+
+    //         // Ensure the response is OK (status code 200-299)
+    //         if (result && typeof result.status !== 'undefined') {
+    //             if (result.status == '1') {  // Check if the status is 1 (indicating success)
+
+    //                 // Check if filename is a string or an array, and handle accordingly
+    //                 let filenames;
+    //                 if (Array.isArray(result.filename)) {
+    //                     filenames = result.filename; // Use directly if it's already an array
+    //                 } else if (typeof result.filename === 'string') {
+    //                     filenames = result.filename.split(','); // Split if it's a comma-separated string
+    //                 } else {
+    //                     console.error("Unexpected data type for result.filename:", typeof result.filename);
+    //                     filenames = []; // Default to an empty array if data type is unexpected
+    //                 }
+
+    //                 // Join filenames with a newline for display in the alert
+    //                 const filenamesMessage = filenames.map(filename => filename.trim()).join('\n');
+
+    //                 // Check if the file was newly created or appended
+    //                 if (result.message.includes('appended')) {
+    //                     // File content was appended (updated)
+    //                     alert('File content appended successfully:\n' + filenamesMessage);
+    //                 } else if (result.message.includes('created')) {
+    //                     // New file was created and uploaded
+    //                     alert('All Selected:\n' + filenamesMessage);
+    //                 } else {
+    //                     // Catch-all success message if neither 'appended' nor 'created' are found
+    //                     alert('File processed successfully:\n' + filenamesMessage);
+    //                 }
+
+    //                 // Reload the page after displaying the success message
+    //                 window.location.reload();
+    //             } else {
+    //                 // If result.status is not 1 (indicating an error)
+    //                 alert('Error: ' + result.message);
+    //                 console.error('Error response from server:', result);
+    //             }
+    //         }
+
+    //     } 
+
+    //     catch (error) {
+    //     // Catch any network or processing errors
+    //     alert('An error occurred while submitting the form.');
+    //     console.error('Error:', error);
+    // }
+    // }
+
+    async function submitForm(event) {
+        event.preventDefault();  // Prevent the form from submitting the traditional way
+
+        let formData = new FormData(document.getElementById('UploadForm'));  // Get form data
+        console.log("Form data:", formData);  // Check form data
+
+        alert("Document is getting uploaded.....");
+
+        try {
+            const response = await fetch('/submit', {
+                method: 'POST',
+                body: formData
+            });
+
+            const responseText = await response.text();  // Get raw response text
+            console.log("Raw response text:", responseText);
+
+            let result;
+            try {
+                result = JSON.parse(responseText);  // Manually parse the response text
+                console.log("Parsed result:", result);
+            } catch (err) {
+                console.error("Error parsing JSON:", err);
+                return;
+            }
+
+            if (result && result.status === "1") {
+                let filenames = Array.isArray(result.filename) ? result.filename : result.filename.split(',');
+
+                const filenamesMessage = filenames.join('\n');
+                alert('File uploaded successfully:\n' + filenamesMessage);
+                window.location.reload();
+            } else {
+                alert('Error: ' + (result.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error("Error during fetch:", error);
+            alert('Error: ' + error.message);
+        }
+    }
+
+    // async function submitForm(event) {
+    //     event.preventDefault();  // Prevent the form from submitting traditionally
+
+    //     let formData = new FormData(document.getElementById('UploadForm'));  // Get form data
+    //     console.log("Form data:", formData);  // Debugging form data
+
+    //     alert("Document is getting uploaded.....");
+
+    //     try {
+    //         const response = await fetch('/submit', {
+    //             method: 'POST',
+    //             body: formData
+    //         });
+
+    //         const responseText = await response.text();  // Get raw response text
+    //         console.log("Raw response text:", responseText);
+
+    //         let result;
+    //         try {
+    //             result = JSON.parse(responseText);  // Parse the response JSON
+    //             console.log("Parsed result:", result);
+    //         } catch (err) {
+    //             console.error("Error parsing JSON:", err);
+    //             return;
+    //         }
+
+    //         if (result && result.status === "1") {
+    //             // Extract `filename` and `inserted_filenames`
+    //             const uploadedFilename = result.filename;  // Single uploaded file
+    //             const batchFilenames = result.inserted_filenames || [];  // Batch of filenames
+
+    //             // Construct message
+    //             let filenamesMessage = `Uploaded Filename: ${uploadedFilename}\n\n`;
+
+    //             // Check if batch filenames exist
+    //             if (batchFilenames.length > 0) {
+    //                 filenamesMessage += `Batch Filenames:\n${batchFilenames.join('\n')}`;
+    //             } else {
+    //                 filenamesMessage += `Batch Filenames: None provided`;
+    //             }
+
+    //             alert(filenamesMessage);  // Show the alert
+    //             window.location.reload();  // Reload the page
+    //         } else {
+    //             alert('Error: ' + (result.message || 'Unknown error'));  // Handle error message
+    //         }
+    //     } catch (error) {
+    //         console.error("Error during fetch:", error);
+    //         alert('Error: ' + error.message);
+    //     }
+    // }
+
+
+
+    // function askForSetNumber() {
+    //     // Get the checkbox for sample-paper-solution
+    //     let samplePaperCheckbox = document.getElementById("sample-paper-solution");
+
+    //     if (samplePaperCheckbox.checked) {
+    //         // Ask the user for the set number
+    //         let setNumber = prompt("Please enter the set number:");
+
+    //         if (setNumber != null && setNumber !== '') {
+    //             // Set the hidden input value for set_number
+    //             document.getElementById("set_number").value = setNumber;
+
+    //             // Submit the form
+    //             document.getElementById("UploadForm").submit();
+    //         } else {
+    //             alert("Set number is required!");
+    //         }
+    //     } else {
+    //         // If the sample-paper-solution is not checked, submit the form as usual
+    //         document.getElementById("UploadForm").submit();
+    //     }
+    // }
+
+    // Add the event listener to the submit button
+    document.getElementById('submitButton').addEventListener('click', submitForm);
+
+    function confirmLogout() {
+        const confirmLogout = confirm("Will be redirected to the admin dashboard?");
+        if (confirmLogout) {
+            // Redirect to login page
+            window.location.href = '/static/example_screen.html'; // Change 'login.html' to your actual login page URL
+        }
+    }
+
+</script>
+</body>
+
+</html>

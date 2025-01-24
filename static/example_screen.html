@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
@@ -33,7 +34,7 @@
         }
 
         .form-section {
-            width: 40%;
+            width: 45%;
             padding: 20px;
             background-color: #f7f9fa;
             border-left: 1px solid #e0e4e8;
@@ -102,8 +103,8 @@
         }
 
         .logo {
-            max-width: 80px;
-            height: 80px;
+            max-width: 50px;
+            height: 50px;
             margin-right: 20px;
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -111,17 +112,26 @@
 
         .header h3 {
             margin: 0;
-            color: blueviolet;
-            font-size: 24px;
+            font-size: 25px;
             font-family: Arial, Helvetica, sans-serif;
             flex-grow: 1;
             /* Makes the title take available space */
             text-align: center;
+
+            /* Gradient applied to text */
+            background: linear-gradient(to right, #fc9b1d 50%, #ff3f05 10%, #0642b5 60%);
+            background-clip: text;
+            /* Standard property */
+            -webkit-background-clip: text;
+            /* Vendor-prefixed for compatibility */
+            -webkit-text-fill-color: transparent;
+            /* Makes the text transparent to show the gradient */
         }
+
 
         .logout-icon {
             color: grey;
-            font-size: 30px;
+            font-size: 20px;
             cursor: pointer;
             transition: color 0.3s;
             margin-left: 10px;
@@ -133,9 +143,9 @@
 
         .output-section .output {
             border: 1px solid #e0e4e8;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            height: 750px;
+            height: 800px;
             /* Adjusted height to 300px for visibility */
             background-color: #f7f9fa;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -251,14 +261,15 @@
         .form-section input[type="text"],
         .form-section input[type="number"],
         .form-group.task input[type="checkbox"] {
-            width: calc(100% - 20px);
+            width: calc(100% - 15px);
             padding: 8px;
             margin-top: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 14px;
         }
+
 
         /* .form-section h3 {
             font-size: 30px;
@@ -266,7 +277,7 @@
         } */
 
         .form-group.task label {
-            margin-left: 4px;
+            margin-left: 5px;
             font-family: Arial, Helvetica, sans-serif;
         }
 
@@ -276,7 +287,7 @@
         }
 
         .form-section label {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: bold;
             margin-bottom: 5px;
             display: inline-block;
@@ -297,9 +308,9 @@
         }
 
         .form-section button {
-            width: 100%;
+            width: 80px;
             padding: 12px;
-            font-size: 16px;
+            font-size: 12px;
         }
 
         .task {
@@ -312,7 +323,7 @@
             flex-grow: 1;
             /* Ensure label takes up available space */
             margin-right: 10px;
-            font-size: 20px;
+            font-size: 16px;
             /* Space between label and limit control */
         }
 
@@ -417,20 +428,35 @@
             font-size: 40px;
             font-weight: bold;
             font-family: Arial, Helvetica, sans-serif;
-            letter-spacing: 5px;
+            /* letter-spacing: 5px;
             color: #333;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
             padding: 10px;
-            background: linear-gradient(90deg, #A7D3E0, #A0D9B5);
+            background: linear-gradient(90deg, #A7D3E0, #A0D9B5); */
         }
 
         .button-options {
             display: flex;
+            flex-wrap: wrap;
+            /* Allow buttons to wrap onto the next line */
             gap: 10px;
+            /* Space between buttons */
             justify-content: space-around;
-            /* Evenly spaced buttons */
+            /* Evenly space the buttons */
             margin-bottom: 20px;
             /* Space below buttons */
+        }
+
+        .button-options button {
+            flex: 0 0 calc(33.33% - 10px);
+            /* Each button takes up a third of the container width, minus the gap */
+            height: 50px;
+            /* Ensure all buttons have the same height */
+            display: flex;
+            align-items: center;
+            /* Vertically center the text inside the button */
+            justify-content: center;
+            /* Horizontally center the text inside the button */
         }
 
         .option-button {
@@ -443,6 +469,8 @@
             transition: transform 0.2s, box-shadow 0.2s;
             border-radius: 5px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+            height: 100%;
+            /* Ensure the button fills the full height */
         }
 
         .option-button.selected {
@@ -459,6 +487,7 @@
         .option-button:hover {
             box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4);
         }
+
 
         .loading {
             border: 4px solid #f3f3f3;
@@ -480,8 +509,6 @@
             }
         }
 
-
-
         /* General mobile adjustments for 750px and below */
         @media (max-width: 750px) {
 
@@ -500,9 +527,20 @@
                 padding: 10px;
             }
 
+            .form-section label {
+                font-size: 12px;
+            }
+
+            .form-section select,
+            .form-section input[type="text"],
+            .form-section input[type="number"],
+            .form-group.task input[type="checkbox"] {
+                font-size: 12px;
+            }
+
             .output-section {
                 margin-top: 10px;
-                font-size: 16px;
+                font-size: 14px;
             }
 
             .columns-wrapper {
@@ -539,56 +577,76 @@
                 margin-bottom: 0;
             }
 
-            /* img {
-                max-width: 60px;
-                height: 60px;
-                margin-right: 15px;
-            } */
+            /* Adjust the buttons layout for small screens */
+            .button-options {
+                display: flex;
+                flex-wrap: wrap;
+                /* Allow buttons to wrap */
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .button-options .option-button {
+                width: 48%;
+                /* Make buttons take up 48% of the width */
+                padding: 12px;
+                margin-bottom: 10px;
+                font-size: 12px;
+                box-sizing: border-box;
+            }
+
+            /* Ensure the layout for first two buttons on the first row and the remaining three on the next */
+            .button-options .option-button:nth-child(1),
+            .button-options .option-button:nth-child(2) {
+                width: 48%;
+                /* First two buttons take up 48% */
+            }
+
+            .button-options .option-button:nth-child(3),
+            .button-options .option-button:nth-child(4),
+            .button-options .option-button:nth-child(5),
+            .button-options .option-button:nth-child(6) {
+                width: 48%;
+                /* Next three buttons take up 48% */
+            }
 
             span {
-                font-size: 32px;
-                letter-spacing: 3px;
+                font-size: 25px;
+                /* letter-spacing: 3px; */
                 padding: 8px;
-                text-align: center;
+                text-align: left;
             }
 
             .header {
                 display: flex;
                 flex-direction: row;
-                /* Keep items in a single line */
                 align-items: center;
                 justify-content: space-between;
-                /* Space out elements */
                 padding: 10px 10px;
                 width: 90%;
-                /* Full width to avoid wrapping */
             }
 
             .logo {
-                max-width: 60px;
-                height: 60px;
+                max-width: 50px;
+                height: 50px;
                 margin-right: 10px;
-                /* Reduced spacing for a compact layout */
             }
 
-            h3 {
+            .header h3 {
                 font-size: medium;
-                /* Slightly reduce font size for smaller screens */
                 flex-grow: 1;
                 font-family: Arial, Helvetica, sans-serif;
-                text-align: left;
-                /* Center-align text */
+                text-align: center;
                 margin: 0;
-                /* Remove extra margin */
                 margin-bottom: 12px;
             }
 
             .logout-icon {
                 font-size: 20px;
-                /* Reduce icon size */
                 margin-left: 10px;
-                /* Add slight margin for spacing */
             }
+
+
 
         }
 
@@ -660,27 +718,22 @@
             /* Adjust button options for small screens */
             .button-options {
                 display: flex;
-                flex-direction: column;
-                /* Stack buttons vertically */
-                width: 50%;
+                flex-wrap: wrap;
+                /* Allow buttons to wrap to the next line */
+                width: 100%;
                 margin-top: 10px;
             }
 
             .button-options .option-button {
-                width: 50%;
-                /* Make buttons take full width */
+                width: 48%;
+                /* Buttons will take up 48% of the width, leaving space for margins */
                 padding: 12px;
-                /* Adjust padding for touch targets */
                 margin-bottom: 10px;
-                /* Add space between buttons */
                 font-size: 12px;
-                /* Adjust font size */
+                box-sizing: border-box;
+                /* Ensures padding doesn't affect button width */
             }
 
-            .button-options .option-button:last-child {
-                margin-bottom: 0;
-                /* Remove bottom margin for the last button */
-            }
 
             /* Adjust button appearance on small screens */
             .option-button {
@@ -689,18 +742,11 @@
                 padding: 10px;
             }
 
-            /* Optionally, adjust the "selected" state if needed */
-            .option-button.selected {
-                background-color: #4CAF50;
-                /* Example background change */
-                color: white;
-            }
-
             span {
-                font-size: 24px;
-                letter-spacing: 2px;
+                font-size: 20px;
+                /* letter-spacing: 2px; */
                 padding: 6px;
-                text-align: center;
+                text-align: left;
 
             }
 
@@ -709,7 +755,7 @@
                 /* Slightly reduce font size for smaller screens */
                 flex-grow: 1;
                 font-family: Arial, Helvetica, sans-serif;
-                text-align: left;
+                text-align: center;
                 /* Center-align text */
                 margin: 0;
                 /* Center text on very small screens */
@@ -724,6 +770,13 @@
                 margin-top: 5px;
                 /* Add some space above the icon */
             }
+
+            .logo {
+                max-width: 30px;
+                height: 30px;
+                margin-right: 10px;
+            }
+
 
 
         }
@@ -749,9 +802,9 @@
 
             <div class="header">
                 <!-- Image -->
-                <img src="/images/atslogo.jpeg" alt="Logo" class="logo">
+                <img src="/images/LearnAize Logo.png" alt="Logo" class="logo">
                 <!-- Title -->
-                <h3>STUDY CONTENT</h3>
+                <h3>LERANAIZE</h3>
                 <!-- Logout Icon -->
                 <i class="fas fa-sign-out-alt logout-icon" onclick="confirmLogout()"></i>
             </div>
@@ -759,64 +812,64 @@
 
             <div class="button-options">
                 <button id="worksheetButton" class="option-button selected"
-                    onclick="selectScreenType('worksheet')">Worksheet</button>
+                    onclick="selectScreenType('worksheet')">WORKSHEET</button>
                 <button id="textbookSolutionsButton" class="option-button"
-                    onclick="selectScreenType('textbook-solutions')">Textbook Solutions</button>
+                    onclick="selectScreenType('textbook-solutions')">TEXTBOOK SOLUTIONS</button>
                 <button id="textbookButton" class="option-button"
-                    onclick="selectScreenType('textbook')">Textbook</button>
+                    onclick="selectScreenType('textbook')">TEXTBOOK</button>
                 <button id="questionPaperButton" class="option-button"
-                    onclick="selectScreenType('sample-paper')">Previous Paper</button>
+                    onclick="selectScreenType('sample-paper')">PREVIOUS PAPERS</button>
                 <button id="questionBankButton" class="option-button"
-                    onclick="selectScreenType('question-bank')">Question Bank</button>
+                    onclick="selectScreenType('question-bank')">QUESTION BANK</button>
                 <button id="syllabusButton" class="option-button"
-                    onclick="selectScreenType('syllabus')">Syallabus</button>
+                    onclick="selectScreenType('syllabus')">SYLLABUS</button>
             </div>
 
             <form onsubmit="fetchQuestionsAndAnswers(); return false;">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="board" class="required">Board</label>
+                        <label for="board" class="required">BOARD</label>
                         <select id="board" name="board" required>
-                            <option value="select">Select</option>
+                            <option value="select">SELECT</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="medium">Medium</label>
+                        <label for="medium">MEDIUM</label>
                         <select id="medium" name="medium">
-                            <option value="select">Select</option>
+                            <option value="select">SELECT</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="grade" class="required">Class</label>
+                        <label for="grade" class="required">CLASS</label>
                         <select id="grade" name="grade" required>
-                            <option value="select">Select</option>
+                            <option value="select">SELECT</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="subject" class="required">Subject</label>
+                        <label for="subject" class="required">SUBJECT</label>
                         <select id="subject" name="subject" required>
-                            <option value="select">Select</option>
+                            <option value="select">SELECT</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="lesson">Chapter/Topic</label>
+                        <label for="lesson">CHAPTER/TOPIC</label>
                         <select id="lesson" name="lesson" required>
-                            <option value="select">Select</option>
+                            <option value="select">SELECT</option>
                         </select>
                     </div>
                 </div>
                 <br>
-                <label for="task" class="required">Select the Question Type</label>
+                <label for="task" class="required">SELECT THE QUESTION TYPE</label>
                 <div class="task">
                     <input type="checkbox" id="fill-in-the-blanks" name="tasks" value="fill-in-the-blanks">
-                    <label for="fill-in-the-blanks">Fill in the Blanks</label>
+                    <label for="fill-in-the-blanks">FILL IN THE BLANK'S</label>
                     <div class="limit-controls">
                         <input type="number" id="fill-in-the-blanks_limit" name="limit_Fills_ups" min="0" value="">
                     </div>
@@ -824,7 +877,7 @@
 
                 <div class="task">
                     <input type="checkbox" id="match-the-column" name="tasks" value="match-the-column">
-                    <label for="match-the-column">Match the Column</label>
+                    <label for="match-the-column">MATCH THE COLUMN'S</label>
                     <div class="limit-controls">
                         <input type="number" id="match-the-column_limit" name="limit_match-the-column" min="0" value="">
                     </div>
@@ -832,7 +885,7 @@
 
                 <div class="task">
                     <input type="checkbox" id="name-the-following" name="tasks" value="name-the-following">
-                    <label for="name-the-following">Name the Following</label>
+                    <label for="name-the-following">NAME THE FOLLOWING</label>
                     <div class="limit-controls">
                         <input type="number" id="name-the-following_limit" name="limit_name-the-following" min="0"
                             value="">
@@ -841,7 +894,7 @@
 
                 <div class="task">
                     <input type="checkbox" id="give-reasons" name="tasks" value="give-reasons">
-                    <label for="give-reasons">Give Reasons</label>
+                    <label for="give-reasons">GIVE REASON'S</label>
                     <div class="limit-controls">
                         <input type="number" id="give-reasons_limit" name="limit_give-reasons" min="0" value="">
                     </div>
@@ -849,7 +902,7 @@
 
                 <div class="task">
                     <input type="checkbox" id="answer-in-one-word" name="tasks" value="answer-in-one-word">
-                    <label for="answer-in-one-word">Answers in One Word</label>
+                    <label for="answer-in-one-word">ANSWER IN ONE WORD</label>
                     <div class="limit-controls">
                         <input type="number" id="answer-in-one-word_limit" name="limit_ans-one-word" min="0" value="">
                     </div>
@@ -857,7 +910,7 @@
 
                 <div class="task">
                     <input type="checkbox" id="short-answers" name="tasks" value="short-answers">
-                    <label for="short-answers">Short Answers</label>
+                    <label for="short-answers">SHORT ANSWER'S</label>
                     <div class="limit-controls">
                         <input type="number" id="short-answers_limit" name="limit_short-answers" min="0" value="">
                     </div>
@@ -865,7 +918,7 @@
 
                 <div class="task">
                     <input type="checkbox" id="long-answers" name="tasks" value="long-answers">
-                    <label for="long-answers">Long Answers</label>
+                    <label for="long-answers">LONG ANSWER'S</label>
                     <div class="limit-controls">
                         <input type="number" id="long-answers_limit" name="limit_long-answers" min="0" value="">
                     </div>
@@ -874,7 +927,7 @@
                 <div class="task">
                     <input type="checkbox" id="multiple-choice-questions" name="tasks"
                         value="multiple-choice-questions">
-                    <label for="multiple-choice-questions">Multiple Choice Questions</label>
+                    <label for="multiple-choice-questions">MULTIPLE CHOICE QUESTION'S</label>
                     <div class="limit-controls">
                         <input type="number" id="multiple-choice-questions_limit" name="limit_multiple-choice-questions"
                             min="0" value="">
@@ -883,7 +936,7 @@
 
                 <div class="task">
                     <input type="checkbox" id="true-false" name="tasks" value="true-false">
-                    <label for="true-false">True/False</label>
+                    <label for="true-false">TRUE OR FALSE</label>
                     <div class="limit-controls">
                         <input type="number" id="true-false_limit" name="limit_true-false" min="0" value="">
                     </div>
@@ -892,30 +945,30 @@
                 <div class="task">
                     <input type="checkbox" id="text-book-solution" name="tasks" value="text-book-solution"
                         onchange="toggleCheckboxes(this)">
-                    <label for="text-book-solution">Text Book Solutions</label>
+                    <label for="text-book-solution">TEXTBOOK SOLUTION'S</label>
                 </div>
 
                 <div class="task">
                     <input type="checkbox" id="text-book" name="tasks" value="text-book"
                         onchange="toggleTextBook(this)">
-                    <label for="text-book">Text book</label>
+                    <label for="text-book">TEXTBOOK</label>
                 </div>
 
                 <div class="task">
                     <input type="checkbox" id="sample-paper-solution" name="tasks" value="sample-paper-solution"
                         onchange="toggleSamplePaper(this)">
-                    <label for="sample-paper-solution">Sample Paper</label>
+                    <label for="sample-paper-solution">PREVIOUS PAPER'S</label>
                 </div>
 
                 <div class="task">
                     <input type="checkbox" id="question-bank" name="tasks" value="question-bank"
                         onchange="toggleQuestionBank(this)">
-                    <label for="question-bank">Question Bank</label>
+                    <label for="question-bank">QUESTION BANK</label>
                 </div>
 
                 <div class="task">
                     <input type="checkbox" id="syllabus" name="tasks" value="syllabus" onchange="toggleSyllabus(this)">
-                    <label for="syllabus">Syllabus</label>
+                    <label for="syllabus">SYLLABUS</label>
                 </div>
 
                 <br>
@@ -934,24 +987,63 @@
         <div class="output-section">
             <!-- Add the image and text side by side -->
             <div style="
-                display: flex;
-                align-items: center;
-                justify-content: center; /* Centers the content horizontally */
-                margin-bottom: 10px; /* Reduced margin */
-                padding: 10px; /* Reduced padding */
-                background: #f5f5f5; /* Light background color for contrast */
-                border-radius: 10px; /* Rounded corners */
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-                flex-wrap: wrap; /* Allows the image and text to wrap on smaller screens */
-            ">
-                <!-- Text next to the image -->
-                <span>
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Distribute items to the edges */
+            margin-bottom: 10px; /* Reduced margin */
+            padding: 10px; /* Reduced padding */
+            background: #f5f5f5; /* Light background color for contrast */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+            flex-wrap: nowrap; /* Ensure items stay in a single row */
+        ">
+                <!-- Text aligned to the left
+                <span style="
+    font-size: 18px; /* Adjust font size */
+    font-weight: bold; /* Make text bold */
+    background: linear-gradient(to right, #fc9b1d 50%, #ff3f05 10%, #0642b5 60%);
+    background-clip: text; /* Standard property */
+    -webkit-background-clip: text; /* Vendor-prefixed for compatibility */
+    -webkit-text-fill-color: transparent; /* Makes the text transparent to show the gradient */
+">
                     KNOWLEDGE OASIS
-                </span>
+                </span> -->
+
+
+                <!-- Button aligned to the right -->
+                <button style="
+                padding: 8px 15px; /* Padding for the button */
+                background: #0642b5; /* Button background color */
+                color: #fff; /* Button text color */
+                border: none; /* Remove border */
+                border-radius: 5px; /* Rounded corners */
+                font-size: 14px; /* Font size */
+                cursor: pointer; /* Pointer cursor on hover */
+                transition: background 0.3s; /* Smooth hover effect */
+            " onclick="window.location.href='https://example.com/download';">
+                    Download App
+                </button>
+
+                <!-- Upload Button - Visible only for Teachers -->
+
+                <button id="upload-btn" style="
+                padding: 8px 15px; /* Padding for the button */
+                background: #0642b5; /* Button background color */
+                color: #fff; /* Button text color */
+                border: none; /* Remove border */
+                border-radius: 5px; /* Rounded corners */
+                font-size: 14px; /* Font size */
+                cursor: pointer; /* Pointer cursor on hover */
+                transition: background 0.3s; /* Smooth hover effect */
+            " onclick="window.location.href='/static/upload_teacher.html'">
+                    Upload
+                </button>
+
             </div>
 
+
             <div class="output" id="data">
-                <h3>Fetched Questions And Answers will appear here .....</h3>
+                <h3>Fetched Questions And Answers.....</h3>
                 <!-- Questions section -->
                 <div class="questionsDiv" id="questionsDiv">
 
@@ -982,19 +1074,19 @@
             <div class="buttons-container">
                 <!-- Left side buttons: "Add Question" and "Add Answer" -->
                 <div class="left-buttons">
-                    <button id="addQuestionBtn">Question</button>
-                    <button id="addAnswerBtn" disabled>Answers</button>
-                    <button id="textbookSolutionBtn" style="display: none;">Click To Fetch TextBook Solution</button>
-                    <button id="samplePaperBtn" style="display: none;">Click To Fetch Question Bank</button>
-                    <button id="textbookBtn" style="display: none;">Click To Fetch Textbook </button>
-                    <button id="syllabusBtn" style="display: none;">Click To Fetch Syllabus </button>
-                    <button id="questionBankBtn" style="display: none;">Click To Fetch Question Bank</button>
+                    <button id="addQuestionBtn">QUESTIONS</button>
+                    <button id="addAnswerBtn" disabled>ANSWERS</button>
+                    <button id="textbookSolutionBtn" style="display: none;">CLICK TO FETCH TEXTBOOK SOLUTIONS</button>
+                    <button id="samplePaperBtn" style="display: none;">CLICK TO FETCH PREVIOUS PAPER</button>
+                    <button id="textbookBtn" style="display: none;">CLICK TO FETCH TEXTBOOK</button>
+                    <button id="syllabusBtn" style="display: none;">CLICK TO FETCH SYLLABUS </button>
+                    <button id="questionBankBtn" style="display: none;">CLICK TO FETCH QUESTION BANK</button>
                 </div>
 
                 <!-- Right side buttons: "Print" and "Download" -->
                 <div class="right-buttons">
-                    <button id="printBtn">Print</button>
-                    <button id="downloadBtn">Download</button>
+                    <button id="printBtn">PRINT</button>
+                    <button id="downloadBtn">DOWNLOAD</button>
                     <br>
                 </div>
 
@@ -1128,7 +1220,7 @@
                 .then(response => response.json())
                 .then(boards => {
                     const boardInput = document.getElementById('board');
-                    boardInput.innerHTML = '<option value="select">Select Board</option>';
+                    boardInput.innerHTML = '<option value="select">SELECT BOARD</option>';
 
                     // Populate the board dropdown
                     boards.forEach(boardItem => {
@@ -1150,7 +1242,7 @@
                 .then(response => response.json())
                 .then(mediums => {
                     const mediumInput = document.getElementById('medium');
-                    mediumInput.innerHTML = '<option value="select">Select Medium</option>';
+                    mediumInput.innerHTML = '<option value="select">SELECT MEDIUM</option>';
 
                     // Populate the medium dropdown
                     mediums.forEach(mediumItem => {
@@ -1171,7 +1263,7 @@
                 .then(response => response.json())
                 .then(classes => {
                     const classInput = document.getElementById('grade');
-                    classInput.innerHTML = '<option value="select">Select Class</option>';
+                    classInput.innerHTML = '<option value="select">SELECT CLASS</option>';
 
                     // Populate the class dropdown
                     classes.forEach(classItem => {
@@ -1218,7 +1310,7 @@
                     const subjectInput = document.getElementById('subject');
 
                     // Clear previous options
-                    subjectInput.innerHTML = '<option value="select">Select Subject</option>';
+                    subjectInput.innerHTML = '<option value="select">SELECT SUBJECT</option>';
 
                     // Iterate through the array and create option elements
                     subject.forEach(subItem => {
@@ -1275,7 +1367,7 @@
                     const topicInput = document.getElementById('lesson');
 
                     // Clear previous options
-                    topicInput.innerHTML = '<option value="select">Select Topic</option>';
+                    topicInput.innerHTML = '<option value="select">SELECT TOPIC</option>';
 
                     // Iterate through the array and create option elements
                     topics.forEach(topicItem => {
@@ -2679,6 +2771,9 @@
         const addQuestionBtn = document.getElementById('addQuestionBtn');
         const addAnswerBtn = document.getElementById('addAnswerBtn');
 
+        const printBtn = document.getElementById('printBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
         let selectedScreenType = 'worksheet'; // Default selection
 
 
@@ -2763,6 +2858,8 @@
                 questionBankBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'inline-block';
                 addAnswerBtn.style.display = 'inline-block';
+                printBtn.style.display = 'inline-block';
+                downloadBtn.style.display = 'inline-block';
 
                 const lessonField = document.getElementById('lesson');
                 if (lessonField) {
@@ -2790,16 +2887,18 @@
                 textbookSolutionsCheckbox.parentElement.style.display = 'flex';
                 samplePaperCheckbox.parentElement.style.display = 'none';
                 textbookCheckbox.parentElement.style.display = 'none';
-                textbookSolutionBtn.style.display = 'inline-block';
                 syllabusCheckbox.parentElement.style.display = 'none';
                 questionBankCheckbox.parentElement.style.display = 'none';
 
+                textbookSolutionBtn.style.display = 'inline-block';
                 textbookBtn.style.display = 'none';
                 syllabusBtn.style.display = 'none';
                 samplePaperBtn.style.display = 'none';
                 questionBankBtn.style.display = 'none';
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
+                printBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
 
                 const lessonField = document.getElementById('lesson');
                 if (lessonField) {
@@ -2847,6 +2946,8 @@
                 addQuestionBtn.style.display = 'none';
                 addAnswerBtn.style.display = 'none';
                 samplePaperBtn.style.display = 'inline-block';
+                printBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
             }
 
             else if (screenType === "textbook") {
@@ -2883,6 +2984,8 @@
                 samplePaperBtn.style.display = 'none';
                 syllabusBtn.style.display = 'none';
                 questionBankBtn.style.display = 'none';
+                printBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
             }
 
             else if (screenType === "syllabus") {
@@ -2918,6 +3021,8 @@
                 syllabusBtn.style.display = 'inline-block';
                 samplePaperBtn.style.display = 'none';
                 questionBankBtn.style.display = 'none';
+                printBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
             }
 
             else if (screenType === "question-bank") {
@@ -2954,16 +3059,264 @@
                 syllabusBtn.style.display = 'none';
                 samplePaperBtn.style.display = 'none';
                 questionBankBtn.style.display = 'inline-block';
+                printBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
             }
 
         }
 
-
-        // Call the function on page load to set the default selected button
-        window.onload = toggleCheckboxVisibility;
+        window.addEventListener('load', function () {
+            // Call your toggleCheckboxVisibility function
+            toggleCheckboxVisibility();
+        })
     </script>
 
     <script>
+
+        // IMP CODE IN WORKING 
+        // async function fetchQuestionsAndAnswers() {
+        //     console.log('Fetching questions and answers...');
+        //     let selectedTasks = [];
+        //     let totalResults = 0; // Track total results
+
+        //     document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+        //         const taskId = checkbox.id; // Get the ID of the selected checkbox
+        //         // console.log(taskId);
+        //         const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
+
+        //         // console.log(limitInput);
+
+        //         if (limitInput) { // Check if the number input exists
+        //             const limitValue = limitInput.value; // Get the value of the number input
+        //             selectedTasks.push({ id: taskId, limit: limitValue }); // Store the checkbox ID and limit value
+        //         }
+        //     });
+
+        //     console.log("Selected tasks with limits:", selectedTasks);
+
+        //     // Clear previous data before starting to append new results
+        //     const dataContainer = document.getElementById('data');
+        //     dataContainer.innerHTML = '';
+
+        //     // Ensure there are selected tasks
+        //     if (selectedTasks.length === 0) {
+        //         dataContainer.innerHTML = '<p style="color: #28a745; font-size: 18px; font-weight: bold;">Fetched Questions And Answers will appear here .....</p>';
+        //         return;
+        //     }
+
+        //     const allQuestionsAndAnswers = []; // To store the combined results
+        //     let heading = false;
+
+        //     // Define a function to handle the fetching and displaying of questions and answers
+        //     const fetchAndDisplayResults = async (sTask) => {
+        //         if (totalResults >= 36) return; // Stop fetching if total results reached 25
+
+        //         const board = document.getElementById('board').value;
+        //         const medium = document.getElementById('medium').value;
+        //         const grade = document.getElementById('grade').value;
+        //         const subject = document.getElementById('subject').value;
+        //         const lesson = document.getElementById('lesson').value;
+        //         const tasks = sTask.id;
+
+        //         let limit = sTask.limit;
+
+        //         // Validate limit
+        //         limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '36' : parseInt(limit);
+        //         limit = Math.min(limit, 36 - totalResults); // Adjust limit to avoid exceeding 25
+        //         console.log("This is limit", limit);
+
+        //         let missingFields = [];
+
+        //         // Check each field and add the field name to the missingFields array if not selected
+        //         if (board === 'select') missingFields.push("Board");
+        //         if (medium === 'select') missingFields.push("Medium");
+        //         if (grade === 'select') missingFields.push("Class");
+        //         if (subject === 'select') missingFields.push("Subject");
+        //         if (lesson === 'select') missingFields.push("Chapter/Topic");
+
+        //         // Show alert if any field is missing
+        //         if (missingFields.length > 0) {
+        //             alert("Please select the following fields: " + missingFields.join(", "));
+        //             console.error('Missing fields:', missingFields);
+        //             return;
+        //         }
+
+        //         // Construct the query string
+        //         const queryParams = new URLSearchParams({
+        //             board: board,
+        //             medium: medium,
+        //             grade: grade,
+        //             subject: subject,
+        //             lesson: lesson,
+        //             tasks: tasks,
+        //             limit: limit, // Adjusted limit per task
+        //         });
+        //         console.log("This is query:", queryParams.toString());
+
+        //         const loadingDiv = document.createElement('div');
+        //         loadingDiv.classList.add('loading');
+        //         dataContainer.appendChild(loadingDiv);
+
+        //         try {
+        //             const response = await fetch(`/get_questions_and_answers?${queryParams.toString()}`);
+        //             const result = await response.json();
+
+        //             if (response.ok && result.questions_and_answers) {
+        //                 dataContainer.removeChild(loadingDiv);
+        //                 const questionsAndAnswers = result.questions_and_answers;
+
+        //                 // Calculate how many results we can still take before reaching 25
+        //                 const remainingSlots = 36 - totalResults;
+        //                 const limitedQuestionsAndAnswers = questionsAndAnswers.slice(0, remainingSlots);
+
+        //                 // Increment the total results counter
+        //                 totalResults += limitedQuestionsAndAnswers.length;
+        //                 // alert("This is the totalResults"+totalResults);
+
+        //                 if (totalResults >= 36) {
+        //                     alert("Total results have exceeded 36. The current total is: " + totalResults);
+        //                 }
+
+        //                 allQuestionsAndAnswers.push(...limitedQuestionsAndAnswers);
+
+        //                 if (!heading) {
+        //                     dataContainer.innerHTML += `<h3> Board: ${mappings.boards[board]}
+        //                 Medium: ${mappings.mediums[medium]}
+        //                 Class: ${mappings.grades[grade]}
+        //                 Subject: ${mappings.subjects[subject]}
+        //                 Lesson: ${mappings.lessons[lesson]} <h3>`;
+        //                     heading = true;
+        //                 }
+
+        //                 // Display the limited questions and answers in the DOM
+        //                 const questionsDiv = document.createElement('div');
+        //                 questionsDiv.classList.add('questionsDiv');
+
+        //                 // Format task ID (e.g., "fill-in-the-blank" => "Fill In The Blank")
+        //                 let formattedTaskId = sTask.id.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+
+        //                 // Add task-specific heading 
+        //                 questionsDiv.innerHTML = `<h3>${formattedTaskId} - Questions</h3>`;
+
+        //                 limitedQuestionsAndAnswers.forEach((qa, index) => {
+        //                     questionsDiv.innerHTML += `<p><strong>Q ${index + 1}:</strong> ${qa.question}</p>`;
+
+        //                     // If there are options, display them
+        //                     if (qa.options && qa.options.length > 0) {
+        //                         questionsDiv.innerHTML += `<p>Options:</p><ul>`;
+        //                         const optionLabels = ['A', 'B', 'C', 'D']; // Labels for options
+        //                         qa.options.forEach((option, index) => {
+        //                             const label = optionLabels[index] || ''; // Get label based on index, if available
+        //                             questionsDiv.innerHTML += `<li>${label}. ${option}</li>`;
+        //                         });
+        //                         questionsDiv.innerHTML += `</ul>`;
+        //                     }
+
+        //                     // If there are columns for matching questions
+        //                     let columnsWrapper = '<div class="columns-wrapper">';
+        //                     if (qa.column_a && qa.column_a.length > 0) {
+        //                         columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
+        //                         qa.column_a.forEach((a) => {
+        //                             columnsWrapper += `<li> ${a}</li> `;
+        //                         });
+        //                         columnsWrapper += '</ul></div>';
+        //                     }
+        //                     if (qa.column_b && qa.column_b.length > 0) {
+        //                         columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
+        //                         qa.column_b.forEach((b) => {
+        //                             columnsWrapper += `<li> ${b}</li> `;
+        //                         });
+        //                         columnsWrapper += '</ul></div>';
+        //                     }
+        //                     columnsWrapper += '</div>';
+        //                     questionsDiv.innerHTML += columnsWrapper;
+        //                 });
+
+        //                 // Add a separator after the answers list
+        //                 questionsDiv.innerHTML += `<hr>`;
+
+        //                 // Append questions to the container
+        //                 dataContainer.appendChild(questionsDiv);
+
+        //                 // Create a div for answers
+        //                 const answersDiv = document.createElement('div');
+        //                 answersDiv.classList.add('answersDiv');
+        //                 answersDiv.innerHTML = `<h3> ${formattedTaskId} - Answer's</h3>`;
+
+        //                 // Loop through the answers array
+        //                 limitedQuestionsAndAnswers.forEach((ans, index) => {
+        //                     // Display the answer
+        //                     answersDiv.innerHTML += `<p><strong>A ${index + 1}:</strong> ${ans.answer}</p>`;
+
+        //                     // Display the explanation if it exists
+        //                     if (ans.explanation && ans.explanation.length > 0) {
+        //                         answersDiv.innerHTML += `<p>Explanation: ${ans.explanation}</p>`;
+        //                     }
+        //                 });
+
+        //                 // Add a separator after the answers list
+        //                 answersDiv.innerHTML += `<hr>`;
+
+        //                 // Append the answers div to the container
+        //                 dataContainer.appendChild(answersDiv);
+
+        //                 // Initially, hide the answers div
+        //                 answersDiv.style.display = 'none';
+
+        //                 // Render MathJax math for questions and answers
+        //                 MathJax.typesetPromise([questionsDiv, answersDiv]).then(() => {
+        //                     console.log("MathJax rendering complete.");
+        //                 }).catch((err) => console.error("MathJax rendering failed:", err));
+
+        //                 console.log("Added questions and answers: ", limitedQuestionsAndAnswers);
+        //                 console.log("Total results so far: ", totalResults);
+
+        //             }
+        //             else {
+        //                 alert("You need to select all the required fields.");
+        //             }
+
+        //         } catch (error) {
+        //             dataContainer.removeChild(loadingDiv);
+        //             console.error("Error fetching data:", error);
+        //         }
+        //     };
+
+        //     // Fetch and display results for each selected task
+        //     for (const sTask of selectedTasks) {
+        //         await fetchAndDisplayResults(sTask);
+        //         if (totalResults >= 36) break; // Stop if we have collected 25 results
+        //     }
+
+        //     // At this point, `allQuestionsAndAnswers` will contain up to 25 results
+        //     console.log("Final set of questions and answers: ", allQuestionsAndAnswers);
+        // }
+
+
+        // Function to handle button visibility based on the role
+        function handleRoleBasedButtons(role_id) {
+            const uploadButton = document.getElementById('upload-btn');
+
+            if (role_id === '2') { // Teacher role
+                uploadButton.style.display = 'block';  // Show upload button
+
+            } else {
+                uploadButton.style.display = 'none';  // Hide upload button for non-teachers
+
+            }
+        }
+
+        window.addEventListener('load', function () {
+            // Your existing logic for role-based buttons
+            const role_id = localStorage.getItem('role_id');  // Get role_id from localStorage
+            console.log("the Role_id:", role_id);
+            if (role_id) {
+                handleRoleBasedButtons(role_id);  // Show/hide buttons based on role
+            } else {
+                console.error('Role not found in localStorage.');
+            }
+        });
+
         async function fetchQuestionsAndAnswers() {
             console.log('Fetching questions and answers...');
             let selectedTasks = [];
@@ -2971,10 +3324,7 @@
 
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
                 const taskId = checkbox.id; // Get the ID of the selected checkbox
-                // console.log(taskId);
                 const limitInput = document.querySelector(`#${taskId}_limit`); // Get the corresponding number input
-
-                // console.log(limitInput);
 
                 if (limitInput) { // Check if the number input exists
                     const limitValue = limitInput.value; // Get the value of the number input
@@ -2997,9 +3347,18 @@
             const allQuestionsAndAnswers = []; // To store the combined results
             let heading = false;
 
+            // Utility function to escape HTML special characters
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+
+            // The New one -----
             // Define a function to handle the fetching and displaying of questions and answers
             const fetchAndDisplayResults = async (sTask) => {
-                if (totalResults >= 36) return; // Stop fetching if total results reached 25
+                if (totalResults >= 36) return; // Stop fetching if total results reached 36
 
                 const board = document.getElementById('board').value;
                 const medium = document.getElementById('medium').value;
@@ -3012,30 +3371,8 @@
 
                 // Validate limit
                 limit = (limit === '' || isNaN(limit) || parseInt(limit) < 1) ? '36' : parseInt(limit);
-                limit = Math.min(limit, 36 - totalResults); // Adjust limit to avoid exceeding 25
+                limit = Math.min(limit, 36 - totalResults); // Adjust limit to avoid exceeding 36
                 console.log("This is limit", limit);
-
-                // // Validate required fields
-                // if (board === 'select' || medium === 'select' || grade === 'select' || subject === 'select' || lesson === 'select' || tasks === 'select') {
-                //     console.error('Please select all required fields');
-                //     return;
-                // }
-
-                // if (board == 'select') {
-                //     alert('Please select a valid board');
-                // }
-                // if (medium == 'select') {
-                //     alert('Please select a valid medium');
-                // }
-                // if (grade == 'select') {
-                //     alert('Please select a valid grade');
-                // }
-                // if (subject == 'select') {
-                //     alert('Please select a valid subject');
-                // }
-                // if (lesson == 'select') {
-                //     alert('Please select a valid lesson');
-                // }
 
                 let missingFields = [];
 
@@ -3077,13 +3414,12 @@
                         dataContainer.removeChild(loadingDiv);
                         const questionsAndAnswers = result.questions_and_answers;
 
-                        // Calculate how many results we can still take before reaching 25
+                        // Calculate how many results we can still take before reaching 36
                         const remainingSlots = 36 - totalResults;
                         const limitedQuestionsAndAnswers = questionsAndAnswers.slice(0, remainingSlots);
 
                         // Increment the total results counter
                         totalResults += limitedQuestionsAndAnswers.length;
-                        // alert("This is the totalResults"+totalResults);
 
                         if (totalResults >= 36) {
                             alert("Total results have exceeded 36. The current total is: " + totalResults);
@@ -3092,51 +3428,46 @@
                         allQuestionsAndAnswers.push(...limitedQuestionsAndAnswers);
 
                         if (!heading) {
-                            dataContainer.innerHTML += `<h3> Board: ${mappings.boards[board]}
-                        Medium: ${mappings.mediums[medium]}
-                        Class: ${mappings.grades[grade]}
-                        Subject: ${mappings.subjects[subject]}
-                        Lesson: ${mappings.lessons[lesson]} <h3>`;
+                            dataContainer.innerHTML += `<h3> Board: ${escapeHTML(mappings.boards[board])}
+                    Medium: ${escapeHTML(mappings.mediums[medium])}
+                    Class: ${escapeHTML(mappings.grades[grade])}
+                    Subject: ${escapeHTML(mappings.subjects[subject])}
+                    Lesson: ${escapeHTML(mappings.lessons[lesson])} <h3>`;
                             heading = true;
                         }
 
-                        // Display the limited questions and answers in the DOM
                         const questionsDiv = document.createElement('div');
                         questionsDiv.classList.add('questionsDiv');
 
-                        // Format task ID (e.g., "fill-in-the-blank" => "Fill In The Blank")
                         let formattedTaskId = sTask.id.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
 
-                        // Add task-specific heading 
-                        questionsDiv.innerHTML = `<h3>${formattedTaskId} - Questions</h3>`;
+                        questionsDiv.innerHTML = `<h3>${escapeHTML(formattedTaskId)} - Questions</h3>`;
 
                         limitedQuestionsAndAnswers.forEach((qa, index) => {
-                            questionsDiv.innerHTML += `<p><strong>Q ${index + 1}:</strong> ${qa.question}</p>`;
+                            questionsDiv.innerHTML += `<p><strong>Q ${index + 1}:</strong> ${escapeHTML(qa.question)}</p>`;
 
-                            // If there are options, display them
                             if (qa.options && qa.options.length > 0) {
                                 questionsDiv.innerHTML += `<p>Options:</p><ul>`;
-                                const optionLabels = ['A', 'B', 'C', 'D']; // Labels for options
+                                const optionLabels = ['A', 'B', 'C', 'D'];
                                 qa.options.forEach((option, index) => {
-                                    const label = optionLabels[index] || ''; // Get label based on index, if available
-                                    questionsDiv.innerHTML += `<li>${label}. ${option}</li>`;
+                                    const label = optionLabels[index] || '';
+                                    questionsDiv.innerHTML += `<li>${label}. ${escapeHTML(option)}</li>`;
                                 });
                                 questionsDiv.innerHTML += `</ul>`;
                             }
 
-                            // If there are columns for matching questions
                             let columnsWrapper = '<div class="columns-wrapper">';
                             if (qa.column_a && qa.column_a.length > 0) {
                                 columnsWrapper += '<div class="column column-a"><strong>Column A:</strong><ul>';
                                 qa.column_a.forEach((a) => {
-                                    columnsWrapper += `< li > ${a}</li > `;
+                                    columnsWrapper += `<li>${escapeHTML(a)}</li>`;
                                 });
                                 columnsWrapper += '</ul></div>';
                             }
                             if (qa.column_b && qa.column_b.length > 0) {
                                 columnsWrapper += '<div class="column column-b"><strong>Column B:</strong><ul>';
                                 qa.column_b.forEach((b) => {
-                                    columnsWrapper += `< li > ${b}</li > `;
+                                    columnsWrapper += `<li>${escapeHTML(b)}</li>`;
                                 });
                                 columnsWrapper += '</ul></div>';
                             }
@@ -3144,47 +3475,30 @@
                             questionsDiv.innerHTML += columnsWrapper;
                         });
 
-                        // Add a separator after the answers list
                         questionsDiv.innerHTML += `<hr>`;
-
-                        // Append questions to the container
                         dataContainer.appendChild(questionsDiv);
 
-                        // Create a div for answers
                         const answersDiv = document.createElement('div');
                         answersDiv.classList.add('answersDiv');
-                        answersDiv.innerHTML = `<h3> ${formattedTaskId} - Answer's</h3>`;
+                        answersDiv.innerHTML = `<h3>${escapeHTML(formattedTaskId)} - Answers</h3>`;
 
-                        // Loop through the answers array
                         limitedQuestionsAndAnswers.forEach((ans, index) => {
-                            // Display the answer
-                            answersDiv.innerHTML += `<p><strong>A ${index + 1}:</strong> ${ans.answer}</p>`;
-
-                            // Display the explanation if it exists
+                            answersDiv.innerHTML += `<p><strong>A ${index + 1}:</strong> ${escapeHTML(ans.answer)}</p>`;
                             if (ans.explanation && ans.explanation.length > 0) {
-                                answersDiv.innerHTML += `<p>Explanation: ${ans.explanation}</p>`;
+                                answersDiv.innerHTML += `<p>Explanation: ${escapeHTML(ans.explanation)}</p>`;
                             }
                         });
 
-                        // Add a separator after the answers list
                         answersDiv.innerHTML += `<hr>`;
-
-                        // Append the answers div to the container
                         dataContainer.appendChild(answersDiv);
 
-                        // Initially, hide the answers div
                         answersDiv.style.display = 'none';
 
-                        // Render MathJax math for questions and answers
                         MathJax.typesetPromise([questionsDiv, answersDiv]).then(() => {
                             console.log("MathJax rendering complete.");
                         }).catch((err) => console.error("MathJax rendering failed:", err));
 
-                        console.log("Added questions and answers: ", limitedQuestionsAndAnswers);
-                        console.log("Total results so far: ", totalResults);
-
-                    }
-                    else {
+                    } else {
                         alert("You need to select all the required fields.");
                     }
 
@@ -3194,15 +3508,16 @@
                 }
             };
 
-            // Fetch and display results for each selected task
             for (const sTask of selectedTasks) {
                 await fetchAndDisplayResults(sTask);
-                if (totalResults >= 36) break; // Stop if we have collected 25 results
+                if (totalResults >= 36) break; // Stop if we have collected 36 results
             }
 
-            // At this point, `allQuestionsAndAnswers` will contain up to 25 results
             console.log("Final set of questions and answers: ", allQuestionsAndAnswers);
         }
+
+
+
     </script>
 </body>
 

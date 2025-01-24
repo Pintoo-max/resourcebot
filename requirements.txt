@@ -7,3 +7,15 @@ pymongo
 python-docx
 pymupdf  # For `fitz`
 bcrypt
+reportlab
+google-auth==2.23.0
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.0
+uvicorn==0.23.2
+datetime
+itsdangerous
+beautifulsoup4
+google-ads 
+google-auth
+python-jose
+python-dotenv

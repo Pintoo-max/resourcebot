@@ -141,42 +141,69 @@
             text-decoration: underline;
         } */
 
-        /* Style the parent container */
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            /* Stacks items vertically */
-            align-items: center;
-            /* Centers all items horizontally */
-            gap: 10px;
-            /* Adds spacing between links */
+
+        /* General container for links */
+        .action-links {
             margin-top: 20px;
-            /* Adds spacing from elements above */
+            /* Add spacing from above content */
+            text-align: center;
+            /* Center align the entire section */
         }
 
-        /* Style individual links */
-        .links-container a {
+        /* Inline links styling (Forgot Password & Skip Login) */
+        .inline-links {
+            display: flex;
+            /* Flexbox for horizontal alignment */
+            justify-content: center;
+            /* Center content horizontally */
+            gap: 120px;
+            /* Spacing between the two links */
+            margin-bottom: 10px;
+            /* Add spacing below inline links */
+        }
+
+        .inline-links a {
             font-size: 18px;
-            color: #007bff;
-            /* Blue color for links */
-            text-decoration: none;
-            /* Removes underline */
-            font-weight: bold;
+            /* Font size for links */
+            color: #1c8efb;
+            /* Link color */
+            text-decoration: underline;
+            /* Remove underline */
+           
+            /* Make links bold */
             transition: color 0.3s ease;
-            /* Adds smooth hover effect */
+            /* Smooth hover effect */
         }
 
-        /* Hover effect for links */
-        .links-container a:hover {
-            color: #0056b3;
-            /* Darker blue on hover */
+        .inline-links a:hover {
+            color: #6a11cb;
+            /* Change color on hover */
         }
 
-        /* Styling for hidden registration link */
-        .container-footer.hidden {
-            display: none;
-            /* Keeps it hidden */
+        /* Center link styling (Back to Welcome Page) */
+        .center-link {
+            margin-top: 10px;
+            /* Add spacing above the link */
         }
+
+        .center-link a {
+            font-size: 18px;
+            /* Font size for the link */
+            color: #1c8efb;
+            /* Link color */
+            text-decoration: underline;
+            /* Remove underline */
+            
+            /* Make link bold */
+            transition: color 0.3s ease;
+            /* Smooth hover effect */
+        }
+
+        .center-link a:hover {
+            color: #26a5e0;
+            /* Change color on hover */
+        }
+
 
 
         /* Responsive Design */
@@ -287,21 +314,16 @@
             <button type="submit">Login</button>
         </form>
 
-        <div class="links-container">
-
-            <!-- <div id="registrationLink" class="container-footer hidden">
-                <a href="/static/register.html">New User? Register Here</a>
-            <button onclick="redirectToRegistration()">New User? Register Here</button> 
-            </div> -->
-
-            <div class="forgot-password">
-                <a href="/static/forgot-password.html">Forgot Password?</a>
+        <div class="action-links">
+            <!-- Forgot Password and Skip Login -->
+            <div class="inline-links">
+                <a href="/static/forgot-password.html" class="forgot-password">Forgot Password?</a>
+                <a href="/static/example_screen.html" class="skip-login">Skip Login</a>
             </div>
-
-            <div class="skiploginLink">
-                <a href="/static/example_screen.html">Skip login</a>
+            <!-- Back to Welcome Page -->
+            <div class="center-link">
+                <a href="/static/welcome.html" class="back-welcome">Back to Welcome Page</a>
             </div>
-
         </div>
 
     </div>
@@ -440,6 +462,9 @@
             } else {
                 // Student/Teacher login
                 const loginSuccess = await performLogin(email, password, instituteId, role_id);
+
+                localStorage.setItem('role_id', role_id);
+                
                 if (loginSuccess) {
                     alert("User Login Successfully");
                     window.location.href = "/static/example_screen.html";

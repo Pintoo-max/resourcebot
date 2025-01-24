@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-
     <link rel="stylesheet" href="css/style1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -1711,7 +1710,7 @@
 
                 function fetchAndRenderSubjects() {
                     const tbody = document.querySelector('.subject-list tbody');
-                    tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>'; // Show loading message
+                    tbody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>'; // Show loading message
 
                     fetch('/get_SubjectDetails1', { method: 'GET' })
                         .then(response => {
@@ -1722,49 +1721,69 @@
                             }
                             return response.json();
                         })
-                        .then(subjects => {
-                            console.log('Subjects:', subjects); // Check the fetched data
-                            tbody.innerHTML = ''; // Clear existing rows after fetching
+                        .then(result => {
+                            console.log('API Response:', result); // Log the API response
 
+                            // Check if the response structure is valid
+                            if (result.status !== 'success' || !Array.isArray(result.data)) {
+                                throw new Error('Invalid API response format');
+                            }
+
+                            const subjects = result.data;
+                            tbody.innerHTML = ''; // Clear existing rows
+
+                            // Check if subjects are empty
                             if (subjects.length === 0) {
-                                tbody.innerHTML = '<tr><td colspan="6">No subjects found.</td></tr>'; // Handle empty state
-                            } else {
-                                subjects.forEach((subject, index) => {
-                                    const row = document.createElement('tr');
-                                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${subject.board_name || 'Unknown Board'}</td> <!-- Display Board Name -->
-                        <td>${subject.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
-                        <td>${subject.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
-                        <td>${subject.subject_id || 'Unknown subject_ID'}</td> <!-- Display Subject ID -->
-                        <td>${subject.subject_name || 'Unknown Subject'}</td> <!-- Display Subject Name -->
-                        <td class="action-icons">
-                            <i class="fas fa-edit edit-icon" title="Edit" data-subject-id="${subject.subject_id}" data-subject-name="${subject.subject_name}"></i>
-                            <i class="fas fa-trash-alt delete-icon" title="Delete" data-subject-id="${subject.subject_id}"></i>
-                        </td>
-                    `;
-                                    tbody.appendChild(row);
-                                });
-
-                                addEditEventListeners_subject();
-                                addDeleteEventListeners_subject();
-                            }
-                            if ($.fn.DataTable.isDataTable('#subject-datatable')) {
-                                $('#subject-datatable').DataTable().destroy(); // Destroy previous instance if exists
+                                tbody.innerHTML = '<tr><td colspan="7">No subjects found.</td></tr>';
+                                return;
                             }
 
-                            $('#subject-datatable').DataTable({
-                                "paging": true,   // Enable pagination
-                                "searching": true, // Enable search
-                                "ordering": true,  // Enable column sorting
-                                "info": true,      // Show info about the table
+                            // Populate table with subjects
+                            subjects.forEach((subject, index) => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${index + 1}</td>
+                                    <td>${subject.board_name || 'Unknown Board'}</td>
+                                    <td>${subject.medium_name || 'Unknown Medium'}</td>
+                                    <td>${subject.class_name || 'Unknown Class'}</td>
+                                    <td>${subject.subject_id || 'Unknown Subject ID'}</td>
+                                    <td>${subject.subject_name || 'Unknown Subject'}</td>
+                                    <td class="action-icons">
+                                        <i class="fas fa-edit edit-icon" title="Edit" data-subject-id="${subject.subject_id}" data-subject-name="${subject.subject_name}"></i>
+                                        <i class="fas fa-trash-alt delete-icon" title="Delete" data-subject-id="${subject.subject_id}"></i>
+                                    </td>
+                                `;
+                                tbody.appendChild(row);
                             });
-                        })
 
+                            // Initialize or reinitialize DataTable after updating the table body
+                            reinitializeDataTable();
+                        })
                         .catch(error => {
                             console.error('Error fetching subjects:', error);
-                            tbody.innerHTML = '<tr><td colspan="6">An error occurred while fetching subjects.</td></tr>';
+                            tbody.innerHTML = '<tr><td colspan="7">An error occurred while fetching subjects.</td></tr>';
                         });
+                }
+
+                function reinitializeDataTable() {
+                    const table = $('#subject-datatable');
+
+                    // Clear and destroy any existing DataTable instance
+                    if ($.fn.DataTable.isDataTable(table)) {
+                        table.DataTable().clear().destroy();
+                    }
+
+                    // Reinitialize DataTable with the updated data
+                    table.DataTable({
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        responsive: true,  // Make table responsive (especially for smaller screens)
+                        destroy: true, // Allow reinitialization
+                    });
+
+                    console.log('DataTable reinitialized successfully.');
                 }
 
                 function addEditEventListeners_subject() {
@@ -2204,62 +2223,75 @@
                     });
             }
 
-
-
             function fetchAndRenderTopics() {
                 const tbody = document.querySelector('.topic-list tbody');
-                tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>'; // Show loading message
+                    tbody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>'; // Adjust colspan for the loading message
 
-                fetch('/get_TopicDetails1', { method: 'GET' })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.text().then(text => {
-                                throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(topics => {
-                        console.log('Topics:', topics); // Check the fetched data
-                        tbody.innerHTML = ''; // Clear existing rows after fetching
+                    fetch('/get_TopicDetails1', { method: 'GET' }) // Correct endpoint
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(result => {
+                            console.log('API Response:', result); // Log the API response
 
-                        if (topics.length === 0) {
-                            tbody.innerHTML = '<tr><td colspan="6">No Topics found.</td></tr>'; // Handle empty state
-                        } else {
+                            // Check if the response structure is valid
+                            if (result.status !== 'success' || !Array.isArray(result.data)) {
+                                throw new Error('Invalid API response format');
+                            }
+
+                            const topics = result.data; // Extract topics array
+                            tbody.innerHTML = ''; // Clear existing rows
+
+                            // Check if topics are empty
+                            if (topics.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="7">No Topics found.</td></tr>';
+                                return;
+                            }
+
+                            // Populate table with topics
                             topics.forEach((topic, index) => {
                                 const row = document.createElement('tr');
                                 row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${topic.board_name || 'Unknown Board'}</td> <!-- Display Board Name -->
-                        <td>${topic.medium_name || 'Unknown Medium'}</td> <!-- Display Medium Name -->
-                        <td>${topic.class_name || 'Unknown Class'}</td> <!-- Display Class Name -->
-                        <td>${topic.subject_name || 'Unknown Subject'}</td> <!-- Display Subject Name -->
-                        <td>${topic.topic_name || 'Unknown subject_ID'}</td> <!-- Display Topic Name -->
-                        <td class="action-icons">
-                           <i class="fas fa-edit edit-icon" title="Edit" data-topic-id="${topic.topic_id}" data-topic-name="${topic.topic_name}"></i>
-                            <i class="fas fa-trash-alt delete-icon" title="Delete" data-topic-id="${topic.topic_id}"></i>
-                        </td>
-                    `;
+                                    <td>${index + 1}</td>
+                                    <td>${topic.board_name || 'Unknown Board'}</td>
+                                    <td>${topic.medium_name || 'Unknown Medium'}</td>
+                                    <td>${topic.class_name || 'Unknown Class'}</td>
+                                    <td>${topic.subject_name || 'Unknown Subject'}</td>
+                                    <td>${topic.topic_name || 'Unknown Topic'}</td>
+                                    <td class="action-icons">
+                                        <i class="fas fa-edit edit-icon" title="Edit" data-topic-id="${topic.topic_id}" data-topic-name="${topic.topic_name}"></i>
+                                        <i class="fas fa-trash-alt delete-icon" title="Delete" data-topic-id="${topic.topic_id}"></i>
+                                    </td>
+                                `;
                                 tbody.appendChild(row);
                             });
-                            addEditEventListeners_topic(); // Add event listeners after rows are appended
-                            addDeleteEventListeners_topic();
-                        }
-                        if ($.fn.DataTable.isDataTable('#topic-datatable')) {
-                            $('#topic-datatable').DataTable().destroy(); // Destroy previous instance if exists
-                        }
 
-                        $('#topic-datatable').DataTable({
-                            "paging": true,   // Enable pagination
-                            "searching": true, // Enable search
-                            "ordering": true,  // Enable column sorting
-                            "info": true,      // Show info about the table
+                            // Attach event listeners for edit and delete actions
+                            addEditEventListeners_topic();
+                            addDeleteEventListeners_topic();
+
+                            // Reinitialize DataTable efficiently
+                            if ($.fn.DataTable.isDataTable('#topic-datatable')) {
+                                $('#topic-datatable').DataTable().clear().destroy(); // Clear previous data
+                            }
+
+                            $('#topic-datatable').DataTable({
+                                paging: true,
+                                searching: true,
+                                ordering: true,
+                                info: true,
+                                destroy: true, // Allow reinitialization
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching topics:', error);
+                            tbody.innerHTML = `<tr><td colspan="7">An error occurred: ${error.message}</td></tr>`;
                         });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching topics:', error);
-                        tbody.innerHTML = '<tr><td colspan="6">An error occurred while fetching topics.</td></tr>';
-                    });
             }
 
             function addEditEventListeners_topic() {
@@ -2408,12 +2440,12 @@
 
             // Function to fetch and populate board details
             function fetchBoardDtls_R() {
-                fetchReportDetails('/get_SchoolBoard', 'report-board', 'board_id', 'board_name');
+                fetchReportDetails('/get_SchoolBoard', 'report-board', 'board_name', 'board_name');
             }
 
             // Function to fetch and populate medium details
             function fetchMediumDtls_R() {
-                fetchReportDetails('/get_SchoolMedium', 'report-medium', 'medium_id', 'medium_name');
+                fetchReportDetails('/get_SchoolMedium', 'report-medium', 'medium_name', 'medium_name');
             }
 
             // Function to fetch and populate class details
@@ -2451,11 +2483,11 @@
             }
 
             document.getElementById('fetch-reports-btn').addEventListener('click', function () {
-                const boardId = document.getElementById('report-board').value;
-                const mediumId = document.getElementById('report-medium').value;
+                const boardName = document.getElementById('report-board').value;
+                const mediumName = document.getElementById('report-medium').value;
                 const classsName = document.getElementById('report-class').value;
 
-                if (!boardId || !mediumId || !classsName) {
+                if (!boardName || !mediumName || !classsName) {
                     alert("Please select board, medium, and class!");
                     return;
                 }
@@ -2469,7 +2501,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ board_id: boardId, medium_id: mediumId, classs_name: classsName }),
+                    body: JSON.stringify({ board_name: boardName, medium_name: mediumName, classs_name: classsName }),
                 })
                     .then(response => {
                         console.log("Response from server:", response);

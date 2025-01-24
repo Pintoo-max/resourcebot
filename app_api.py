@@ -21,9 +21,28 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from textwrap import wrap
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+from fastapi.staticfiles import StaticFiles
+
+from contextlib import asynccontextmanager
+import unicodedata
+from unicodedata import normalize
+# Example Hindi text
+hindi_text = "नमस्ते, यह एक परीक्षण है।"
+
+# Normalize the Hindi text
+normalized_text = unicodedata.normalize('NFC', hindi_text)
+
+print(normalized_text)
+
+# Register the font
+pdfmetrics.registerFont(TTFont('NotoSansDevanagari', './Noto_Sans_Devanagari/NotoSansDevanagari-VariableFont_wdth,wght.ttf'))
 
 # Load environment variables
 load_dotenv()
+
+
 
 # Constants and configurations
 MONGO_DETAILS = os.getenv("MONGO_DETAILS", "mongodb+srv://i-campus:atsiCampus123@cluster0.2q7k67a.mongodb.net/")
@@ -37,8 +56,25 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 # Initialize FastAPI app
 app = FastAPI()
+
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup event
+    print("Startup event")
+    # Initialize your resources here
+    yield
+    # Shutdown event
+    print("Shutdown event")
+    # Clean up resources here
+
+# Use the lifespan event manager
+app = FastAPI(lifespan=lifespan)
 
 # MongoDB client and database
 client = AsyncIOMotorClient(MONGO_DETAILS)
@@ -52,6 +88,7 @@ institute_collection = db['institute']
 class_collection = db['class']
 subject_collection = db['subject']
 topic_collection = db['topic']
+
 # Helper functions
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -260,13 +297,21 @@ async def verify_access_token(authorization: str = Header(...)):
     token = authorization.split(" ")[1]
     token_record = await tokens_collection.find_one({"access_token": token})
     if not token_record:
-        raise HTTPException(status_code=401, detail="Token not found or invalid")
-    
+        #raise HTTPException(status_code=401, detail="Token not found or invalid")
+        raise HTTPException(
+            status_code=401,
+            detail={"status_code": 401, "detail": "Token not found or invalid"},
+        )
     # Check if the token has expired
     if token_record["expires_at"] < datetime.utcnow():
-        raise HTTPException(status_code=401, detail="Token has expired")
-
-
+        content = {"status_code": 401, "detail": "Token has expired"}
+        #raise HTTPException(status_code=401, detail=JSONResponse(content=content))
+        #raise HTTPException(status_code=401, detail=content)
+        raise HTTPException(
+            status_code=401,
+            detail={"status_code": 401, "detail": "Token has expired"},
+        )
+       
     # Replace "your_valid_token" with the actual validation logic or token    
     return {"user": "authenticated_user"}  # Mock user details
 
@@ -317,7 +362,7 @@ async def get_boards(user: dict = Depends(verify_access_token)):
         subjects = convert_objectid_to_str(subjects)
 
         # Response structure
-        response_data = {"Category": ["AI generated worksheet", "Textbook", "Syllabus", "Previous Year Questions"]}
+        response_data = {"Category": ["AI generated worksheet", "Textbook", "Syllabus", "Question Paper", "Textbook Solutions", "Question Bank"]}
 
         # Organize data by board, medium, and class using subject_collection as the link
         for board in boards:
@@ -532,107 +577,8 @@ class QuestionRequest(BaseModel):
     tasks: List[TaskRequest]  # Accept a list of TaskRequest objects
     limit: Optional[int] = 30  # Global limit (optional)
 
-@app.post("/get_questions_and_answers_api")
-async def get_questions_and_answers_api(request: QuestionRequest):
-    # Validate the limit for each task
-    for task in request.tasks:
-        if task.limit is not None and task.limit < 1:
-            raise HTTPException(status_code=422, detail="Limit must be at least 1")
 
-    # Get the board and grade information
-    existing_board = await board_collection.find_one({"board_id": request.board})
-    if not existing_board:
-        raise HTTPException(status_code=404, detail="Board not found")
-    board_name = existing_board["board_name"]
-
-    existing_grade = await class_collection.find_one({"classs_id": request.grade})
-    if not existing_grade:
-        raise HTTPException(status_code=404, detail="Grade not found")
-    class_name = existing_grade["classs_name"]
-
-    # Get the database and collection
-    db = await get_or_create_database(board_name)
-    collection = await get_collection(board_name, class_name)
-    if collection is None:
-        raise HTTPException(status_code=404, detail="Collection not found")
-
-    final_result = []  # Store the questions for all tasks here
-
-    # Loop over each task type in the request
-    for task_info in request.tasks:
-        task = task_info.type  # The task type (e.g., "true-false")
-        task_limit = task_info.limit  # Task-specific limit
-
-        # Construct the query for the specific task
-        task_query = {
-            "board": str(request.board),
-            "medium": str(request.medium),
-            "grade": str(request.grade),
-            "subject": str(request.subject),
-            "lesson": str(request.lesson),
-            "tasks": task  # Filter by the specific task
-        }
-
-        # Fetch the document for this specific task
-        document = await collection.find_one(task_query)
-        if not document:
-            continue  # Skip if no data is found for this task
-
-        # Process the questions and answers for this task
-        questions_and_answers = document.get("questions_and_answers", {})
-        task_result = []  # Store the questions for this specific task
-
-        # Loop over each question for this task (assuming up to 25 questions)
-        for i in range(1, 26):
-            question_key = f"question{i}"
-            answer_key = f"answer{i}"
-
-            # If the question and answer exist for this task, add them
-            if question_key in questions_and_answers and answer_key in questions_and_answers:
-                question_data = {
-                    "question": questions_and_answers.get(question_key, ""),
-                    "type": task,
-                    "correct_answer": questions_and_answers.get(answer_key, "")
-                }
-
-                # Add task-specific fields for different task types
-                if task == "multiple-choice-questions":
-                    question_data["options"] = questions_and_answers.get(f"options{i}", [])
-                elif task == "true-false":
-                    question_data["options"] = ["True", "False"]
-                elif task == "match-the-column":
-                    question_data["options"] = {
-                        "column_a": questions_and_answers.get(f"column_a{i}", []),
-                        "column_b": questions_and_answers.get(f"column_b{i}", [])
-                    }
-                elif task == "fill-in-the-blanks":
-                    # No options for fill-in-the-blanks, just the correct answer
-                    pass
-
-                task_result.append(question_data)
-
-                # If we have reached the task-specific limit, stop adding questions for this task
-                if len(task_result) >= task_limit:
-                    break
-
-        # Add task-specific result to the final result
-        final_result.extend(task_result)
-
-        # If we have reached the global limit, stop processing further tasks
-        if len(final_result) >= request.limit:
-            break
-
-    # Return the response
-    return {
-        "status": 200,
-        "message": "Worksheet generated successfully",
-        "data": {
-            "questions": final_result
-        }
-    }
-
-
-@app.post("/get_questions_and_answers_api_pdf")
+@app.post("/get_questions_and_answers_api_pdf_single")
 async def get_questions_and_answers_api(request: QuestionRequest):
     # Validate the limit for each task
     for task in request.tasks:
@@ -1131,7 +1077,57 @@ async def get_questionBank(
         }
     
     
-@app.post("/get_questions_and_answers_api_pdf2")
+
+class TopicDtl2(BaseModel):
+    board: str
+    grade: str
+    medium: str
+    subject: str
+
+@app.post("/get_TopicDetails")
+async def topic_details(top: TopicDtl2):
+    query = {
+    "medium_id": str(top.medium),
+    "class_id": str(top.grade),
+    "board_id": str(top.board),
+    "subject_id": str(top.subject)
+    }
+    print("Executing Query:", query)
+
+    try:
+        topics = await topic_collection.find(query).to_list(length=100)
+        #boards = await board_collection.find().to_list(length=100)  # Adjust length as needed
+   
+        if not topics:
+            return {
+                "status": 404,
+                "message": "No topics found for the given criteria.",
+                "data": []
+            }
+
+        # Convert ObjectId to string
+        for topic in topics:
+            if "_id" in topic:
+                topic["_id"] = str(topic["_id"])
+
+        return {
+            "status": 200,
+            "message": "Topics extracted successfully.",
+            "data": topics
+        }
+
+    except Exception as e:
+        print(f"Unhandled Exception: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "status": 500,
+                "message": "An unexpected error occurred.",
+                "error": str(e)
+            }
+        )
+
+@app.post("/get_questions_and_answers_api_pdf")
 async def get_questions_and_answers_api(request: QuestionRequest):
     # Validate the limit for each task
     for task in request.tasks:
@@ -1230,13 +1226,13 @@ async def get_questions_and_answers_api(request: QuestionRequest):
 
     # Generate the Questions PDF
     c = canvas.Canvas(questions_pdf_filepath, pagesize=letter)
-    c.setFont("Helvetica", 11)
+    c.setFont("NotoSansDevanagari", 12)
     y = 750
     c.drawString(200, 800, "Questions Worksheet")
     for question in final_result:
         if y < 50:
             c.showPage()
-            c.setFont("Helvetica", 12)
+            c.setFont("NotoSansDevanagari", 12)
             y = 750
         question_text = question["question"]
         c.drawString(50, y, f"Q: {question_text}")
@@ -1252,21 +1248,30 @@ async def get_questions_and_answers_api(request: QuestionRequest):
             for col_a, col_b in zip(column_a, column_b):
                 c.drawString(100, y, f"{col_a} -> {col_b}")
                 y -= 20
+                if y < 50:  # Add a new page if space runs out mid-column
+                    c.showPage()
+                    c.setFont("NotoSansDevanagari", 12)
+                    y = 750
         elif isinstance(options, list):
             for opt in options:
                 c.drawString(100, y, f"- {opt}")
                 y -= 20
+                if y < 50:  # Add a new page if space runs out mid-options
+                    c.showPage()
+                    c.setFont("NotoSansDevanagari", 12)
+                    y = 750
+
     c.save()
 
     # Generate the Answers PDF
     c = canvas.Canvas(answers_pdf_filepath, pagesize=letter)
-    c.setFont("Helvetica", 11)
+    c.setFont("NotoSansDevanagari", 11)
     y = 750
     c.drawString(200, 800, "Answers Worksheet")
     for question in final_result:
         if y < 50:
             c.showPage()
-            c.setFont("Helvetica", 12)
+            c.setFont("NotoSansDevanagari", 12)
             y = 750
         question_text = question["question"]
         c.drawString(50, y, f"Q: {question_text}")
@@ -1280,10 +1285,21 @@ async def get_questions_and_answers_api(request: QuestionRequest):
             for match in correct_answer:
                 c.drawString(100, y, match)
                 y -= 20
+                if y < 50:  # Add a new page if space runs out mid-correct answer
+                    c.showPage()
+                    c.setFont("NotoSansDevanagari", 12)
+                    y = 750
         else:
             c.drawString(50, y, f"Correct Answer: {correct_answer}")
             y -= 30
+            if y < 50:  # Add a new page if space runs out mid-correct answer
+                c.showPage()
+                c.setFont("NotoSansDevanagari", 12)
+                y = 750
+   
     c.save()
+    if not os.path.exists(questions_pdf_filepath):
+         raise HTTPException(status_code=500, detail="PDF not created")
 
     # Generate downloadable links
     questions_pdf_link = f"http://127.0.0.1:8000/static/apps/{questions_pdf_filename}"
@@ -1299,3 +1315,4 @@ async def get_questions_and_answers_api(request: QuestionRequest):
             "answers_pdf_link": answers_pdf_link
         }
     })
+    

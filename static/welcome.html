@@ -6,140 +6,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to LearnAize</title>
   <!-- <link rel="stylesheet" href="styles.css"> -->
-  
 </head>
+
 <style>
-  /* Global Styles */
-  body,
-  html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    height: 100%;
-    overflow: hidden;
+/* Global Styles */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  height: 100%;
+  overflow: hidden;
+}
+
+.full-page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Background Overlay */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, #1c8efb, #6a11cb);
+  z-index: 1;
+  opacity: 0.9;
+}
+
+/* Content Section */
+.content {
+  z-index: 2;
+}
+
+.main-heading {
+  font-size: 3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.brand-highlight {
+  color: #ffcb05;
+  text-shadow: 0 0 10px rgba(255, 203, 5, 0.8);
+}
+
+.subheading {
+  font-size: 1.2rem;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+/* Buttons */
+.button-container {
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 15px 35px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin: 0 10px;
+}
+
+.btn-login {
+  background: #4CAF50;
+  color: white;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btn-signup {
+  background: #ff5722;
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+}
+
+.btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Decorative Images */
+.image-container {
+  position: relative;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  height: auto;
+}
+
+.image-container img {
+  width: 250px; /* Adjust size as needed */
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Floating Animation (Optional, for other images) */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
   }
 
-  .full-page {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    text-align: center;
-    overflow: hidden;
+  50% {
+    transform: translateY(-15px);
   }
+}
 
-  /* Background Overlay */
-  .background-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(120deg, #1c8efb, #6a11cb);
-    z-index: 1;
-    opacity: 0.9;
-  }
+/* Media Queries for Responsive Design */
 
-  /* Content Section */
-  .content {
-    z-index: 2;
-  }
-
+/* Screen width 700px and below */
+@media (max-width: 700px) {
   .main-heading {
-    font-size: 3rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-  }
-
-  .brand-highlight {
-    color: #ffcb05;
-    text-shadow: 0 0 10px rgba(255, 203, 5, 0.8);
+    font-size: 2rem;
+    letter-spacing: 0.8px;
   }
 
   .subheading {
-    font-size: 1.2rem;
-    font-weight: 300;
-    margin-bottom: 30px;
-  }
-
-  /* Buttons */
-  .button-container {
-    margin-top: 20px;
+    font-size: 1rem;
   }
 
   .btn {
-    padding: 15px 35px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    margin: 0 10px;
+    padding: 12px 30px;
+    font-size: 1rem;
   }
 
-  .btn-login {
-    background: #4CAF50;
-    color: white;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  .image-container img {
+    width: 200px;
+  }
+}
+
+/* Screen width 400px and below */
+@media (max-width: 400px) {
+  .main-heading {
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
   }
 
-  .btn-signup {
-    background: #ff5722;
-    color: white;
-    box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+  .subheading {
+    font-size: 0.9rem;
   }
 
-  .btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  .btn {
+    padding: 10px 25px;
+    font-size: 0.9rem;
   }
 
-  /* Decorative Images */
-  .image-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
+  .image-container img {
+    width: 150px;
   }
+}
 
-  .floating-image {
-    position: absolute;
-    width: 250px;
-    height: auto;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    animation: float 4s infinite ease-in-out;
-  }
-
-  .floating-image.left {
-    top: 20%;
-    left: 10%;
-  }
-
-  .floating-image.right {
-    top: 40%;
-    right: 10%;
-  }
-
-  /* Floating Animation */
-  @keyframes float {
-
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-15px);
-    }
-  }
 </style>
 
 <body>
@@ -149,6 +184,9 @@
 
     <!-- Content Section -->
     <div class="content">
+      <div class="image-container">
+        <img src="/images/LearnAize Logo.png" alt="logo">
+      </div>
       <h1 class="main-heading">Welcome to <span class="brand-highlight">LearnAize</span></h1>
       <p class="subheading">Empowering your learning and teaching journey with ease!</p>
 
@@ -158,24 +196,20 @@
         <button class="btn btn-signup" onclick="redirectToSignup()">Sign Up</button>
       </div>
     </div>
-
-    <!-- Decorative Images
-    <div class="image-container">
-      <img src="resourcebot/assets/images/student-studying.jpg" alt="Students Studying" class="floating-image left">
-      <img src="resourcebot/assets/images/education-goal.jpg" alt="Education Goal" class="floating-image right">
-    </div> -->
   </div>
-</body>
-<script>
-  // Redirect to Login Page
-  function redirectToLogin() {
-    window.location.href = '/static/login.html'; // Replace 'login.html' with the actual path of your login page
-  }
 
-  // Redirect to Sign-Up Page
-  function redirectToSignup() {
-    window.location.href = 'static/signup.html'; // Replace 'signup.html' with the actual path of your signup page
-  }
-</script>
+  <script>
+    // Redirect to Login Page
+    function redirectToLogin() {
+      window.location.href = '/static/login.html'; // Replace 'login.html' with the actual path of your login page
+    }
+
+    // Redirect to Sign-Up Page
+    function redirectToSignup() {
+      window.location.href = '/static/signup.html'; // Replace 'signup.html' with the actual path of your signup page
+    }
+  </script>
+
+</body>
 
 </html>

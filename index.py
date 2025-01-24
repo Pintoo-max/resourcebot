@@ -20,12 +20,14 @@ import re
 import uuid
 from datetime import datetime
 # from fastapi.middleware.session import CORSMiddleware
-from google.oauth2 import id_token
-from google.auth.transport import requests
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
+from google.oauth2 import id_token
+from google.auth.transport import requests
 from fastapi.middleware.cors import CORSMiddleware
-
+import requests
+from bs4 import BeautifulSoup
+from typing import List
 
 app = FastAPI()
 # templates = Jinja2Templates(directory="templates") 
@@ -52,7 +54,7 @@ topic_collection = db['topic']
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Set this to your frontend domain
+    allow_origins=["http://127.0.0.1:8000"],  # Set this to your frontend domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -61,7 +63,8 @@ app.add_middleware(
 # Add the SessionMiddleware
 app.add_middleware(
     SessionMiddleware,
-    secret_key="secret-key",  # Replace with a secure secret key
+    secret_key="secret-key"
+      # Replace with a secure secret key
 )
 
 # def get_collection(class_name: str) -> Collection:
@@ -720,227 +723,6 @@ async def form_uplaod(
             #         "status": response.get('status')  # Include status in the response on error
             #     }
 
-    
-# async def store_task_data(task_type, questions_and_answers, collection, filename, new_data):
-#     # Create a formatted dictionary for questions and answers
-#     formatted_questions_and_answers = {}
-#     for idx, qa in enumerate(questions_and_answers, start=1):
-#         question_key = f"question{idx}"
-#         answer_key = f"answer{idx}"
-        
-#         # Handle formatting for different types
-#         if task_type == 'true-false':
-#             formatted_questions_and_answers[question_key] = qa['statement']
-#             formatted_questions_and_answers[answer_key] = qa['answer']
-#             if 'explanation' in qa:
-#                 explanation_key = f"explanation{idx}"
-#                 formatted_questions_and_answers[explanation_key] = qa['explanation']
-        
-#         elif task_type == 'match-the-column':
-#             column_a_key = f"column_a{idx}"
-#             column_b_key = f"column_b{idx}"
-#             formatted_questions_and_answers[question_key] = "Match the following"
-#             formatted_questions_and_answers[column_a_key] = qa['column_a']
-#             formatted_questions_and_answers[column_b_key] = qa['column_b']
-#             formatted_questions_and_answers[answer_key] = qa['answers']
-        
-#         elif task_type == 'multiple-choice-questions':
-#             formatted_questions_and_answers[question_key] = qa['question']
-#             formatted_questions_and_answers[answer_key] = qa['answer']
-#             if 'options' in qa:
-#                 options_key = f"options{idx}"
-#                 formatted_questions_and_answers[options_key] = qa['options']
-#             if 'explanation' in qa:
-#                 explanation_key = f"explanation{idx}"
-#                 formatted_questions_and_answers[explanation_key] = qa['explanation']
-        
-#         else:  # For general questions and answers
-#             formatted_questions_and_answers[question_key] = qa['question']
-#             formatted_questions_and_answers[answer_key] = qa['answer']
-
-#     # Check for existing files with the same base filename
-#     existing_file = await collection.find_one({"filename": filename})
-#     if existing_file:
-#         # If file exists, update the existing document
-#         result = await collection.update_one(
-#             {"filename": filename},
-#             {
-#                 "$set": {"questions_and_answers": formatted_questions_and_answers},
-#                 "$addToSet": {"tasks": task_type}  # Add task_type to the array if it doesn't already exist
-#             }
-#         )
-#         if result.modified_count > 0:
-#             print(f"Updated existing file: {filename}")
-#             # Print all task types in the array
-#             updated_file = await collection.find_one({"filename": filename})
-#             print("All task types:", updated_file["tasks"])
-#             return {"status": "1", "message": f"File '{filename}' updated successfully."}
-#         else:
-#             print(f"No changes made to the existing file: {filename}")
-#             return {"status": "0", "message": f"No changes were made to '{filename}'."}
-
-#     else:
-#         # If file doesn't exist, create a new entry with the filename
-#         document = {
-#             "board": new_data["board"],
-#             "board_name": new_data["board_name"],
-#             "medium": new_data["medium"],
-#             "medium_name": new_data["medium_name"],
-#             "grade": new_data["grade"],
-#             "grade_name": new_data["class_name"],
-#             "subject": new_data["subject"],
-#             "subject_name": new_data["subject_name"],
-#             "lesson": new_data["lesson"],
-#             "lesson_name": new_data["topic_name"],
-#             "filename": filename,
-#             "tasks": [task_type],
-#             "unique_code": new_data["unique_code"],
-#             "timestamp": new_data["timestamp"],
-#             "questions_and_answers": formatted_questions_and_answers
-#         }
-#         result = await collection.insert_one(document)
-#         if result.inserted_id:
-#             print(f"Inserted new file: {filename}")
-#             print("All task types:", [task_type])
-#             return {"status": "1", "message": f"File '{filename}' inserted successfully."}
-#         else:
-#             print(f"Failed to insert the new file: {filename}")
-#             return {"status": "0", "message": f"Failed to insert '{filename}'."}
-
-# Create a dictionary to store filenames and their corresponding task types
-# inserted_files = {}
-# inserted_filenames = []  # List to store only the filenames
-# print("This is insert", inserted_files)
-
-# async def store_task_data(task_type, questions_and_answers, collection, filename, new_data):
-#     global inserted_files  # Use global to access the dictionary outside the function
-#     global inserted_filenames  # Use global to access the list of inserted filenames
-
-#     # Clear the existing filenames to start fresh for each upload
-#     inserted_files.clear()
-#     inserted_filenames.append(filename)
-
-#     # Create a formatted dictionary for questions and answers
-#     formatted_questions_and_answers = {}
-#     for idx, qa in enumerate(questions_and_answers, start=1):
-#         question_key = f"question{idx}"
-#         answer_key = f"answer{idx}"
-        
-#         # Handle formatting for different types
-#         if task_type == 'true-false':
-#             formatted_questions_and_answers[question_key] = qa['statement']
-#             if 'options' in qa:
-#                 options_key = f"options{idx}"
-#                 formatted_questions_and_answers[options_key] = qa['options']
-#             formatted_questions_and_answers[answer_key] = qa['answer']
-#             if 'explanation' in qa:
-#                 explanation_key = f"explanation{idx}"
-#                 formatted_questions_and_answers[explanation_key] = qa['explanation']
-        
-#         elif task_type == 'match-the-column':
-#             column_a_key = f"column_a{idx}"
-#             column_b_key = f"column_b{idx}"
-#             formatted_questions_and_answers[question_key] = "Match the following"
-#             formatted_questions_and_answers[column_a_key] = qa['column_a']
-#             formatted_questions_and_answers[column_b_key] = qa['column_b']
-#             formatted_questions_and_answers[answer_key] = qa['answers']
-        
-#         elif task_type == 'multiple-choice-questions':
-#             formatted_questions_and_answers[question_key] = qa['question']
-#             if 'options' in qa:
-#                 options_key = f"options{idx}"
-#                 formatted_questions_and_answers[options_key] = qa['options']
-#             formatted_questions_and_answers[answer_key] = qa['answer']
-#             if 'explanation' in qa:
-#                 explanation_key = f"explanation{idx}"
-#                 formatted_questions_and_answers[explanation_key] = qa['explanation']
-        
-#         else:  # For general questions and answers
-#             formatted_questions_and_answers[question_key] = qa['question']
-#             formatted_questions_and_answers[answer_key] = qa['answer']
-
-#     # Check for existing files with the same base filename
-#     existing_file = await collection.find_one({"filename": filename})
-#     if existing_file:
-#         # If file exists, update the existing document
-#         result = await collection.update_one(
-#             {"filename": filename},
-#             {
-#                 "$set": {"questions_and_answers": formatted_questions_and_answers},
-#                 "$addToSet": {"tasks": task_type}  # Add task_type to the array if it doesn't already exist
-#             }
-#         )
-#         if result.modified_count > 0:
-#             updated_file = await collection.find_one({"filename": filename})
-#             print(f"Updated existing file: {filename}")
-#             print("All task types:", updated_file["tasks"])
-#             inserted_files[filename] = updated_file["tasks"]  # Store the filename and task types
-
-#             # inserted_filenames.append(filename)  # Add to the list of inserted filenames
-#             print_all_inserted_filenames()  # Print after each update
-            
-#             return {
-#                 "status": "1",
-#                 "message": f"File '{filename}' updated successfully.",
-#                 "task_types": updated_file["tasks"]  # Return the list of task types
-#             }
-#         else:
-#             print(f"No changes made to the existing file: {filename}")
-#             return {
-#                 "status": "0",
-#                 "message": f"No changes were made to '{filename}'.",
-#                 "task_types": existing_file["tasks"]
-#             }
-
-#     else:
-#         # If file doesn't exist, create a new entry with the filename
-#         document = {
-#             "board": new_data["board"],
-#             "board_name": new_data["board_name"],
-#             "medium": new_data["medium"],
-#             "medium_name": new_data["medium_name"],
-#             "grade": new_data["grade"],
-#             "grade_name": new_data["class_name"],
-#             "subject": new_data["subject"],
-#             "subject_name": new_data["subject_name"],
-#             "lesson": new_data["lesson"],
-#             "lesson_name": new_data["topic_name"],
-#             "filename": filename,
-#             "tasks": [task_type],  # Start with the new task_type
-#             "unique_code": new_data["unique_code"],
-#             "timestamp": new_data["timestamp"],
-#             "questions_and_answers": formatted_questions_and_answers
-#         }
-        
-#         result = await collection.insert_one(document)
-#         if result.inserted_id:
-#             print(f"Inserted new file: {filename}")
-#             print("All task types:", document["tasks"])
-#             inserted_files[filename] = document["tasks"]  # Store the filename and task types
-
-#             # # Append the filename to the list of inserted filenames
-#             # inserted_filenames.append(filename)
-#             print_all_inserted_filenames()  # Print after each insertion
-            
-#             return {
-#                 "status": "1",
-#                 "message": f"File '{filename}' inserted successfully.",
-#                 "task_types": document["tasks"] # Return the list of task types
-#             }
-
-#         else:
-#             print(f"Failed to insert the new file: {filename}")
-#             return {
-#                 "status": "0",
-#                 "message": f"Failed to insert '{filename}'."
-#             }
-
-# # Function to print all inserted filenames as a single string
-# def print_all_inserted_filenames():
-#     print("\n--- List of Inserted Filenames ---")
-#     print(" ".join(inserted_filenames))  # Print all filenames as a space-separated string
-#     print("-----------------------------------")
-#     inserted_files.clear()
 
 # Global dictionary to store filenames and task types
 inserted_files = {}
@@ -1115,140 +897,6 @@ def print_all_inserted_filenames_batch():
     # Clear the batch list after printing
     # inserted_filenames_batch.clear()
 
-
-# Function to preprocess the document by dividing into sections
-# def preprocess_document(file_content):
-#     task_sections = {}
-#     current_task_type = None
-#     task_content = []
-    
-    
-#     for line in file_content.splitlines():
-#         line = line.strip()
-        
-#         # Identify task headers to define sections
-#         if re.match(r'Fill in the blanks', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'fill-in-the-blanks'
-#             task_content = []
-#         elif re.match(r'Name the following', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'name-the-following'
-#             task_content = []
-#         elif re.match(r'Answer in one Word', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'answer-in-one-word'
-#             task_content = []
-#         elif re.match(r'Match The Following', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'match-the-column'
-#             task_content = []
-#         elif re.match(r'Multiple Choice Question', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'multiple-choice-questions'
-#             task_content = []
-#         elif re.match(r'True or False', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'true-false'
-#             task_content = []
-#         elif re.match(r'Long Answers', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'long-answers'
-#             task_content = []
-#         elif re.match(r'Short Answers', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'short-answers'
-#             task_content = []
-#         elif re.match(r'Give Reasons', line, re.IGNORECASE):
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'give-reasons'
-#             task_content = []
-        
-#         # Append line to current task content
-#         if current_task_type:
-#             task_content.append(line)
-    
-#     # Add the last section
-#     if current_task_type:
-#         task_sections[current_task_type] = task_content
-    
-#     print("task section found ",task_sections)
-#     return task_sections
-
-# def preprocess_document(file_content, selected_tasks):
-#     task_sections = {}
-#     current_task_type = None
-#     task_content = []
-    
-#     for line in file_content.splitlines():
-#         line = line.strip()
-        
-#         # Check if the task header matches the selected tasks
-#         if re.match(r'Fill in the blanks', line, re.IGNORECASE) and 'fill-in-the-blanks' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'fill-in-the-blanks'
-#             task_content = []
-#         elif re.match(r'Name the following', line, re.IGNORECASE) and 'name-the-following' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'name-the-following'
-#             task_content = []
-#         elif re.match(r'Answer in one Word', line, re.IGNORECASE) and 'answer-in-one-word' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'answer-in-one-word'
-#             task_content = []
-#         elif re.match(r'Match The Following', line, re.IGNORECASE) and 'match-the-column' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'match-the-column'
-#             task_content = []
-#         elif re.match(r'Multiple Choice Question', line, re.IGNORECASE) and 'multiple-choice-questions' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'multiple-choice-questions'
-#             task_content = []
-#         elif re.match(r'True or False', line, re.IGNORECASE) and 'true-false' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'true-false'
-#             task_content = []
-#         elif re.match(r'Long Answers', line, re.IGNORECASE) and 'long-answers' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'long-answers'
-#             task_content = []
-#         elif re.match(r'Short Answers', line, re.IGNORECASE) and 'short-answers' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'short-answers'
-#             task_content = []
-#         elif re.match(r'Give Reasons', line, re.IGNORECASE) and 'give-reasons' in selected_tasks:
-#             if current_task_type:
-#                 task_sections[current_task_type] = task_content
-#             current_task_type = 'give-reasons'
-#             task_content = []
-        
-#         # Append line to current task content if the task type is selected
-#         if current_task_type:
-#             task_content.append(line)
-    
-#     # Add the last section
-#     if current_task_type:
-#         task_sections[current_task_type] = task_content
-    
-#     print("task sections found: ", task_sections)
-#     return task_sections
 
 
 def preprocess_document(file_content, selected_tasks):
@@ -1546,266 +1194,6 @@ def extract_text_from_doc(file_contents: bytes) -> str:
         text += para.text + "\n"
     return text
 
-# def detect_format(line, next_line):
-#     """Detect the format of the question based on the line content."""
-#     line = line.strip()
-#     next_line = next_line.strip()
-    
-#     if re.match(r'^\d+\.', line):
-#         if next_line.startswith("Answer:"):
-#             print("Format found: question and answer")
-#             return 'question_answer'
-#         # if re.match(r'^[A-Da-d]\.', next_line) or re.match(r'^[1-4]\.', next_line):
-#         #     print("Format found: mcq")
-#         #     return 'mcq'
-
-#         # for Mcq
-#         if re.match(r'^\d+\.', line):
-#         # Check if the next line starts with an option (A), (B), (C), (D)
-#             if re.match(r'^[A-D]\)', next_line):
-#                 print("Format found: mcq")
-#                 return 'mcq'
-#             elif next_line.startswith("Answer:"):
-#                 print("Format found: question_answer with answer line")
-#                 return 'mcq'
-#             elif next_line.startswith("Explanation:"):
-#                 print("Format found: expanation ")
-#                 return 'mcq'
-            
-#             #  For trueorFalse      
-#             if re.match(r'^\d+\.', line):
-#             # Check if the next line starts with an option (A), (B)
-#                 if re.match(r'^[A-B]\)', next_line):
-#                     print("Format found: trueorfalse")
-#                     return 'trueorfalse'
-#                 elif next_line.startswith("Answer:"):
-#                     print("Format found: question_answer with answer line")
-#                     return 'trueorfalse'
-#                 elif next_line.startswith("Explanation:"):
-#                     print("Format found: explanation ")
-#                     return 'trueorfalse'
-            
-#             # Detecting the format based on presence of columns and answers
-#             if re.match(r'^[1-5]\.', line) :
-#                 print("Format found: matchthecolumn ")
-#                 return 'matchthecolumn'
-#             elif re.match(r'^[A-E]\.', line):
-#                 print("Format found: matchthecolumn")
-#                 return 'matchthecolumn'
-#             elif line.startswith("Answers"):
-#                 print("Format found: matchthecolumn")
-#                 return 'matchthecolumn'
-            
-#         return None
-
-
-# def extract_question_and_answer(lines, line_index):
-#     """Extract question and answer."""
-#     line = lines[line_index].strip()
-#     question = line[len(re.match(r'^\d+\.', line).group()):].strip()
-#     answer_line_index = line_index + 1
-#     if answer_line_index < len(lines) and lines[answer_line_index].startswith("Answer:"):
-#         answer = lines[answer_line_index][len("Answer:"):].strip()
-#         return question, answer
-#     return None, None
-
-# def extract_mcq_details(lines, index):
-#     """Extract question, options, answer, and explanation for MCQ format."""
-#     question = lines[index].strip()
-#     options = []
-#     answer = None
-#     explanation = None
-
-#     # Loop through the following lines to find options, answer, and explanation
-#     for i in range(index + 1, len(lines)):
-#         line = lines[i].strip()
-        
-#         # Match options (A) option text
-#         if re.match(r'^[A-Da-d]\)', line):
-#             options.append(line)
-        
-#         # Match answer line
-#         elif line.startswith("Answer:"):
-#             answer = line
-        
-#         # Match explanation line
-#         elif line.startswith("Explanation:"):
-#             explanation = line
-#             break  # Assuming explanation is the last piece of information
-
-#     if question and options and answer:
-#         return {
-#             'question': question,
-#             'options': options,
-#             'answer': answer,
-#             'explanation': explanation
-#         }
-#     return None
-
-# def extract_trueorfalse_details(lines, index):
-#     """Extract question, options, answer, and explanation for MCQ format."""
-#     question = lines[index].strip()
-#     options = []
-#     answer = None
-#     explanation = None
-
-#     # Loop through the following lines to find options, answer, and explanation
-#     for i in range(index + 1, len(lines)):
-#         line = lines[i].strip()
-        
-#         # Match options (A) option text
-#         if re.match(r'^[A-B]\)', line):
-#             options.append(line)
-        
-#         # Match answer line
-#         elif line.startswith("Answer:"):
-#             answer = line
-        
-#         # Match explanation line
-#         elif line.startswith("Explanation:"):
-#             explanation = line
-#             break  # Assuming explanation is the last piece of information
-
-#     if question and options and answer:
-#         return {
-#             'question': question,
-#             'options': options,
-#             'answer': answer,
-#             'explanation': explanation
-#         }
-#     return None
-
-
-# def extract_matchthecolumn_details(txts):
-#     # print("Lines")
-#     # print(lines)
-#     """Extracts details from the 'Match the Following' question format."""
-    
-#     column_a = []
-#     column_b = []
-#     answers = []
-#     question = []
-
-
-#     # Split the input into sections based on the headers
-#     sections = txts.strip().split("\n\n")
-    
-#     # Store the sections directly into the desired arrays
-#     question = sections[0].strip()
-#     column_a = sections[1].splitlines()[1:]  # Exclude the header "Column A"
-#     column_b = sections[2].splitlines()[1:]  # Exclude the header "Column B"
-#     answers = sections[3].splitlines()[1:]    # Exclude the header "Answer"
-
-#     # # Display the results
-#     # print("Column A:", column_a)
-#     # print("Column B:", column_b)
-#     # print("Answers:", answers)
-
-#     return {
-#         'question': question,
-#        'column_a': column_a,
-#        'column_b': column_b,
-#        'answers': answers
-#      }
-   
-
-
-# def parse_questions_and_answers(text: str, filename: str):
-#     lines = text.strip().split('\n')
-#     data = {}
-#     heading_set = False
-#     question_counter = 1
-
-#     for i in range(len(lines)):
-#         line = lines[i].strip()
-
-#         # Detect heading (only set once)
-#         if not heading_set and line.startswith("Chapter:"):
-#             data["heading"] = line
-#             heading_set = True
-#             continue
-
-#         # Check next line for format detection
-#         next_line = lines[i + 1].strip() if i + 1 < len(lines) else ""
-
-#         # Detect format
-#         format_detected = detect_format(line, next_line)
-#         # print(f"Detected format for line '{line}': {format_detected}")
-
-#         if format_detected == 'question_answer':
-#             print("This is question&answers")
-#             question, answer = extract_question_and_answer(lines, i)
-#             if question and answer:
-#                 data[f"question{question_counter}"] = question
-#                 data[f"answer{question_counter}"] = answer
-#                 question_counter += 1
-#             else:
-#                 print(f"Failed to extract question or answer for line: {line}")
-
-#         elif format_detected == 'mcq' :
-#             print("This is mcq format")
-#             mcq_data = extract_mcq_details(lines, i)
-#             print("This is mcq_data")
-#             print(mcq_data)
-#             if mcq_data:
-#                 print("This is in if condition")
-#                 data[f"question{question_counter}"] = mcq_data['question']
-#                 data[f"options{question_counter}"] = mcq_data['options']
-#                 data[f"answer{question_counter}"] = mcq_data['answer']
-#                 data[f"explanation{question_counter}"] = mcq_data.get('explanation', '')
-#                 question_counter += 1
-#             else:
-#                 print(f"Failed to extract question,option and answer for line: {line}")
-        
-#         elif format_detected == 'trueorfalse' :
-#             print("This is trueorfasle format")
-#             trueorfalse = extract_trueorfalse_details(lines, i)
-#             if trueorfalse:
-#                 print("This is in if condition")
-#                 data[f"question{question_counter}"] = trueorfalse['question']
-#                 data[f"options{question_counter}"] =trueorfalse['options']
-#                 data[f"answer{question_counter}"] = trueorfalse['answer']
-#                 data[f"explanation{question_counter}"] = trueorfalse.get('explanation', '')
-#                 question_counter += 1
-#             else:
-#                 print(f"Failed to extract question,option and answer for line: {line}")
-
-#         # elif format_detected == 'matchthecolumn':
-#         #     # print("hghkjhjhjkh",extract_matchthecolumn_details)
-#         #     matchthefollowing = extract_matchthecolumn_details(text)
-#         #     print("This is match the column",matchthefollowing)
-#         #     if matchthefollowing:
-#         #         print("This is in if condition")
-#         #         # Ensure the data is correctly formatted for storage
-#         #         data[f"column_a{question_counter}"] = matchthefollowing['column_a']
-#         #         data[f"column_b{question_counter}"] = matchthefollowing['column_b']
-#         #         data[f"answer{question_counter}"] = matchthefollowing['answers']
-#         #         question_counter += 1
-#         #     else:
-#         #         print(f"Failed to extract column data for format: {format_detected}")
-
-#     if format_detected == 'matchthecolumn':
-#             # print("hghkjhjhjkh",extract_matchthecolumn_details)
-#             matchthefollowing = extract_matchthecolumn_details(text)
-#             print("This is match the column",matchthefollowing)
-#             if matchthefollowing:
-#                 print("This is in if condition")
-#                 # Ensure the data is correctly formatted for storage
-#                 data[f"question{question_counter}"] = matchthefollowing['question']
-#                 data[f"column_a{question_counter}"] = matchthefollowing['column_a']
-#                 data[f"column_b{question_counter}"] = matchthefollowing['column_b']
-#                 data[f"answer{question_counter}"] = matchthefollowing['answers']
-#                 question_counter += 1
-#             else:
-#                 print(f"Failed to extract column data for format: {format_detected}")
-
-#     # Print data to verify its structure
-#     print("Data to be stored in database:", data)
-
-#     # Add filename to the data
-#     # data["filename"] = filename
-#     return data
-
 @app.get("/retrieve", response_class=HTMLResponse)
 async def get_retrieve_page():
     print("This is retrieve")
@@ -1837,7 +1225,7 @@ async def get_subjects(
 
     # Fetch subjects
     subjects = await collection.distinct("subject", query)
-    print(subjects)
+    # print(subjects)
     return {"subjects": subjects}
 
 @app.get("/getchaptersandtasks")
@@ -1878,6 +1266,121 @@ async def get_chapters_and_tasks(
     
     return {"chapters": chapters, "tasks": tasks}
 
+# this is the owrking code for question and answer to fetch -- 10-01-2025
+# @app.get("/get_questions_and_answers")
+# async def get_questions_and_answers(
+#     board: str = Query(...),
+#     medium: str = Query(...),
+#     grade: str = Query(...),
+#     subject: str = Query(...),
+#     lesson: str = Query(...),
+#     tasks: str = Query(...),
+#     limit: Optional[int] = Query(None, ge=1)  # Ensure limit is >= 1
+# ):
+    
+#     # Validate limit
+#     if limit is not None and limit < 1:
+#         raise HTTPException(status_code=422, detail="Limit must be at least 1")
+
+#     existing_board = await board_collection.find_one({"board_id": int(board)})
+#     print(existing_board)
+#     board_name = existing_board["board_name"]
+
+#     existing_grade = await class_collection.find_one({"classs_id": int(grade)})
+#     print(existing_grade)
+#     class_name = existing_grade["classs_name"]
+
+#     # Construct the query
+#     query = {
+#         "board": board,
+#         "medium":medium,
+#         "grade": grade,
+#         "subject":subject,
+#         "lesson": lesson,
+#         "tasks": {"$in": tasks.split(",")}
+#     }
+
+#     print("Query:", query)
+    
+#     # # Get the collection based on grade
+#     # collection = get_collection(class_name)
+#     db = await get_or_create_database(board_name)
+#     print("This is db", db)
+
+#     # Get the collection using both the board name and class name
+#     collection = await get_collection(board_name, class_name)  # Pass both arguments
+#     print("This is collection", collection)
+    
+#     if collection is None:
+#         raise HTTPException(status_code=404, detail="Collection not found")
+
+#     # Find the document based on the query
+#     document = await collection.find_one(query)
+#     if not document:
+#         print("No document found for query")
+#         raise HTTPException(status_code=404, detail="No data found for the specified criteria")
+
+#     # Extract the question numbers
+#     questions_and_answers = document.get("questions_and_answers", {})
+#     question_numbers = [
+#         int(key.replace('question', '')) for key in questions_and_answers.keys()
+#         if key.startswith('question') and key.replace('question', '').isdigit()
+#     ]
+
+#     question_numbers.sort()
+
+#     # Apply random sampling if a limit is specified
+#     if limit > len(question_numbers):
+#         limit = len(question_numbers)
+#     selected_question_numbers = random.sample(question_numbers, limit)
+
+#     # Prepare the result
+#     result = []
+
+#     if not any(task in tasks for task in ['match-the-column', 'multiple-choice-questions', 'true-false']):
+#         for number in selected_question_numbers:
+#             question_key = f"question{number}"
+#             answer_key = f"answer{number}"
+#             result.append({
+#                 "question": questions_and_answers.get(question_key, ""),
+#                 "answer": questions_and_answers.get(answer_key, "")
+#             })
+
+#         print('final result',result)
+
+#     elif any(task in tasks for task in ['multiple-choice-questions', 'true-false']): 
+#         for number in selected_question_numbers:
+#             question_key = f"question{number}"
+#             options_key = f"options{number}"
+#             answer_key = f"answer{number}"
+#             explanation_key = f"explanation{number}"
+
+#             result.append({
+#                 "question": questions_and_answers.get(question_key, ""),
+#                 "options": questions_and_answers.get(options_key, ""),
+#                 "answer": questions_and_answers.get(answer_key, ""),
+#                 "explanation": questions_and_answers.get(explanation_key, "")
+#             })
+
+#         print('final result',result)
+
+#     elif any(task in tasks for task in ['match-the-column']): 
+#         for number in selected_question_numbers:
+#             question_key = f"question{number}"
+#             column_a_key = f"column_a{number}"
+#             column_b_key = f"column_b{number}"
+#             answer_key = f"answer{number}"
+
+#             result.append({
+#                 "question": questions_and_answers.get(question_key, ""),
+#                 "column_a": questions_and_answers.get(column_a_key, ""),
+#                 "column_b": questions_and_answers.get(column_b_key, ""),
+#                 "answer": questions_and_answers.get(answer_key, "")
+#             })
+
+#         print('final result',result)
+
+#     return {"questions_and_answers": result}
 
 @app.get("/get_questions_and_answers")
 async def get_questions_and_answers(
@@ -1885,11 +1388,10 @@ async def get_questions_and_answers(
     medium: str = Query(...),
     grade: str = Query(...),
     subject: str = Query(...),
-    lesson: str = Query(...),
+    lesson: str = Query(...),  # Allow multiple lessons (chapters) to be selected
     tasks: str = Query(...),
     limit: Optional[int] = Query(None, ge=1)  # Ensure limit is >= 1
 ):
-    
     # Validate limit
     if limit is not None and limit < 1:
         raise HTTPException(status_code=422, detail="Limit must be at least 1")
@@ -1902,14 +1404,17 @@ async def get_questions_and_answers(
     print(existing_grade)
     class_name = existing_grade["classs_name"]
 
+    # If multiple chapters are selected, split the lesson string by commas and handle it as a list
+    selected_lessons = lesson.split(",") if lesson else []
+    
     # Construct the query
     query = {
         "board": board,
-        "medium":medium,
+        "medium": medium,
         "grade": grade,
-        "subject":subject,
-        "lesson": lesson,
-        "tasks": {"$in": tasks.split(",")}
+        "subject": subject,
+        "lesson": {"$in": selected_lessons},  # Match any of the selected chapters
+        "tasks": {"$in": tasks.split(",")}  # Match any of the selected tasks
     }
 
     print("Query:", query)
@@ -1982,7 +1487,7 @@ async def get_questions_and_answers(
             column_a_key = f"column_a{number}"
             column_b_key = f"column_b{number}"
             answer_key = f"answer{number}"
-
+            
             result.append({
                 "question": questions_and_answers.get(question_key, ""),
                 "column_a": questions_and_answers.get(column_a_key, ""),
@@ -1993,6 +1498,7 @@ async def get_questions_and_answers(
         print('final result',result)
 
     return {"questions_and_answers": result}
+
 
 @app.get("/get_textbook-solution")
 async def get_questions_and_answers(
@@ -2095,7 +1601,6 @@ async def get_questions_and_answers(
    # document = await collection.find(query)
     documents = await collection.find(query).to_list(length=None)  # Convert cursor to list
     if not documents:
-    
         print("No document found for query")
         raise HTTPException(status_code=404, detail="No data found for the specified criteria")
     else:
@@ -2104,7 +1609,6 @@ async def get_questions_and_answers(
             doc['_id'] = str(doc['_id'])
 
        # document['_id'] = str(document['_id'])
-       
       
     return {"document": documents}
 
@@ -2189,7 +1693,6 @@ async def get_questions_and_answers(
     tasks: str = Query(...),
    
 ):
-
     # Construct the query
     query = {
         "board": board,
@@ -2280,7 +1783,7 @@ async def get_questions_and_answers(
         raise HTTPException(status_code=404, detail="Collection not found")
 
     # Find the document based on the query
-   # document = await collection.find(query)
+    # document = await collection.find(query)
     # Find the document based on the query
     document = await collection.find_one(query)
     if not document:
@@ -2320,68 +1823,6 @@ def get_role_id(role: str) -> int:
 
 
 @app.post("/register")
-# async def register_user(user: User):
-
-#     hashed_password = pwd_context.hash(user.password)
-
-#     print("this is new user",user)
-#     # Assign role_id based on the role
-#     role_id = get_role_id(user.role)
-#     print(role_id)
-    
-#     institute = await institute_collection.find_one({
-#         "unique_institute_id": user.unique_institute_id
-#         })
-
-    
-#     # Create user profile data
-#     user_profile = {
-#         # "user_id": user_id,
-#         "role": user.role,
-#         "name": user.name,
-#         "teachertype": user.teachertype,
-#         "surname": user.surname,
-#         "institute_name": institute['institute_name'],
-#         "class_name": user.class_name,
-#         "unique_institute_id": user.unique_institute_id,
-#         "date_of_birth": user.date_of_birth,
-#         "email": user.email,
-#     }
-
-#     # Create auth data
-#     auth_data = {
-#         # "user_id": user_id,
-#         "role": user.role,
-#         "email": user.email,
-#         "password": hashed_password,
-#         "role_id": role_id,  # Store the role_id
-#         "unique_institute_id": user.unique_institute_id,
-#     }
-
-#     existing_user = await profiles_collection.find_one({
-#         # "user_id": user_id,
-#                                                         "role": user.role,
-#                                                         "email": user.email,
-#                                                         "class_name":user.class_name,
-#                                                         "unique_institute_id": user.unique_institute_id,
-#                                                         "date_of_birth": user.date_of_birth
-#                                                         })
-#     print(existing_user)
-
-#     # Check if the email is already registered
-#     # if auth_collection.find_one({"email": user.email}):
-#     if existing_user:
-#         raise HTTPException(status_code=400, detail="User is already registered")
-    
-#     if user.password != user.confirm_password:
-#         raise HTTPException(status_code=400, detail="Passwords do not match")
-
-#     # Insert data into collections
-#     profiles_collection.insert_one(user_profile)
-#     auth_collection.insert_one(auth_data)
-
-#     return {"message": "Registration successful"}
-
 async def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
 
@@ -2470,36 +1911,6 @@ class StudentTeacherLoginData(BaseModel):
     password: str
     unique_institute_id: Optional[str] = None 
     # teachertype: str
-
-# @app.post("/student-teacher-login")
-# async def student_teacher_login(data: StudentTeacherLoginData):
-#     # Check if the registration type is 'registered'
-#     if data.registrationtype == "registered":
-#         user_auth = await auth_collection.find_one({
-#             "email": data.email,
-#             "role_id": data.role_id,
-#             "unique_institute_id": data.unique_institute_id,  # For registered users, this should be checked
-#             "teachertype": data.teachertype
-#         })
-#     elif data.teachertype == "open":
-#         user_auth = await auth_collection.find_one({
-#             "email": data.email,
-#             "role_id": data.role_id,
-#             # "open_institute": True,  # Check the open_institute flag for open users
-#             "teachertype": data.teachertype
-#         })
-#     else:
-#         raise HTTPException(status_code=422, detail="Invalid registration type")
-
-#     # Check if user exists
-#     if not user_auth:
-#         raise HTTPException(status_code=404, detail="User not found. Please check your email, institute ID, or role.")
-
-#     # Check password
-#     if not pwd_context.verify(data.password, user_auth['password']):
-#         raise HTTPException(status_code=401, detail="Incorrect password")
-
-#     return {"message": "Login successful"}
 
 @app.post("/student-teacher-login")
 async def student_teacher_login(data: StudentTeacherLoginData):
@@ -2927,7 +2338,7 @@ async def subject_added(subjt: Subject):
 
     }
     print("main yaha hoon yaha hoon yaha hoon yaha")
-    print(subject_profile)
+    # print(subject_profile)
     # Insert data into both collections
     subject_collection.insert_one(subject_profile)
  
@@ -2961,70 +2372,70 @@ async def subject_details(subjt: SubjectDtl):
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
-@app.get("/get_SubjectDetails1")
-async def get_subject_details(request: Request):
-    try:
-        # Fetch all subjects
-        cursor = subject_collection.find()
-        subjects = await cursor.to_list(length=None)
+# @app.get("/get_SubjectDetails1")
+# async def get_subject_details(request: Request):
+#     try:
+#         # Fetch all subjects
+#         cursor = subject_collection.find()
+#         subjects = await cursor.to_list(length=None)
 
-        # Create a list to store detailed subject information
-        detailed_subjects = []
+#         # Create a list to store detailed subject information
+#         detailed_subjects = []
 
-        # Iterate through subjects and fetch related class, medium, and board details
-        for subject in subjects:
-            subject["_id"] = str(subject["_id"])  # Convert ObjectId to string
+#         # Iterate through subjects and fetch related class, medium, and board details
+#         for subject in subjects:
+#             subject["_id"] = str(subject["_id"])  # Convert ObjectId to string
 
-            # Fetch the subject_id directly
-            subject_id = subject.get("subject_id", "Unknown subject_ID")
-            # Convert class_id, medium_id, and board_id to int for the query
+#             # Fetch the subject_id directly
+#             subject_id = subject.get("subject_id", "Unknown subject_ID")
+#             # Convert class_id, medium_id, and board_id to int for the query
 
-            try:
-                class_id = int(subject.get("class_id", 0))
-                medium_id = int(subject.get("medium_id", 0))
-                board_id = int(subject.get("board_id", 0))
-            except ValueError:
-                print(f"Invalid ID format for subject {subject['_id']}")
-                class_id, medium_id, board_id = None, None, None
+#             try:
+#                 class_id = int(subject.get("class_id", 0))
+#                 medium_id = int(subject.get("medium_id", 0))
+#                 board_id = int(subject.get("board_id", 0))
+#             except ValueError:
+#                 print(f"Invalid ID format for subject {subject['_id']}")
+#                 class_id, medium_id, board_id = None, None, None
 
-            print(f"Subject ID: {subject['_id']}")
-            print(f"Class ID: {class_id} (Type: {type(class_id)})")
-            print(f"Medium ID: {medium_id} (Type: {type(medium_id)})")
-            print(f"Board ID: {board_id} (Type: {type(board_id)})")
+#             # print(f"Subject ID: {subject['_id']}")
+#             # print(f"Class ID: {class_id} (Type: {type(class_id)})")
+#             # print(f"Medium ID: {medium_id} (Type: {type(medium_id)})")
+#             # print(f"Board ID: {board_id} (Type: {type(board_id)})")
 
-            # Fetch class name based on class_id
-            class_data = await class_collection.find_one({"classs_id": class_id})
-            subject["class_name"] = class_data["classs_name"] if class_data else "Unknown Class"
-            if not class_data:
-                print(f"No class found for class_id: {class_id}")
+#             # Fetch class name based on class_id
+#             class_data = await class_collection.find_one({"classs_id": class_id})
+#             subject["class_name"] = class_data["classs_name"] if class_data else "Unknown Class"
+#             if not class_data:
+#                 print(f"No class found for class_id: {class_id}")
 
-            # Fetch medium name based on medium_id
-            medium_data = await medium_collection.find_one({"medium_id": medium_id})
-            subject["medium_name"] = medium_data["medium_name"] if medium_data else "Unknown Medium"
-            if not medium_data:
-                print(f"No medium found for medium_id: {medium_id}")
+#             # Fetch medium name based on medium_id
+#             medium_data = await medium_collection.find_one({"medium_id": medium_id})
+#             subject["medium_name"] = medium_data["medium_name"] if medium_data else "Unknown Medium"
+#             if not medium_data:
+#                 print(f"No medium found for medium_id: {medium_id}")
 
-            # Fetch board name based on board_id
-            board_data = await board_collection.find_one({"board_id": board_id})
-            subject["board_name"] = board_data["board_name"] if board_data else "Unknown Board"
-            if not board_data:
-                print(f"No board found for board_id: {board_id}")
+#             # Fetch board name based on board_id
+#             board_data = await board_collection.find_one({"board_id": board_id})
+#             subject["board_name"] = board_data["board_name"] if board_data else "Unknown Board"
+#             if not board_data:
+#                 print(f"No board found for board_id: {board_id}")
 
-            # Append the subject with the fetched details
-            detailed_subjects.append({
-                "_id": subject["_id"],
-                "subject_id": subject_id,  # Add subject_id here
-                "subject_name": subject["subject_name"],
-                "class_name": subject["class_name"],
-                "medium_name": subject["medium_name"],
-                "board_name": subject["board_name"]
-            })
+#             # Append the subject with the fetched details
+#             detailed_subjects.append({
+#                 "_id": subject["_id"],
+#                 "subject_id": subject_id,  # Add subject_id here
+#                 "subject_name": subject["subject_name"],
+#                 "class_name": subject["class_name"],
+#                 "medium_name": subject["medium_name"],
+#                 "board_name": subject["board_name"]
+#             })
 
-        return detailed_subjects
+#         return detailed_subjects
     
-    except Exception as e:
-        print(f"Unhandled Exception: {e}")
-        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+#     except Exception as e:
+#         print(f"Unhandled Exception: {e}")
+#         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
 class Update_Subject(BaseModel):
     subject_id: int
@@ -3144,74 +2555,79 @@ async def topic_details(top: TopicDtl):
         print(f"Unhandled Exception: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
-@app.get("/get_TopicDetails1")
-async def get_topic_details(request: Request):
-    try:
-        # Fetch all subjects
-        cursor = topic_collection.find()
-        topics = await cursor.to_list(length=None)
+# @app.get("/get_TopicDetails1")
+# async def get_topic_details(request: Request):
+#     try:
+#         # Fetch all subjects
+#         cursor = topic_collection.find()
+#         topics = await cursor.to_list(length=None)
 
-        # Create a list to store detailed subject information
-        detailed_topics = []
+#         # Create a list to store detailed subject information
+#         detailed_topics = []
 
-        # Iterate through subjects and fetch related class, medium, and board details
-        for topic in topics:
-            topic["_id"] = str(topic["_id"])  # Convert ObjectId to string
+#         # Iterate through subjects and fetch related class, medium, and board details
+#         for topic in topics:
+#             topic["_id"] = str(topic["_id"])  # Convert ObjectId to string
 
-            # Fetch the subject_id directly
-            topic_id = topic.get("topic_id", "Unknown topic_ID")
-            # Convert class_id, medium_id, and board_id to int for the query
+#             # Fetch the subject_id directly
+#             topic_id = topic.get("topic_id", "Unknown topic_ID")
+#             # Convert class_id, medium_id, and board_id to int for the query
 
-            try:
-                class_id = int(topic.get("class_id", 0))
-                medium_id = int(topic.get("medium_id", 0))
-                board_id = int(topic.get("board_id", 0))
-                subject_id = int(topic.get("subject_id",0))
-            except ValueError:
-                print(f"Invalid ID format for subject {topic['_id']}")
-                class_id, medium_id, board_id, subject_id = None, None, None, None
+#             try:
+#                 class_id = int(topic.get("class_id", 0))
+#                 medium_id = int(topic.get("medium_id", 0))
+#                 board_id = int(topic.get("board_id", 0))
+#                 subject_id = int(topic.get("subject_id",0))
+#             except ValueError:
+#                 print(f"Invalid ID format for subject {topic['_id']}")
+#                 class_id, medium_id, board_id, subject_id = None, None, None, None
+        
+#             # print(f"Topic ID: {topic['_id']}")
+#             # print(f"Subject ID: {subject_id} (Type:{type(subject_id)})")
+#             # print(f"Class ID: {class_id} (Type: {type(class_id)})")
+#             # print(f"Medium ID: {medium_id} (Type: {type(medium_id)})")
+#             # print(f"Board ID: {board_id} (Type: {type(board_id)})")
 
+#             # Fetch class name based on class_id
+#             class_data = await class_collection.find_one({"classs_id": class_id})
+#             topic["class_name"] = class_data["classs_name"] if class_data else "Unknown Class"
+#             if not class_data:
+#                 print(f"No class found for class_id: {class_id}")
 
-            # Fetch class name based on class_id
-            class_data = await class_collection.find_one({"classs_id": class_id})
-            topic["class_name"] = class_data["classs_name"] if class_data else "Unknown Class"
-            if not class_data:
-                print(f"No class found for class_id: {class_id}")
+#             # Fetch medium name based on medium_id
+#             medium_data = await medium_collection.find_one({"medium_id": medium_id})
+#             topic["medium_name"] = medium_data["medium_name"] if medium_data else "Unknown Medium"
+#             if not medium_data:
+#                 print(f"No medium found for medium_id: {medium_id}")
 
-            # Fetch medium name based on medium_id
-            medium_data = await medium_collection.find_one({"medium_id": medium_id})
-            topic["medium_name"] = medium_data["medium_name"] if medium_data else "Unknown Medium"
-            if not medium_data:
-                print(f"No medium found for medium_id: {medium_id}")
-
-            # Fetch board name based on board_id
-            board_data = await board_collection.find_one({"board_id": board_id})
-            topic["board_name"] = board_data["board_name"] if board_data else "Unknown Board"
-            if not board_data:
-                print(f"No board found for board_id: {board_id}")
+#             # Fetch board name based on board_id
+#             board_data = await board_collection.find_one({"board_id": board_id})
+#             topic["board_name"] = board_data["board_name"] if board_data else "Unknown Board"
+#             if not board_data:
+#                 print(f"No board found for board_id: {board_id}")
             
-            subject_data = await subject_collection.find_one({"subject_id": subject_id})
-            topic["subject_name"] = subject_data["subject_name"] if subject_data else "Unknown Subject"
-            if not board_data:
-                print(f"No board found for subject_id: {subject_id}")
+#             subject_data = await subject_collection.find_one({"subject_id": subject_id})
+#             topic["subject_name"] = subject_data["subject_name"] if subject_data else "Unknown Subject"
+#             if not board_data:
+#                 print(f"No board found for subject_id: {subject_id}")
 
-            # Append the subject with the fetched details
-            detailed_topics.append({
-                "_id": topic["_id"],
-                "topic_id": topic_id,  # Add subject_id here
-                "topic_name": topic["topic_name"],
-                "subject_name": topic["subject_name"],
-                "class_name": topic["class_name"],
-                "medium_name": topic["medium_name"],
-                "board_name": topic["board_name"]
-            })
+#             # Append the subject with the fetched details
+#             detailed_topics.append({
+#                 "_id": topic["_id"],
+#                 "topic_id": topic_id,  # Add subject_id here
+#                 "topic_name": topic["topic_name"],
+#                 "subject_name": topic["subject_name"],
+#                 "class_name": topic["class_name"],
+#                 "medium_name": topic["medium_name"],
+#                 "board_name": topic["board_name"]
+#             })
 
-        return detailed_topics
+#         return detailed_topics
     
 
-    except Exception as e:
-        print(f"Unhandled Exception: {e}")
-        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+#     except Exception as e:
+#         print(f"Unhandled Exception: {e}")
+#         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
 class Update_Topic(BaseModel):
     topic_id: int
@@ -3670,43 +3086,43 @@ if __name__ == "__main__":
 #             return {"status": "0", "message": f"Failed to insert '{filename}'."}
 
 
-GOOGLE_CLIENT_ID = "409005645941-t0srh7jvesh8cehoil6fpnnedqid2qd5.apps.googleusercontent.com"
+# GOOGLE_CLIENT_ID = "409005645941-t0srh7jvesh8cehoil6fpnnedqid2qd5.apps.googleusercontent.com"
 
-# Define the request schema
-class GoogleLoginRequest(BaseModel):
-    id_token: str
+# # Define the request schema
+# class GoogleLoginRequest(BaseModel):
+#     id_token: str
     
-@app.post("/google-login")
-async def google_login(request: GoogleLoginRequest):
-    try:
-        # Verify the token
-        id_info = id_token.verify_oauth2_token(
-            request.id_token,
-            requests.Request(),
-            GOOGLE_CLIENT_ID
-        )
+# @app.post("/google-login")
+# async def google_login(request: GoogleLoginRequest):
+#     try:
+#         # Verify the token
+#         id_info = id_token.verify_oauth2_token(
+#             request.id_token,
+#             requests.Request(),
+#             GOOGLE_CLIENT_ID
+#         )
 
-        # Extract user info
-        user_info = {
-            "email": id_info.get("email"),
-            "name": id_info.get("name"),
-            "picture": id_info.get("picture"),
-        }
+#         # Extract user info
+#         user_info = {
+#             "email": id_info.get("email"),
+#             "name": id_info.get("name"),
+#             "picture": id_info.get("picture"),
+#         }
 
-        print("Hello User :",user_info)
+#         print("Hello User :",user_info)
 
-        if not id_info.get("email_verified"):
-            raise HTTPException(status_code=400, detail="Email not verified")
+#         if not id_info.get("email_verified"):
+#             raise HTTPException(status_code=400, detail="Email not verified")
 
-        return {"success": True, "user": user_info}
+#         return {"success": True, "user": user_info}
 
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail="Invalid token: " + str(e))
+#     except ValueError as e:
+#         raise HTTPException(status_code=400, detail="Invalid token: " + str(e))
 
 
 class ReportFilter(BaseModel):
-    board_id: str
-    medium_id: str
+    board_name: str
+    medium_name: str
     classs_name: str
     
 
@@ -3714,26 +3130,28 @@ class ReportFilter(BaseModel):
 async def fetch_reports(request: Request):
     try:
         data = await request.json()
-        board_id = data.get("board_id")
-        medium_id = data.get("medium_id")
+        board_name = data.get("board_name")
+        medium_name = data.get("medium_name")
         classs_name = data.get("classs_name")
 
-        if not board_id or not medium_id:
+        if not board_name or not medium_name:
             raise HTTPException(status_code=400, detail="Invalid input data")
 
         # client = MongoClient("mongodb://your_mongo_connection_string")
-        db = client["State_Board"]
+        db = client[board_name]  # Assuming `board_name` maps to the database name
+        print(f"Using Database: {board_name}")
+        
         collection_name = f"class_{classs_name}"
         collection = db[collection_name]
 
         # Log query details
         print(f"Querying collection: {collection_name}")
-        print(f"Query parameters: {{'board': {board_id}, 'medium': {medium_id}, 'classs': {classs_name}}}")
+        print(f"Query parameters: {{'board': {board_name}, 'medium': {medium_name}, 'classs': {classs_name}}}")
 
         # Query the database
         reports_cursor = collection.find({
-            "board": board_id,
-            "medium": medium_id,
+            "board_name": board_name,
+            "medium_name": medium_name,
             "grade_name": classs_name
         })
 
@@ -3768,3 +3186,165 @@ async def fetch_reports(request: Request):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+# def check_ad_networks(url: str):
+#     try:
+#         # Send a GET request to the URL
+#         response = requests.get(url)
+#         response.raise_for_status()  # Raise an exception for bad responses
+#     except requests.exceptions.RequestException as e:
+#         raise HTTPException(status_code=400, detail=str(e))
+
+#     # Parse the HTML content
+#     soup = BeautifulSoup(response.text, "html.parser")
+#     scripts = soup.find_all("script")
+
+#     # List to hold detected ad networks
+#     ad_networks = []
+
+#     # Check for ad network scripts
+#     for script in scripts:
+#         if script.get("src"):
+#             src = script.get("src")
+#             if "googletagservices" in src or "googleadservices" in src:
+#                 ad_networks.append("Google AdSense/Ad Exchange")
+#             elif "amazon-adsystem" in src:
+#                 ad_networks.append("Amazon Associates")
+#             elif "adtech" in src or "openx" in src or "pubmatic" in src:
+#                 ad_networks.append("Other ad networks")
+#             elif "propellerads.com" in src:
+#                 ad_networks.append("PropellerAds")
+#             elif "taboola.com" in src:
+#                 ad_networks.append("Taboola")
+#             elif "revcontent.com" in src:
+#                 ad_networks.append("Revcontent")
+#             elif "infolinks.com" in src:
+#                 ad_networks.append("Infolinks")
+
+#     # If no ad networks found
+#     if not ad_networks:
+#         return {"message": "No ad networks found on the website."}
+#     return {"ad_networks": ad_networks}
+
+# # FastAPI endpoint
+# @app.get("/check-ad-networks")
+# async def get_ad_networks(url: str):
+#     result = check_ad_networks(url)
+#     return result
+
+
+@app.get("/get_TopicDetails1")
+async def get_topic_details(request: Request):
+    try:
+        # Fetch all topics in a single query
+        cursor = topic_collection.find()
+        topics = await cursor.to_list(length=None)
+
+        # Fetch all related data in bulk and create lookup maps
+        class_cursor = class_collection.find({}, {"classs_id": 1, "classs_name": 1})
+        classes = await class_cursor.to_list(length=None)
+        class_map = {int(cls["classs_id"]): cls["classs_name"] for cls in classes}
+
+        medium_cursor = medium_collection.find({}, {"medium_id": 1, "medium_name": 1})
+        mediums = await medium_cursor.to_list(length=None)
+        medium_map = {int(med["medium_id"]): med["medium_name"] for med in mediums}
+
+        board_cursor = board_collection.find({}, {"board_id": 1, "board_name": 1})
+        boards = await board_cursor.to_list(length=None)
+        board_map = {int(brd["board_id"]): brd["board_name"] for brd in boards}
+
+        subject_cursor = subject_collection.find({}, {"subject_id": 1, "subject_name": 1})
+        subjects = await subject_cursor.to_list(length=None)
+        subject_map = {int(sub["subject_id"]): sub["subject_name"] for sub in subjects}
+
+        # Process topics and enrich with related data
+        detailed_topics = []
+        for topic in topics:
+            try:
+                # Convert ObjectId to string and ensure IDs are integers
+                topic["_id"] = str(topic["_id"])
+                class_id = int(topic.get("class_id", "0"))
+                medium_id = int(topic.get("medium_id", "0"))
+                board_id = int(topic.get("board_id", "0"))
+                subject_id = int(topic.get("subject_id", "0"))
+
+                # Fetch related names using pre-fetched lookup maps
+                topic["class_name"] = class_map.get(class_id, "Unknown Class")
+                topic["medium_name"] = medium_map.get(medium_id, "Unknown Medium")
+                topic["board_name"] = board_map.get(board_id, "Unknown Board")
+                topic["subject_name"] = subject_map.get(subject_id, "Unknown Subject")
+
+                # Append enriched topic details
+                detailed_topics.append({
+                    "_id": topic["_id"],
+                    "topic_id": topic.get("topic_id", "Unknown Topic ID"),
+                    "topic_name": topic.get("topic_name", "Unknown Topic Name"),
+                    "class_name": topic["class_name"],
+                    "medium_name": topic["medium_name"],
+                    "board_name": topic["board_name"],
+                    "subject_name": topic["subject_name"]
+                })
+            except Exception as e:
+                print(f"Error processing topic with ID {topic.get('_id')}: {e}")
+
+        # Return the enriched topic data
+        return {"status": "success", "data": detailed_topics}
+
+    except Exception as e:
+        # Handle overall errors gracefully
+        print(f"Error fetching topic details: {e}")
+        return {"status": "error", "message": str(e)}
+
+@app.get("/get_SubjectDetails1")
+async def get_subject_details(request: Request):
+    try:
+        # Fetch all subjects in a single query
+        cursor = subject_collection.find()
+        subjects = await cursor.to_list(length=None)
+
+        # Fetch all related data in bulk and create lookup maps
+        class_cursor = class_collection.find({}, {"classs_id": 1, "classs_name": 1})
+        classes = await class_cursor.to_list(length=None)
+        class_map = {int(cls["classs_id"]): cls["classs_name"] for cls in classes}
+
+        medium_cursor = medium_collection.find({}, {"medium_id": 1, "medium_name": 1})
+        mediums = await medium_cursor.to_list(length=None)
+        medium_map = {int(med["medium_id"]): med["medium_name"] for med in mediums}
+
+        board_cursor = board_collection.find({}, {"board_id": 1, "board_name": 1})
+        boards = await board_cursor.to_list(length=None)
+        board_map = {int(brd["board_id"]): brd["board_name"] for brd in boards}
+
+        # Process subjects and enrich with related data
+        detailed_subjects = []
+        for subject in subjects:
+            try:
+                # Convert ObjectId to string and ensure IDs are integers
+                subject["_id"] = str(subject["_id"])
+                subject_id = subject.get("subject_id", "Unknown Subject ID")
+                class_id = int(subject.get("class_id", 0))
+                medium_id = int(subject.get("medium_id", 0))
+                board_id = int(subject.get("board_id", 0))
+
+                # Use pre-fetched maps to fetch related names
+                subject["class_name"] = class_map.get(class_id, "Unknown Class")
+                subject["medium_name"] = medium_map.get(medium_id, "Unknown Medium")
+                subject["board_name"] = board_map.get(board_id, "Unknown Board")
+
+                # Append enriched subject details
+                detailed_subjects.append({
+                    "_id": subject["_id"],
+                    "subject_id": subject_id,
+                    "subject_name": subject.get("subject_name", "Unknown Subject Name"),
+                    "class_name": subject["class_name"],
+                    "medium_name": subject["medium_name"],
+                    "board_name": subject["board_name"]
+                })
+            except Exception as e:
+                print(f"Error processing subject ID {subject.get('_id', 'Unknown')}: {e}")
+
+        return {"status": "success", "data": detailed_subjects}
+
+    except Exception as e:
+        print(f"Unhandled Exception: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
